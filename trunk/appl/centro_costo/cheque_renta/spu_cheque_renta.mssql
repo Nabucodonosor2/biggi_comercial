@@ -1,0 +1,42 @@
+CREATE PROCEDURE spu_cheque_renta(@ve_operacion				varchar(20)
+							, @cod_cheque_renta			numeric
+							, @cod_usuario			numeric(3)
+							, @rut_proveedor	numeric
+							, @dig_verif	varchar(1)
+							, @boleta_factura varchar(100)
+							, @lista_fatura varchar(100))
+AS
+BEGIN
+	if (@ve_operacion='INSERT') begin
+		insert into cheque_renta
+			(fecha_renta
+			,cod_usuario
+			,rut_proveedor
+			,dig_verif
+			,boleta_factura
+			,lista_factura)
+		values
+			( getdate()
+			, @cod_usuario
+			, @rut_proveedor
+			, @dig_verif
+			, @boleta_factura
+			, @lista_fatura)
+	end
+	if (@ve_operacion='UPDATE') begin
+		update cheque_renta 
+		set rut_proveedor = @rut_proveedor
+			,dig_verif = @dig_verif
+			,boleta_factura = @boleta_factura
+			,lista_factura = @lista_fatura 
+		where cod_cheque_renta = @cod_cheque_renta
+
+	end
+	else if (@ve_operacion='DELETE') begin
+		delete cheque_renta 
+		where cod_cheque_renta = @cod_cheque_renta
+
+		delete cheque_renta 
+		where cod_cheque_renta = @cod_cheque_renta
+	end		
+END

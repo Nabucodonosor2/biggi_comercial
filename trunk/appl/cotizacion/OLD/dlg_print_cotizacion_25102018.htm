@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<title>Imprimir Cotizacion</title>
+		<link href="{W_CSS}" rel="stylesheet" type="text/css"/>
+		<script charset="iso-8859-1" src="../../../../commonlib/trunk/script_js/general.js" type="text/javascript"></script>
+		<script charset="iso-8859-1" src="dlg_print_cotizacion.js" type="text/javascript"></script>
+	</head>
+	<body class="content_wm">
+		<div class="titulo_tabla_wm">&nbsp;&nbsp;Imprimir Cotizaci&oacute;n N° {COD_COTIZACION} </div>
+		<form id="form1" name="form1" method="post" action="">
+			<table width="435" border="0" class="table2_wm" align="left">  
+				<tr align="left" class="table_wm" height="26">
+					<th align="left" colspan="3">Tipo Impresion</th>
+					<th width="119" align="left">Logos</th>
+				</tr>
+				<tr align="left" class="table2_wm" height="26"> 
+					<td width="96" align="left">
+						<label><input name="tipo_impresion" type="radio"  id="resumen" value="1" checked="checked" onclick="show_tabla_lista_tecnica(false, true)"/>Resumen</label>
+					</td>
+					<td colspan ="2">
+						<table border="0" id="tabla_formato"> 
+							<tr>
+								<td width="150" align="left">
+									<table>
+										<tr>
+											<td>
+												<div>
+													-<label>
+														<input name="formato" type="radio" onclick="valida_descuento('NO');" id="ch_pdf" value="1" checked="checked">Pdf
+													</label>
+												</div>
+											</td>
+											<td><div id="check_excel">{EXCEL}</div></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+					<td align="left">
+						<label><input name="conlogo" type="radio"  id="logo" value="1" checked="checked">Con logo</label>
+					</td>
+				</tr>
+				<tr align="left" height="26">  
+					<td align="left" colspan="2">
+						<label><input name="tipo_impresion" type="radio" id="ampliada"  value="1" onclick="show_tabla_lista_tecnica(false, false)">Ampliada</label>
+					</td>
+					<td align="left">
+						<label id="desc_item" style="display:none"><input name="descuentos" type="radio" id="item" value="1">Descto.Item</label>
+						<label id="desc_total" style="display:none"><input name="descuentos" type="radio" id="descuento" value="1">Descto.Total</label>
+					</td>
+					<td align="left">
+						<label><input name="conlogo" type="radio" id="sinlogo">Sin logo</label>
+					</td>
+				</tr>
+				<tr align="left" height="26">  
+					<td align="left" colspan="4">
+						<label><input name="tipo_impresion" type="radio" id="resumen_item"  value="1" onclick="show_tabla_lista_tecnica(false, false)">Resumen de Item</label>
+					</td>
+				</tr>
+				<tr align="left" height="26"> 
+					<td align="left">
+						<label><input name="tipo_impresion" type="radio" id="pesomedida"  value="1" onclick="show_tabla_lista_tecnica(false, false)"/>Pesos y Medidas</label>
+					</td>
+					<td align="left" colspan="2">
+						<div id="div_embalaje" style="display:none">
+							<label><input name="embalaje" type="radio" id="c_caja"  value="1" onclick="show_embalaje();" checked="checked">C/ Emb.</input></label>
+							<label><input name="embalaje" type="radio" id="s_caja"  value="1" onclick="show_embalaje();">S/ Emb.</input></label>
+						</div>
+					</td>
+					<td align="left"></td>
+				</tr>
+				<tr align="left" height="26"> 
+					<td align="left" colspan="4">
+						<label><input name="tipo_impresion" type="radio" id="tecnica" value="1" onclick="show_tabla_lista_tecnica(true, false)">Técnica</label>
+					</td>	
+				</tr>
+				<tr>
+					<td>
+						<!-- inicio tabla tecnica oculta--> 
+						<table width="180" border="0" align="left" class="table_wm" id="tabla_lista_tecnica" style="display:none">
+							<tr align="left">
+								<th width="106" align="left">Seleccione Lista Técnica</th>
+							</tr>
+							<tr align="left" class="table2_wm" style="display:{VISIBLE_ELECTRICO}"> 
+								<td width="106" align="left">
+									<label><input name="electrico" type="checkbox"  id="electrico" value="1">Eléctrico</label>
+								</td>
+							</tr>
+							<tr align="left" class="table2_wm" style="display:{VISIBLE_GAS}"> 
+								<td width="106" align="left">
+									<label><input name="gas" type="checkbox" id="gas"  value="1">Gas</label>
+								</td>
+							</tr>
+							<tr align="left" class="table2_wm" style="display:{VISIBLE_VAPOR}"> 
+								<td width="106" align="left">
+									<label><input name="vapor" type="checkbox" id="vapor" value="1">Vapor</label>
+								</td>
+							</tr>
+							<tr align="left" class="table2_wm" style="display:{VISIBLE_AGUA}"> 
+								<td width="106" align="left">
+									<label><input name="agua" type="checkbox" id="agua" value="1">Agua</label>
+								</td>
+							</tr>
+							<tr align="left" class="table2_wm" style="display:{VISIBLE_VENTILACION}"> 
+								<td width="106" align="left">
+									<label><input name="ventilacion" type="checkbox" id="ventilacion" value="1">Ventilación</label>
+								</td>
+							</tr>
+							<tr align="left" class="table2_wm" style="display:{VISIBLE_DESAGUE}"> 
+								<td width="106" align="left">
+									<label><input name="desague" type="checkbox" id="desague" value="1">Desague</label>
+								</td>
+							</tr>
+						</table>
+						<!-- fin tabla tecnica oculta--> 
+					</td>
+				</tr>
+				<tr align="left"> 
+					<td width="96" height="26" align="left">			</td>
+					<td height="26" align="right" colspan="3">
+						<input name="OK" type="button" value="OK"  onclick="okMe();" class="button"/>
+						<input name="Cancelar" type="button" value="Cancelar" onclick="closeMe();" class="button"/>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</body>
+</html>

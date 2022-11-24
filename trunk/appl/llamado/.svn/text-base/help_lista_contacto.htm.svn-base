@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Documento sin t&iacute;tulo</title>
+<link href="{W_CSS}" rel="stylesheet" type="text/css">
+</head>
+<body class="content_wm">
+<div class="titulo_tabla_wm">&nbsp;&nbsp;Seleccione una Empresa</div>
+<table>
+	<tr>
+		<td>
+			<table width="601" border="0" align="left" class="table_wm" style="margin-top:2px;" height="20">
+			  <tr align="left">
+			  	<th width="231" align="center">Razón Social</th>
+			    <th width="92" align="center">Rut</th>
+			  </tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<div style="overflow-x:hidden; overflow-y:auto;">
+				<table  border="0" width="601" class="table2_wm" align="left" height="20">  
+					<!-- startBlock(EMPRESA) -->
+				  <tr class="{DW_TR_CSS}" align="left">
+				  	<td width="231">{NOM_CONTACTO}</td> 
+				    <td width="92" align="right">{RUT}-{DIG_VERIF}</td>
+				  </tr>
+					<!-- endBlock(EMPRESA) -->	
+				</table>
+			</div>
+		<td>
+	<tr>
+</table>
+<p class="msg_wm">{TIENE_MAS_REGISTROS}</p>
+</body>
+</html>

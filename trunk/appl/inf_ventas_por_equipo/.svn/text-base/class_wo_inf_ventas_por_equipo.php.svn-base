@@ -1,0 +1,63 @@
+<?php
+require_once(dirname(__FILE__)."/../../../../commonlib/trunk/php/auto_load.php");
+require_once(dirname(__FILE__)."/../common_appl/class_header_modelo.php");
+
+class wo_inf_ventas_por_equipo extends w_informe_pantalla {
+   function wo_inf_ventas_por_equipo() {
+   	
+		$cod_usuario = session::get("COD_USUARIO");;
+		$db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
+   		$db->EXECUTE_SP("spi_ventas_por_equipo", "$cod_usuario"); 
+		$sql = "select	I.MES
+						,I.ANO
+					    ,I.COD_PRODUCTO                 
+					    ,I.TIPO_DOC                     
+					    ,I.NRO_DOC                      
+						,convert(varchar, I.FECHA_DOC, 103) FECHA_DOC
+						,I.FECHA_DOC DATE_DOC
+					    ,I.NOM_EMPRESA                  
+					    ,I.CANTIDAD                     
+					    ,I.PRECIO                       
+					    ,I.TOTAL                            
+					    ,case when I.CANTIDAD >=0 then I.CANTIDAD else 0 end CANT_FA                      
+					    ,case when I.CANTIDAD < 0 then I.CANTIDAD else 0 end CANT_NC                      
+					    ,case when I.CANTIDAD >=0 then I.TOTAL else 0 end TOT_FA                      
+					    ,case when I.CANTIDAD < 0 then I.TOTAL else 0 end TOT_NC                      
+				FROM INF_VENTAS_POR_EQUIPO I
+				where I.COD_USUARIO = $cod_usuario
+				order by DATE_DOC, I.NRO_DOC";  
+		parent::w_informe_pantalla('inf_ventas_por_equipo', $sql, $_REQUEST['cod_item_menu']);
+		$this->b_print_visible = false;
+		
+		// controls
+		$this->dw->add_control(new static_num('PRECIO'));
+		$this->dw->add_control(new static_num('TOTAL'));
+		
+		// headers
+		$this->add_header($h_ano = new header_num('ANO', 'I.ANO', 'Año'));
+		$this->add_header($h_mes = new header_mes('MES', 'I.MES', 'Mes'));
+		$this->add_header(new header_modelo('COD_PRODUCTO', 'I.COD_PRODUCTO', 'Modelo'));
+		$this->add_header(new header_text('TIPO_DOC', 'I.TIPO_DOC', 'Tipo Doc'));
+		$this->add_header(new header_num('NRO_DOC', 'I.NRO_DOC', 'Nro Doc'));
+		$this->add_header($control = new header_date('FECHA_DOC', 'I.FECHA_DOC', 'Fecha'));
+		$control->field_bd_order = 'I.DATE_DOC';
+		$this->add_header(new header_text('NOM_EMPRESA', 'I.NOM_EMPRESA', 'Cliente'));
+		$this->add_header(new header_num('CANTIDAD', 'I.CANTIDAD', 'CT', 0, true, 'SUM'));
+		$this->add_header(new header_num('PRECIO', 'I.PRECIO', 'Precio'));
+		$this->add_header(new header_num('TOTAL', 'I.TOTAL', 'Total', 0, true, 'SUM'));
+		
+		$this->add_header(new header_num('CANT_FA', 'case when I.CANTIDAD >=0 then I.CANTIDAD else 0 end', 'CANT_FA', 0, true, 'SUM'));
+		$this->add_header(new header_num('CANT_NC', 'case when I.CANTIDAD < 0 then I.CANTIDAD else 0 end', 'CANT_NC', 0, true, 'SUM'));
+		$this->add_header(new header_num('TOT_FA', 'case when I.CANTIDAD >=0 then I.TOTAL else 0 end', 'TOT_FA', 0, true, 'SUM'));
+		$this->add_header(new header_num('TOT_NC', 'case when I.CANTIDAD < 0 then I.TOTAL else 0 end', 'TOT_NC', 0, true, 'SUM'));
+
+		// Filtro inicial
+		$db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
+		$h_ano->valor_filtro = $db->current_year();
+		$h_mes->valor_filtro = $db->current_month();
+		
+		$this->row_per_page = 300;
+		$this->make_filtros();	// filtro incial
+   }
+}
+?>

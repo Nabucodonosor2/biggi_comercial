@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Documento sin t&iacute;tulo</title>
+<link href="{W_CSS}" rel="stylesheet" type="text/css"/>
+<script charset="iso-8859-1" src="../../../../commonlib/trunk/script_js/edit_filter.js" type="text/javascript"></script>
+<style type="text/css">
+<!--
+body {
+	background-color: #E5E5E5;
+	--text-align:center;
+	font-size:14px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+}
+.table{
+	font-size: 11px;
+	font-weight: bold; 
+	color: #FFF;
+	margin-top:1em;
+	border:#000033 1px solid;
+	margin-left:2px;
+	background: #919191;
+}
+.table2{
+	font-size: 11px;
+	--font-weight: bold; 
+	--color: #666666;	
+	--border-left: #000066  1px solid;
+	--border-bottom:#000066  1px solid;
+	--border-right: #000066  1px solid;
+	--margin-left:2px;
+	--background-color:#CCCCCC;	
+}
+</style>
+<script type="text/javascript">
+function get_returnVal(){
+	var vl_ref = document.getElementById('REFERENCIA_0').value;
+	var vl_notas = document.getElementById('NOTAS_0').value;
+	
+	return vl_ref+'|'+vl_notas;
+}
+</script>
+</head>
+<body>
+<div class="titulo_tabla_wm">&nbsp;&nbsp;Crear gasto fijo</div>
+	<form id="form1" name="form1" method="post" action="">
+		<table border="0" style="width: 300px" class="table2">
+			<tr class="encabezado_right">
+				<td>Referencia</td>
+				<td class="claro" align="left">{REFERENCIA}</td>
+			</tr>
+			<tr class="encabezado_right">
+				<td>Notas:</td>
+				<td class="claro" align="left">{NOTAS}</td>
+			</tr>
+			<tr>	
+				<td align="right">
+				</td>
+				<td align="right">
+					<input name="OK" type="submit" value="OK" onclick="if(document.getElementById('REFERENCIA_0').value != ''){returnValue=get_returnVal(); window.close();} else alert('Debe ingresar Referencia antes de grabar.')" class="button"/>
+					<input name="Cancelar" type="button" value="Cancelar" onclick="returnValue=null; window.close();" class="button"/>
+				</td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

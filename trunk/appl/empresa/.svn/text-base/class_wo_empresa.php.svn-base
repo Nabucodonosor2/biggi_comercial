@@ -1,0 +1,31 @@
+<?php
+require_once(dirname(__FILE__)."/../../../../commonlib/trunk/php/auto_load.php");
+
+class wo_empresa extends w_output
+{
+	function wo_empresa() {		
+		$this->b_add_visible  = true;
+		
+		$sql="select 	COD_EMPRESA,
+						RUT,
+						DIG_VERIF,
+						ALIAS,
+						NOM_EMPRESA,
+						GIRO 
+			from 		EMPRESA 
+			order by 	COD_EMPRESA";
+			
+		parent::w_output('empresa', $sql, $_REQUEST['cod_item_menu']);
+		
+		//formato numeros
+		$this->dw->add_control(new static_num('RUT'));
+		
+		// headers
+		$this->add_header(new header_num('COD_EMPRESA', 'COD_EMPRESA', 'Código'));
+		$this->add_header(new header_text('NOM_EMPRESA', 'NOM_EMPRESA', 'Razón Social'));
+		$this->add_header(new header_rut('RUT', 'EMPRESA', 'Rut'));
+		$this->add_header(new header_text('ALIAS', 'ALIAS', 'Alias'));
+		$this->add_header(new header_text('GIRO', 'GIRO', 'Giro'));     
+	}
+}
+?>

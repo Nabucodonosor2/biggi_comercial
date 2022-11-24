@@ -1,0 +1,82 @@
+<?php
+require_once(dirname(__FILE__)."/../../appl.ini");
+require_once(dirname(__FILE__)."/class_database.php");
+
+class server_biggi{
+	function svr_orden_compra($cod_orden_compra){
+		$db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
+		
+		// OC
+ 		$sql_ws = "SELECT COD_ORDEN_COMPRA
+ 						,REFERENCIA
+ 						,CONVERT(VARCHAR,FECHA_ORDEN_COMPRA,103) FECHA_ORDEN_COMPRA
+ 						,SUBTOTAL
+ 						,PORC_DSCTO1
+ 						,MONTO_DSCTO1
+ 						,TOTAL_NETO
+ 						,TOTAL_CON_IVA
+ 						,MONTO_IVA
+ 						,COD_NOTA_VENTA
+ 						,RUT
+				   FROM ORDEN_COMPRA OC
+					   ,EMPRESA E
+				   WHERE COD_ORDEN_COMPRA = $cod_orden_compra
+				   AND OC.COD_EMPRESA = E.COD_EMPRESA";
+				
+		$result_ws = $db->build_results($sql_ws);
+		for ($i=0; $i<count($result_ws); $i++) {
+			$result_ws[$i]['REFERENCIA']			= utf8_encode ($result_ws[$i]['REFERENCIA']);
+			$result_ws[$i]['FECHA_ORDEN_COMPRA']	= utf8_encode ($result_ws[$i]['FECHA_ORDEN_COMPRA']);
+		}
+		$result = array();
+		$result['ORDEN_COMPRA'] = $result_ws;		
+
+		// items OC
+ 		$sql_ws = "SELECT COD_ITEM_ORDEN_COMPRA
+ 						,ORDEN
+ 						,ITEM
+ 						,COD_PRODUCTO
+ 						,NOM_PRODUCTO
+ 						,CANTIDAD
+ 						,PRECIO
+				   FROM ITEM_ORDEN_COMPRA 
+				   WHERE COD_ORDEN_COMPRA = $cod_orden_compra";
+				
+		$result_ws = $db->build_results($sql_ws);
+		for ($i=0; $i<count($result_ws); $i++) {
+			$result_ws[$i]['COD_PRODUCTO'] 		= utf8_encode($result_ws[$i]['COD_PRODUCTO']);
+			$result_ws[$i]['NOM_PRODUCTO'] 		= utf8_encode($result_ws[$i]['NOM_PRODUCTO']);
+		}
+
+		$result['ITEM_ORDEN_COMPRA'] = $result_ws;
+		
+		$j = json_encode($result);
+		return $j;
+	}
+	
+	function svr_consulta_tabla($nom_tabla, $cod_tabla){
+		$db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
+		
+		$sql_ws= "SELECT *
+				  FROM ".$nom_tabla."
+				  WHERE COD_".$nom_tabla."=".$cod_tabla;
+		
+		$result_ws = $db->build_results($sql_ws);
+		if(count($result_ws) > 0){
+			$array = array_keys($result_ws[0]);
+			
+			for($i=0; $i < count($result_ws) ; $i++)
+				for($j=0; $j < count($array) ; $j++)
+					$result_ws[$i][$array[$j]]	= utf8_encode($result_ws[$i][$array[$j]]);
+			
+			$result = array();
+			$result['TABLA'] = $result_ws;
+			
+			$j = json_encode($result);
+			return $j;
+		}else{
+			return 'NO_REGISTRO';
+		}	
+	}
+}
+?>

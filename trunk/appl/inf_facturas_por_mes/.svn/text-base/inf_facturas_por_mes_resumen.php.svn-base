@@ -1,0 +1,69 @@
+<?php
+require_once(dirname(__FILE__)."/../../../../commonlib/trunk/php/auto_load.php");
+
+if (isset($_POST['b_print'])) {
+	$dw = session::get("inf_facturas_por_mes.dw");
+	session::un_set("inf_facturas_por_mes.dw");
+	
+	$cant_factura = $dw->get_item(0, 'CANT_FACTURA');
+	$total_neto = $dw->get_item(0, 'TOTAL_NETO');
+	$monto_iva = $dw->get_item(0, 'MONTO_IVA');
+	$total_con_iva = $dw->get_item(0, 'TOTAL_CON_IVA');
+	
+	$sql = "select $cant_factura			CANT_FACTURA
+					,$total_neto 			TOTAL_NETO
+					,$monto_iva				MONTO_IVA
+					,$total_con_iva			TOTAL_CON_IVA";	
+					
+	$ano = session::get("inf_facturas_por_mes.ANO");
+	$mes_desde = session::get("inf_facturas_por_mes.MES_DESDE");
+	$mes_hasta = session::get("inf_facturas_por_mes.MES_HASTA");
+
+	$b = new base();
+	$mes_desde = $b->nom_mes($mes_desde);
+	$mes_hasta = $b->nom_mes($mes_hasta);
+
+	$labels = array();
+	$labels['strANO'] = $ano;
+	$labels['strMES_DESDE'] = $mes_desde;
+	$labels['strMES_HASTA'] = $mes_hasta;
+	$rpt = new reporte($sql, dirname(__FILE__).'/inf_facturas_por_mes_resumen.xml', $labels, "Resumen Facturas", true, true);
+}
+else if (isset($_POST['b_cancel'])) {
+	session::un_set("inf_ventas_por_mes.dw");
+	base::presentacion();
+}
+else {
+	$temp = new Template_appl('inf_facturas_por_mes_resumen.htm');	
+		
+	// make_menu
+	$menu = session::get('menu_appl');
+	$menu->draw($temp);
+	
+	$ano = session::get("inf_facturas_por_mes.ANO");
+	$mes_desde = session::get("inf_facturas_por_mes.MES_DESDE");
+	$mes_hasta = session::get("inf_facturas_por_mes.MES_HASTA");
+	$cod_usuario =  session::get("COD_USUARIO");
+	$sql = "select	count(*) CANT_FACTURA
+						,sum(F.TOTAL_NETO) TOTAL_NETO
+						,sum(F.MONTO_IVA) MONTO_IVA
+						,sum(F.TOTAL_CON_IVA) TOTAL_CON_IVA
+				FROM FACTURA F
+				WHERE dbo.f_get_tiene_acceso(".$cod_usuario.", 'FACTURA',F.COD_USUARIO_VENDEDOR1, F.COD_USUARIO_VENDEDOR2) = 1 
+				  and F.COD_ESTADO_DOC_SII in (2,3)
+				  and year(F.FECHA_FACTURA) = $ano
+				  and month(F.FECHA_FACTURA) between $mes_desde and $mes_hasta";
+	$dw = new datawindow($sql);
+	$dw->add_control(new static_num('CANT_FACTURA'));
+	$dw->add_control(new static_num('TOTAL_NETO'));
+	$dw->add_control(new static_num('MONTO_IVA'));
+	$dw->add_control(new static_num('TOTAL_CON_IVA'));
+	session::set("inf_facturas_por_mes.dw", $dw);
+	
+	// draw
+	$dw->retrieve();
+	$dw->habilitar($temp, false);
+	
+	print $temp->toString();
+}
+?>

@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+		<title></title>
+		<link href="{W_CSS}" rel="stylesheet" type="text/css"/>
+		<script src="../../../../commonlib/trunk/script_js/SpryTabbedPanels.js" type="text/javascript"></script>
+		<link href="../../../../commonlib/trunk/css/SpryTabbedPanels.css" rel="stylesheet" type="text/css"/>
+		<script charset="iso-8859-1" src="../../../../commonlib/trunk/script_js/edit_filter.js" type="text/javascript"></script>
+		<script charset="iso-8859-1" src="../../../../commonlib/trunk/script_js/general.js" type="text/javascript"></script>
+		<script charset="iso-8859-1" src="consulta_stock_comercial.js" type="text/javascript"></script>
+		{WI_JAVA_SCRIPT}
+	</head>
+	<body>
+		<!-- DO NOT MOVE! The following AllWebMenus linking code section must always be placed right AFTER the BODY tag-->
+		<!-- ******** BEGIN ALLWEBMENUS CODE FOR menu ******** -->
+		<script type="text/javascript">var MenuLinkedBy="AllWebMenus [4]",awmMenuName="menu",awmBN="740";awmAltUrl="";</script>
+		<script charset="UTF-8" src="{K_ROOT_URL}menu/menu.js" type="text/javascript"></script>
+		<script type="text/javascript">{W_MENU}</script>
+		<!-- ******** END ALLWEBMENUS CODE FOR menu ******** -->
+		<table width="1100" border="0" align="center">
+			<tr bgcolor="#FFFFFF">
+				<!-- menu superior-->
+				<td width="1050"  height="51" align="center" id="awmAnchor-menu" style="width:100px; height:50px;">
+					<div style="color:blue; text-align:right; height:29px;"></div>
+					<div style="color:blue;text-align:right; font-family: Verdana,Arial,Helvetica,sans-serif;">{K_NOMBRE}</div>
+				</td>
+			</tr>
+			<tr bgcolor="#FFFFFF">	 		
+				<td>
+					<!-- <img src="../../images_appl/banner_informe.jpg" width="1050" height="120"> -->
+				</td>  
+			</tr>
+			<tr bgcolor="#FFFFFF">
+				<td>
+					<table width="1050" border="0" align="center" height="30">
+						<tr>
+							<td></td>
+						</tr>
+					</table>
+					<p/>
+					<table width="1050" border="0" align="center">
+						<tr bgcolor="#FFFFFF" >
+							<td valign="top">
+								<table width="99%" border="0" align="center">
+									<tr class="titulo_central" align="center">
+										<td align="center">CONSULTA STOCK PRODUCTOS EN BODEGA BIGGI Y TODOINOX</td>
+									</tr>
+									<tr class="titulo_central" align="center">
+										<td class="tit_superior" align="center">(Stock calculado al {FECHA} hrs) </td>
+									</tr>
+
+								</table>
+								
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<table width="99%" rules="none" border="1" align="center" class="claro">							
+									<tr class="titulo_tabla">				
+										<td colspan="4" >STOCK</td>
+									</tr>
+									<tr class="encabezado_center">
+										<th width="4%">IT</th>
+										<th width="13%">MODELO</th>
+										<th width="44%">DESCRIPCION</th>
+										<th width="15%">STOCK TODOINOX</th>
+										<th width="15%">STOCK BODEGA BIGGI</th>
+										<th width="5%"></th>
+									</tr>
+								</table>
+								<div style="overflow-x:hidden; overflow-y:auto; height:450; margin-top:0em;">
+								<table width="99%" rules="none" border="1" align="center" id="STOCK_PRODUCTO"> 	
+									<!-- startBlock(STOCK_PRODUCTO) -->
+									<tr class="{DW_TR_CSS}" id="{DW_TR_ID}">
+										<td width="4%" align="left"  bgcolor="{COLOR_ROJO}">{ITEM}</td>
+										<td width="13%" align="center" bgcolor="{COLOR_ROJO}">{COD_PRODUCTO}</td>
+										<td width="44%" align="left" bgcolor="{COLOR_ROJO}">{NOM_PRODUCTO}</td>
+										<td width="15%" align="center" bgcolor="{COLOR_ROJO}">{STOCK_TODOINOX}</td>
+										<td width="15%" align="center" bgcolor="{COLOR_ROJO}">{STOCK_BODEGA}</td>
+										<td width="5%" align="center" bgcolor="{COLOR_ROJO}">{ELIMINAR_STOCK_PRODUCTO}</td>
+									</tr>
+									<!-- endBlock(STOCK_PRODUCTO) -->	
+								</table>
+								</div>
+								<table width="1050" rules="none" border="1" align="center" class="claro">
+									<tr class="claro">
+										<td align="left">{AGREGAR_STOCK_PRODUCTO}</td>
+									</tr>
+								</table>		
+							</td>
+						</tr>
+					</table>
+					<table>
+						<tr bgcolor="#FFFFFF" height="28">
+							<td>						
+								<table width="1050" border="0" align="center">
+									<tr valign="middle">
+									  <!-- <td width="290" >{WI_BACK}</td> -->
+									</tr>
+								</table> 
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>

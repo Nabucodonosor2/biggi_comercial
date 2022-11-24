@@ -1,0 +1,93 @@
+<?php
+require_once(dirname(__FILE__)."/../../../../commonlib/trunk/php/auto_load.php");
+require_once("../../appl.ini");
+
+class edit_lista_doc extends edit_text {
+	function edit_lista_fa($field, $size = 6, $maxlen = 6) {
+		parent::edit_text($field, $size, $maxlen, $type='text', false);
+		//$this->onKeyUp = 'return onlyList(this, event,1);';
+	}
+}
+function save_direccion() {
+	$COD_USUARIO = session::get("COD_USUARIO");
+	
+	$RUT_PROVEEDOR = $_POST['RUT_PROVEEDOR_0'];
+	$DIG_VERIF = $_POST['DIG_VERIF_0'];
+	$BOLETA_FACTURA = $_POST['BOLETA_FACTURA_0'];
+	$LISTA_FACTURA = $_POST['LISTA_FACTURA_0'];
+	
+	$COD_CHEQUE_TODOINOX = ($COD_CHEQUE_TODOINOX=='') ? "null" : $COD_CHEQUE_TODOINOX;
+	$COD_USUARIO = ($COD_USUARIO=='') ? "null" : $COD_USUARIO;
+	$RUT_PROVEEDOR = ($RUT_PROVEEDOR=='') ? "null" : $RUT_PROVEEDOR;
+	$DIG_VERIF = ($DIG_VERIF=='') ? "null" : $DIG_VERIF;
+	$BOLETA_FACTURA = ($BOLETA_FACTURA=='') ? "null" : $BOLETA_FACTURA;
+	$LISTA_FACTURA = ($LISTA_FACTURA=='') ? "null" : $LISTA_FACTURA;
+	
+	$db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
+	$db->BEGIN_TRANSACTION();
+	$sp = 'spu_cheque_todoinox';
+	$operacion = 'INSERT';
+	    
+	 $param	= "'$operacion'
+	 			,$COD_CHEQUE_TODOINOX
+	 			,$COD_USUARIO
+				,$RUT_PROVEEDOR
+				,'$DIG_VERIF'
+				,'$BOLETA_FACTURA'
+				,'$LISTA_FACTURA'";
+
+	if ($db->EXECUTE_SP($sp, $param)){
+		$db->COMMIT_TRANSACTION();
+		$COD_CHEQUE_TODOINOX = $db->GET_IDENTITY();
+			return true;
+	}
+	
+	$db->ROLLBACK_TRANSACTION();
+	return false;
+	
+}
+
+$temp = new Template_appl('cheque_todoinox.htm');	
+
+$sql = "select   '' RUT_PROVEEDOR
+				,'' DIG_VERIF
+				,'' BOLETA_FACTURA
+				,'' LISTA_FACTURA";
+$dw_datos = new datawindow($sql);
+
+$dw_datos->add_control(new edit_rut('RUT_PROVEEDOR', 10, 10, 'DIG_VERIF'));
+$dw_datos->add_control(new edit_dig_verif('DIG_VERIF', 'RUT_PROVEEDOR'));
+
+$dw_datos->add_control(new drop_down_list('BOLETA_FACTURA',array('','BOLETA','FACTURA'),array('','BOLETA','FACTURA'),150));
+$dw_datos->add_control(new edit_lista_doc('LISTA_FACTURA',60,500));
+
+$entrable = true;
+$dw_datos->insert_row();
+
+if (isset($_POST['b_enviar'])){
+	if(save_direccion()){
+		$db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);		
+		$sql = "SELECT TOP 1 COD_CHEQUE_TODOINOX 
+						,RUT_PROVEEDOR
+						,DIG_VERIF
+						,LISTA_FACTURA  
+				FROM CHEQUE_TODOINOX
+				ORDER BY COD_CHEQUE_TODOINOX DESC";
+		$result = $db->build_results($sql);
+		$linea	= $result[0]['COD_CHEQUE_TODOINOX'];
+		$linea	.= '|'.$result[0]['RUT_PROVEEDOR'];
+		$linea	.= '|'.$result[0]['DIG_VERIF'];
+		$linea	.= '|'.$result[0]['LISTA_FACTURA'];
+		
+		print " <script>window.open('class_reverso_ch_todoinox.php?token=$linea','')</script>";
+	
+	}else{
+		echo 'error blalblana';
+	}
+}
+
+$dw_datos->habilitar($temp, $entrable);
+$menu = session::get('menu_appl');
+$menu->draw($temp);
+print $temp->toString();
+?>

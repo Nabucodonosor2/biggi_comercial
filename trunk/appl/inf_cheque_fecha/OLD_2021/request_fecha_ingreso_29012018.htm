@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Documento sin t&iacute;tulo</title>
+<link href="{W_CSS}" rel="stylesheet" type="text/css"/>
+<script charset="iso-8859-1" src="../../../../commonlib/trunk/script_js/edit_filter.js" type="text/javascript"></script>
+<script charset="iso-8859-1" src="../../../../commonlib/trunk/script_js/general.js" type="text/javascript"></script>
+<style type="text/css">
+<!--
+body {
+	background-color: #E5E5E5;
+	--text-align:center;
+	font-size:14px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+}
+.msg {
+	color:#000;
+	text-align:center;
+	font-size:11px;
+	font-weight:bolder;
+}
+.table{
+	font-size: 11px;
+	font-weight: bold; 
+	color: #FFF;
+	margin-top:1em;
+	border:#000033 1px solid;
+	margin-left:2px;
+	background: #919191;
+}
+.table2{
+	font-size: 11px;
+	--font-weight: bold; 
+	--color: #666666;	
+	--border-left: #000066  1px solid;
+	--border-bottom:#000066  1px solid;
+	--border-right: #000066  1px solid;
+	--margin-left:2px;
+	--background-color:#CCCCCC;	
+}
+.titulo_tabla{
+	background-color: #E5E5E5;
+	font-size: 12px;
+	font-weight:bold;	
+	color: #000066;
+	text-align:left;
+	padding-top:9px;
+	margin-left:-5px;
+	width:100px;	
+}
+-->
+</style>
+<script type="text/javascript">
+function valida_valor(){
+	if(document.getElementById('FECHA_DOC_0').value == '')
+		alert('Debe ingresar una Fecha');
+	else{ 
+		returnValue = document.getElementById('FECHA_DOC_0').value;
+		window.close()
+	}	
+}
+
+function display_div(){
+	if(document.getElementById('CREA_MASIVO_0').checked){
+		document.getElementById('FECHA_DOC_MASIVO').style.display = '';
+		document.getElementById('FECHA_DOC_ESPECIFICO').style.display = 'none';
+	}else if(document.getElementById('CREA_ESPECIFICO_0').checked){
+		document.getElementById('FECHA_DOC_MASIVO').style.display = 'none';
+		document.getElementById('FECHA_DOC_ESPECIFICO').style.display = '';
+	}
+		
+}
+
+function valida_valor2(){
+	var vl_cod_ingreso_pago = document.getElementById('COD_INGRESO_PAGO_0').value;
+	var vl_nro_doc			= document.getElementById('NRO_DOC_0').value;
+	var vl_new_fecha_doc	= document.getElementById('NEW_FECHA_DOC_0').value;
+	
+	if(vl_cod_ingreso_pago == ''){
+		alert('Debe ingresar "Cod. Ingreso pago".');
+		return;
+	}else if(vl_nro_doc == ''){
+		alert('Debe ingresar "Número Documento".');
+		return;
+	}else if(vl_new_fecha_doc == ''){
+		alert('Debe ingresar "Nueva Fecha".');
+		return;
+	}else{
+		returnValue = 'ESPECIFICO|'+vl_cod_ingreso_pago+'|'+vl_nro_doc+'|'+vl_new_fecha_doc;
+		window.close();
+	}
+}
+
+function valida_cod_ingreso(){
+	var vl_cod_ingreso_pago = document.getElementById('COD_INGRESO_PAGO_0').value;
+	var vl_nro_doc			= document.getElementById('NRO_DOC_0').value;
+	
+	var ajax = nuevoAjax();
+	ajax.open("GET", "ajax_valida_ingreso_pago.php?cod_ingreso_pago="+vl_cod_ingreso_pago+"&nro_doc="+vl_nro_doc, false);
+	ajax.send(null);
+	var resp = ajax.responseText;
+	resp = resp.split('|');
+	
+	if(resp[0] == 'NO_VALIDO'){
+		if(resp[1] == '1'){
+			alert('Codigo de ingreso pago no válido');
+			document.getElementById('COD_INGRESO_PAGO_0').value = '';
+		}else{
+			alert('Número de documento no válido');
+			document.getElementById('NRO_DOC_0').value = '';
+		}
+	}	
+}
+</script>
+</head>
+<body onload="window.document.form1.FECHA_DOC_0.focus();">
+<div class="titulo_tabla_wm" style="width: 280px">&nbsp;&nbsp;{PROMPT}</div>
+	<form id="form1" name="form1" method="post" action="">
+		<div>
+			<table border="0" style="width: 280px" class="table2">
+				<tr>
+					<td colspan="2" align="left">&nbsp;{CREA_MASIVO}</td>
+				</tr>
+				<tr>
+					<td colspan="2" align="left">&nbsp;{CREA_ESPECIFICO}</td>
+				</tr>
+			</table>
+		</div>
+		<div id="FECHA_DOC_MASIVO" style="display:">
+			<table border="0" style="width: 280px" class="table2">
+				<tr>
+					<td colspan="2" align="left">&nbsp;</td>
+				</tr>
+				<tr>
+					<td align="left">&nbsp;{FECHA_DOC}</td>
+				</tr>
+				<tr>
+					<td colspan="2" align="left">&nbsp;</td>
+				</tr>
+				<tr>	
+					<td colspan="2" align="center">
+						<input name="OK" type="submit" value="    OK    " onclick="valida_valor();" class="button"/>
+						<input name="Cancelar" type="button" value="Cancelar" onclick="returnValue=null; window.close();" class="button"/>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div id="FECHA_DOC_ESPECIFICO" style="display:none">
+			<table border="0" style="width: 280px" class="table2">
+				<tr>
+					<td colspan="2" align="left">&nbsp;</td>
+				</tr>
+				<tr>	
+					<td align="left">&nbsp;Cod Ingreso Pago</td>
+					<td align="left">&nbsp;{COD_INGRESO_PAGO}</td>
+				</tr>
+				<tr>	
+					<td align="left">&nbsp;Nro Documento</td>
+					<td align="left">&nbsp;{NRO_DOC}</td>
+				</tr>
+				<tr>	
+					<td align="left">&nbsp;Nueva Fecha Depósito</td>
+					<td align="left">&nbsp;{NEW_FECHA_DOC}</td>
+				</tr>
+				<tr>
+					<td colspan="2" align="left">&nbsp;</td>
+				</tr>
+				<tr>	
+					<td colspan="2" align="center">
+						<input name="OK" type="submit" value="    OK    " onclick="valida_valor2();" class="button"/>
+						<input name="Cancelar" type="button" value="Cancelar" onclick="returnValue=null; window.close();" class="button"/>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</form>
+</body>
+</html>

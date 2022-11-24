@@ -1,0 +1,270 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+<title>Registro de Llamadas</title>
+<link href="{W_CSS}" rel="stylesheet" type="text/css">
+<script charset="iso-8859-1" src="http://www.biggi.cl/sysbiggi_new/comercial_biggi/biggi/trunk/appl/llamado/envio_mail/../../../../../commonlib/trunk/script_js/edit_filter.js" type="text/javascript"></script>
+<script charset="iso-8859-1" src="http://www.biggi.cl/sysbiggi_new/comercial_biggi/biggi/trunk/appl/llamado/envio_mail/../../../../../commonlib/trunk/script_js/general.js" type="text/javascript"></script>
+<style type="text/css">
+<!--
+body {
+	background-color: #B1C2EB;
+
+}
+.encabezado_right{
+	background-color:#7896DC;
+	font-size: 11px;
+	font-weight:bold;	
+	color: #FFF;
+	text-align:right;
+	height:23px;
+}
+.encabezado_center{
+	background-color:#7896DC;
+	font-size: 11px;
+	font-weight:bold;	
+	color: #FFF;
+	text-align:center;
+	height:23px;
+}
+
+.encabezado_left{
+	background-color:#7896DC;
+	font-size: 11px;
+	font-weight:bold;	
+	color: #FFF;
+	text-align:left;
+	height:23px;
+}
+.titulo_tabla2{
+	background-color:#EAEAEA;
+	font-size: 20px;
+	font-weight:bold;	
+	color: #700112;
+	text-align:left;
+	padding-top:9px;
+}
+-->
+</style>
+<link rel="stylesheet" href="lib_mail.css" type="text/css" media="screen" title="Test Stylesheet" charset="utf-8" />
+<script src="protoculous-effects-shrinkvars.js" type="text/javascript" charset="utf-8"></script>
+<script src="textboxlist.js" type="text/javascript" charset="utf-8"></script>
+<script src="lib_mail.js" type="text/javascript" charset="utf-8"></script>
+<script src="envio_mail.js" type="text/javascript" charset="iso-8859-1"></script>
+<script type="text/javascript">
+function stopRKey(evt) {
+  var evt = (evt) ? evt : ((event) ? event : null);
+  var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+  if ((evt.keyCode == 13) && (node.type=="text")) {
+  	return false;
+  }
+}
+
+document.onkeypress = stopRKey;
+</script>
+{WI_JAVA_SCRIPT}
+</head>
+<body {WI_ONLOAD}>
+<!-- DO NOT MOVE! The following AllWebMenus linking code section must always be placed right AFTER the BODY tag-->
+<!-- ******** BEGIN ALLWEBMENUS CODE FOR menu ******** -->
+<script type="text/javascript">var MenuLinkedBy="AllWebMenus [4]",awmMenuName="menu",awmBN="740";awmAltUrl="";</script>
+<script charset="UTF-8" src="{K_ROOT_URL}menu/menu.js" type="text/javascript"></script>
+<script type="text/javascript">{W_MENU}</script>
+<!-- ******** END ALLWEBMENUS CODE FOR menu ******** -->
+<form name="formul" action="envio_mail.php" method="post">
+<input name="wi_hidden" id="wi_hidden" type="hidden" value="">
+	<table width="1050" border="0" align="center">
+		<tr bgcolor="#FFFFFF">
+			<td>
+				<table width="1000" border="0" align="center">
+					<tr>
+						<td height="95">
+							<table width="1015" border="0" align="center">
+								<tr valign="top">
+									<td height="530">						
+										<div class="TabbedPanelsContentGroup">
+											<!--INI LLAMADO-->
+											<div class="TabbedPanelsContent">  								   																																		
+												<table width="100%" rules="none" border="1" align="center">
+													<tr class="titulo_tabla2">				
+														<td colspan="6">RESPONDER LLAMADO Nº {COD_LLAMADO}</td>
+													</tr>
+												</table>
+												<br>
+												<table width="100%" rules="none">
+													<tr>				
+														<td>
+															<ol>
+																<li id="facebook-list" class="input-text">
+																	<label>Seleccion de Contactos</label>
+																	<input type="text" value="" id="facebook-demo" size="10"/>
+																	<div id="facebook-auto">
+																		<div class="default">Buscando Contactos....</div> 
+																		<ul class="feed">
+																		</ul>
+																	</div>
+																</li>
+															</ol>
+														</td>
+													</tr>
+												</table>
+												<script language="JavaScript">
+													document.observe('dom:loaded', function() {
+													// init
+													tlist2 = new FacebookList('facebook-demo', 'facebook-auto',{fetchFile:'fetched.dat'});
+													
+													});    
+												</script>
+												<table width="100%" rules="none" border="1" align="center">
+													<tr valign="top">
+														<td width="40%">
+															<table width="100%" border="0" align="center" rules="none">
+																<tr class="encabezado_center">
+																	<td align="left" width="100%">Destinatario</td>
+																</tr>
+															</table>	
+															<div style="overflow-x:hidden; overflow-y:auto; height:330px;">
+																<table width="100%" border="0" align="center" id="DESTINATARIO">
+																	<tbody id="TBODY_DESTINATARIO">
+																		<!-- startBlock(DESTINATARIO) -->
+																		<tr class="{DW_TR_CSS}" id="{DW_TR_ID}">
+																			<td width="75%" align="left">{COD_DESTINATARIO}{NOM_DESTINATARIO}</td>
+																			<td width="25%" align="center">{BTN_DEL}</td>
+																		</tr>
+																		<!-- endBlock(DESTINATARIO) -->
+																	</tbody>
+																</table>
+															</div>
+															<script language="JavaScript">
+																document.observe('dom:loaded', function() {
+																// init
+																tlist3 = new FacebookList2('facebook-demo2', 'facebook-auto2',{fetchFile:'fetched.dat'});
+																
+																});    
+															</script>
+															<table width="100%" rules="none" style="display:{DISPLAY_TABLE_UNO};">
+																<tr>
+																	<td>
+																		<ol>
+																			<li id="facebook-list2" class="input-text">
+																				<label>Seleccion de Responsable</label>
+																				<input type="text" value="" id="facebook-demo2" size="10"/>
+																				<div id="facebook-auto2">
+																					<div class="default">Buscando Contactos....</div> 
+																					<ul class="feed">
+																					</ul>
+																				</div>
+																			</li>
+																		</ol>
+																	</td>
+																</tr>
+															</table>
+															<table width="100%" border="0" align="center" rules="none" style="display:{DISPLAY_TABLE_DOS};">
+																<tr class="encabezado_center">
+																	<td align="left" width="100%">Responsable</td>
+																</tr>
+															</table>
+															<div style="overflow-x:hidden; overflow-y:auto; height:105px; display:{DIV_TABLE_UNO};">
+																<table width="100%" border="0" align="center" id="RESPONSABLE">
+																	<tbody id="TBODY_RESPONSABLE">
+																		<!-- startBlock(RESPONSABLE) -->
+																		<tr class="{DW_TR_CSS}" id="{DW_TR_ID}">
+																			<td width="75%" align="left">{COD_USUARIO_VENDEDOR1_RESP}{NOM_USUARIO}</td>
+																			<td width="25%" align="center">{BTN_DEL_RESP}</td>
+																		</tr>
+																		<!-- endBlock(RESPONSABLE) -->
+																	</tbody>
+																</table>
+															</div>
+														</td>
+														<td width="60%">
+															<table width="100%" rules="none" border="1" align="center">                  			  					  		
+																<tr class="encabezado_right">
+																	<td width="23%">Respuesta:{COD_DESTINATARIO_ENVIO_H}{COD_DESTINATARIO_H}{COD_LLAMADO_ACCION}{COD_SOLICITUD_COTIZACION}</td>
+																	<td colspan="6" class="claro_right" >{COD_LLAMADO_H}{NOM_EST_SOL_COT}<TEXTAREA COLS=62 ROWS=5 name=MENSAJE></TEXTAREA></td>
+																</tr>
+																<tr>
+																	<td class="encabezado_right">Realizado: </td>
+																	<td width="7%" class="claro_center"><input type="checkbox" name="REALIZADO_RESP" value="S" /></td>
+																	<td width="15%" class="encabezado_right">Tipo Docto: </td>
+																	<td width="10%" class="claro_center">{TIPO_DOC_REALIZADO}</td>
+																	<td width="15%" class="encabezado_right">Nº Docto:</td>
+																	<td width="10%" class="claro_center">{COD_DOC_REALIZADO}</td>
+																	<td width="18%" class="claro_center"><input type=submit value="Enviar" onclick="if(!get_returnVal()){ return false; } else { return true;} window.close();" onmouseover="this.bgColor='#5db5c8';" style="background-color:#610B0B; color:#fff; font-size: 10pt;"></td>
+																</tr>
+																<tr>
+																	<table width="100%" rules="none" border="1" align="center">
+																		<tr class="titulo_tabla">				
+																			<td colspan="6">EMPRESA</td>
+																		</tr>
+																		<tr class="encabezado_right">
+																			<td width="25%">Raz&oacute;n Social:</td>
+																			<td width="25%" class="claro_left">{COD_CONTACTO}{NOM_CONTACTO}</td>
+																			<td width="25%">Rut:</td>
+																			<td width="25%" class="claro_left">{RUT}-{DIG_VERIF}</td>
+																		</tr>
+																	</table> 	
+																	<table width="100%" rules="none" border="1" align="center">                  			  					  		
+																		<tr class="titulo_tabla">				
+																			<td colspan="200">CONTACTO</td>
+																		</tr>
+																		<tr class="encabezado_right">
+																			<td width="25%">Nombre:</td>
+																			<td width="25%" class="claro_left" id="TXT_PERSONA" >{NOM_PERSONA}</td>
+																			<td width="25%">Cargo:</td>
+																			<td colspan="25" class="oscuro_left">{CARGO}</td>
+																		</tr>
+																	</table>
+																	<br>
+																	<table width="100%" rules="none" border="1" align="center">                  			  					  		
+																		<tr class="titulo_tabla">				
+																			<td colspan="6">MENSAJE</td>
+																		</tr>
+																		<tr height="50">
+																			<td height="80"  class="claro_left">{MENSAJE_ORIGINAL}</td>
+																		</tr>
+																	</table>
+																	<br>
+																	<table width="100%" border="1" rules="none" align="center" >
+																		<tr class="titulo_tabla">				
+																			<td colspan="4">CONVERSACI&Oacute;N </td>
+																		</tr>
+																		<tr class="encabezado_center">
+																			<th width="10%">Fecha</th>
+																			<th width="15%">Usuario</th>
+																			<th width="55%">Glosa</th>
+																			<th width="10%">Realizado</th>
+																		</tr>
+																	</table>
+																	<div style="overflow-x:hidden; overflow-y:auto; height:70;">
+																		<table width="100%" rules="none" border="1" align="center" class="claro" id="CONVERSACION">
+																			<!-- startBlock(CONVERSACION) -->
+																			<tr class="{DW_TR_CSS}" id="{DW_TR_ID}">
+																				<td width="10%" align="center">{FECHA_LLAMADO_CONVERSA}</td>
+																				<td width="15%">{NOM_DESTINATARIO}</td>
+																				<td width="55%">{GLOSA}</td>
+																				<td width="10%" align="center"><div style="padding-right:20px;">{REALIZADO}</div></td>
+																			</tr>
+																			<!-- endBlock(CONVERSACION) -->
+																		</table>
+																	</div>
+																</tr>
+															</table>
+														</td>
+													</tr>
+												</table>
+											</div>
+										</div>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+</form>						
+</body>
+</html>

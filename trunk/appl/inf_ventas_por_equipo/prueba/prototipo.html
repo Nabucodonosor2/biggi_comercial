@@ -1,0 +1,603 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+		<title>Sistema Grupo de Empresas Biggi</title>
+		<link href="{W_CSS}" rel="stylesheet" type="text/css">
+		<script charset="iso-8859-1" src="../../../../commonlib/trunk/script_js/general.js" type="text/javascript"></script>
+		<script charset="iso-8859-1" src="inf_por_despachar.js" type="text/javascript"></script>
+		
+		<!-- INI CODIGO AGREGADO -->
+		<link href="http://192.168.2.100/desarrolladores/mherrera/sabbagh/trunk/../../commonlib/trunk/css/style_win.css" rel="stylesheet" type="text/css">
+		<style type="text/css">
+			@import "../../../../commonlib/trunk/css/inst.css"; 
+			@import "../../../../commonlib/trunk/css/nav.css";
+		</style>
+		<script src="../../../../commonlib/trunk/script_js/SpryTabbedPanels.js" type="text/javascript"></script>
+		<link href="../../../../commonlib/trunk/css/SpryTabbedPanels.css" rel="stylesheet" type="text/css" />
+		<script charset="iso-8859-1" src="../../../../commonlib/trunk/script_js/edit_filter.js" type="text/javascript"></script>
+		<script charset="iso-8859-1" src="../../../../commonlib/trunk/script_js/general.js" type="text/javascript"></script>
+		<script charset="iso-8859-1" src="../../../../commonlib/trunk/script_js/datawindow_tree.js" type="text/javascript"></script>
+		<script charset="iso-8859-1" src="../empresa/help_empresa.js" type="text/javascript"></script>
+		<script charset="iso-8859-1" src="proyecto.js" type="text/javascript"></script>
+		<script type="text/javascript">
+			function stopRKey(evt) {
+			var evt = (evt) ? evt : ((event) ? event : null);
+			var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+			if ((evt.keyCode == 13) && (node.type=="text")) {return false;}
+			}
+			document.onkeypress = stopRKey;
+			var TabbedPanels1 = null; 
+		</script>
+		<script type="text/javascript">
+			<!--
+			var TabbedPanels1 = new Spry.Widget.TabbedPanels("TabbedPanels1");
+			var TabbedPanels2 = new Spry.Widget.TabbedPanels("TabbedPanels2");
+			//-->
+		</script>
+		<script type="text/javascript">if (TabbedPanels1) TabbedPanels1.showPanel(0);</script>
+		
+		<!-- FIN CODIGO AGREGADO -->
+		
+	</head>
+	<body {WO_ONLOAD}>
+		<!-- DO NOT MOVE! The following AllWebMenus linking code section must always be placed right AFTER the BODY tag-->
+		<!-- ******** BEGIN ALLWEBMENUS CODE FOR menu ******** -->
+		<script type="text/javascript">var MenuLinkedBy="AllWebMenus [4]",awmMenuName="menu",awmBN="740";awmAltUrl="";</script>
+		<script charset="UTF-8" src="{K_ROOT_URL}menu/menu.js" type="text/javascript"></script>
+		<script type="text/javascript">{W_MENU}</script>
+		<!-- ******** END ALLWEBMENUS CODE FOR menu ******** -->	
+		<form action="" method="post" name="input" id="input" enctype="multipart/form-data"><input name="wi_hidden" id="wi_hidden" type="hidden" value="">
+			<table width="1850" border="0" align="center">
+				<tr bgcolor="#FFFFFF">
+					<!-- menu superior-->
+					<td width="1850" height="51" align="center" id="awmAnchor-menu" style="width: 100px; height: 50px;"></td>
+				</tr>
+				<tr bgcolor="#FFFFFF">
+					<td>
+						<table width="1750" border="0">
+							<tr>
+								<td>
+									<table width="520" border="0">
+										<tr>
+											<td height="100%">
+												<div class="titulo_central">Informes->Facturas por Equipo</div>
+											</td>
+										</tr>
+										<tr>
+											<td height="0%">
+												<div class="tit_superior"><font color="#999999">Fecha Actual: 13/04/2011</font></div>
+											</td>
+										</tr>
+									</table>
+								</td>
+								<td width="68"></td>
+								<td width="68"></td>
+								<td width="68">
+									
+								</td>
+								<td width="68">
+									
+								</td>
+								<td width="68">
+									
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr bgcolor="#FFFFFF">
+					<td>
+						<table width="1850" border="0" align="center">
+							<tr>
+								<td height="95">
+									<table width="1850" border="0" align="center">
+										<tr valign="top">
+											<td>
+												<div class="TabbedPanelsContentGroup">
+													<div class="TabbedPanelsContent" style="height: 492px;">
+														<table width="1850" rules="none" border="1" align="center" class="claro">
+															<tr class="encabezado_right">
+																<td width="270">INGRESE A&Ntilde;O:</td>
+																<td width="40" class="claro_left" colspan="5">
+																	<input type="TEXT" value="2011"/>
+																	<input type="button" value="BUSCAR"/>
+																</td>
+																<td width="1300"></td>
+															</tr>
+														</table>
+														<p>
+														<div style="overflow-x: hidden; overflow-y: auto; height: 450;">
+															<table id="FAMILIA" width="1850" rules="none" border="1" align="center" class="claro">
+																<tbody>
+																	<tr class="encabezado_center">
+																		<th rowspan="2" width="160" align="center">Nombre Familia</th>
+																		<th colspan="2" width="70" align="center">Enero</th>
+																		<th colspan="2" width="70" align="center">Febrero</th>
+																		<th colspan="2" width="70" align="center">Marzo</th>
+																		<th colspan="2" width="70" align="center">Abril</th>
+																		<th colspan="2" width="70" align="center">Mayo</th>			
+																		<th colspan="2" width="70" align="center">Junio</th>
+																		<th colspan="2" width="70" align="center">Julio</th>
+																		<th colspan="2" width="70" align="center">Agosto</th>
+																		<th colspan="2" width="70" align="center">Septiembre</th>
+																		<th colspan="2" width="70" align="center">Octubre</th>
+																		<th colspan="2" width="70" align="center">Noviembre</th>
+																		<th colspan="2" width="70" align="center">Diciembre</th>
+																	</tr>
+																	<tr class="encabezado_center">
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																	</tr>
+																	<tr class="dwt_folder" id="FAMILIA_01">
+																		<td width="160" align="left">
+																			<div class="tier1">
+																				<a href="#" onClick="toggleRows(this)" class="folder"></a>
+																				<label id="PL_NOM_PROYECTO_0">ANAFES Y COCINAS INDUSTRIALES</label>
+																			</div>
+																		</td>
+																		<td width="35" align="center">900</td>
+																		<td width="35" align="center">130</td>
+																		<td width="35" align="center">900</td>
+																		<td width="35" align="center">130</td>
+																		<td width="35" align="center">1.600</td>
+																		<td width="35" align="center">130</td>
+																		<td width="35" align="center">1.000</td>
+																		<td width="35" align="center">100</td>
+																		<td width="35" align="center">1.000</td>
+																		<td width="35" align="center">130</td>
+																		<td width="35" align="center">2.000</td>
+																		<td width="35" align="center">130</td>
+																		<td width="35" align="center">1.600</td>
+																		<td width="35" align="center">130</td>
+																		<td width="35" align="center">1.100</td>
+																		<td width="35" align="center">130</td>
+																		<td width="35" align="center">1.300</td>
+																		<td width="35" align="center">130</td>
+																		<td width="35" align="center">1.100</td>
+																		<td width="35" align="center">130</td>
+																		<td width="35" align="center">1.150</td>
+																		<td width="35" align="center">130</td>
+																		<td width="35" align="center">1.300</td>
+																		<td width="35" align="center">130</td>
+
+																	</tr>
+																	<tr class="claro" id="FAMILIA_01-01">
+																		<td width="160" align="left">
+																			<div class="tier2">
+																				<a class="doc"></a>
+																				CE-4C
+																			</div>
+																		</td>
+																		<td width="35" align="center">100</td>
+																		<td width="35" align="center">10</td>
+																		<td width="35" align="center">200</td>
+																		<td width="35" align="center">20</td>
+																		<td width="35" align="center">300</td>
+																		<td width="35" align="center">30</td>
+																		<td width="35" align="center">400</td>
+																		<td width="35" align="center">40</td>
+																		<td width="35" align="center">500</td>
+																		<td width="35" align="center">50</td>
+																		<td width="35" align="center">600</td>
+																		<td width="35" align="center">60</td>
+																		<td width="35" align="center">700</td>
+																		<td width="35" align="center">70</td>
+																		<td width="35" align="center">800</td>
+																		<td width="35" align="center">80</td>
+																		<td width="35" align="center">900</td>
+																		<td width="35" align="center">90</td>
+																		<td width="35" align="center">1.000</td>
+																		<td width="35" align="center">100</td>
+																		<td width="35" align="center">1.100</td>
+																		<td width="35" align="center">110</td>
+																		<td width="35" align="center">1.200</td>
+																		<td width="35" align="center">120</td>
+																	</tr>
+																	<tr class="oscuro" id="FAMILIA_01-01">
+																		<td width="160" align="left">
+																			<div class="tier2">
+																				<a class="doc"></a>
+																				CE-6C
+																			</div>
+																		</td>
+																		<td width="35" align="center">800</td>
+																		
+																		<td width="35" align="center">120</td>
+																		
+																		<td width="35" align="center">700</td>
+																		
+																		<td width="35" align="center">110</td>
+																		
+																		<td width="35" align="center">1.300</td>
+																		
+																		<td width="35" align="center">100</td>
+																		
+																		<td width="35" align="center">600</td>
+																		
+																		<td width="35" align="center">90</td>
+																		
+																		<td width="35" align="center">400</td>
+																		
+																		<td width="35" align="center">80</td>
+																		
+																		<td width="35" align="center">1.400</td>
+																		
+																		<td width="35" align="center">70</td>
+																		
+																		<td width="35" align="center">900</td>
+																		
+																		<td width="35" align="center">60</td>
+																		
+																		<td width="35" align="center">300</td>
+																		
+																		<td width="35" align="center">50</td>
+																		
+																		<td width="35" align="center">400</td>
+																		
+																		<td width="35" align="center">40</td>
+																		
+																		<td width="35" align="center">100</td>
+																		
+																		<td width="35" align="center">30</td>
+																		
+																		<td width="35" align="center">50</td>
+																		
+																		<td width="35" align="center">20</td>
+																		
+																		<td width="35" align="center">100</td>
+																		
+																		<td width="35" align="center">10</td>
+																	</tr>	
+
+																	<tr class="dwt_folder" id="FAMILIA_02">
+																		<td width="160" align="left">
+																			<div class="tier1">
+																				<a href="#" onClick="toggleRows(this)" class="folder"></a>
+																				<label id="PL_NOM_PROYECTO_0">BANDEJEROS</label>
+																			</div>
+																		</td>
+																		<td width="35" align="center">1.600</td>
+																		<td width="35" align="center">100</td>
+																		<td width="35" align="center">400</td>
+																		<td width="35" align="center">150</td>
+																		<td width="35" align="center">1.600</td>
+																		<td width="35" align="center">150</td>
+																		<td width="35" align="center">1.000</td>
+																		<td width="35" align="center">250</td>
+																		<td width="35" align="center">1.900</td>
+																		<td width="35" align="center">450</td>
+																		<td width="35" align="center">1.400</td>
+																		<td width="35" align="center">450</td>
+																		<td width="35" align="center">2.000</td>
+																		<td width="35" align="center">1.050</td>
+																		<td width="35" align="center">1.700</td>
+																		<td width="35" align="center">450</td>
+																		<td width="35" align="center">250</td>
+																		<td width="35" align="center">450</td>
+																		<td width="35" align="center">1.900</td>
+																		<td width="35" align="center">450</td>
+																		<td width="35" align="center">2.200</td>
+																		<td width="35" align="center">650</td>
+																		<td width="35" align="center">650</td>
+																		<td width="35" align="center">1.200</td>
+
+																	</tr>
+																	<tr class="claro" id="FAMILIA_02-01">
+																		<td width="160" align="left">
+																			<div class="tier2">
+																				<a class="doc"></a>
+																				BAR
+																			</div>
+																		</td>
+																		<td width="35" align="center">300</td>
+																		<td width="35" align="center">50</td>
+																		<td width="35" align="center">250</td>
+																		<td width="35" align="center">100</td>
+																		<td width="35" align="center">300</td>
+																		<td width="35" align="center">50</td>
+																		<td width="35" align="center">100</td>
+																		<td width="35" align="center">100</td>
+																		<td width="35" align="center">1.300</td>
+																		<td width="35" align="center">300</td>
+																		<td width="35" align="center">800</td>
+																		<td width="35" align="center">300</td>
+																		<td width="35" align="center">700</td>
+																		<td width="35" align="center">800</td>
+																		<td width="35" align="center">400</td>
+																		<td width="35" align="center">100</td>
+																		<td width="35" align="center">50</td>
+																		<td width="35" align="center">50</td>
+																		<td width="35" align="center">1.800</td>
+																		<td width="35" align="center">150</td>
+																		<td width="35" align="center">1.300</td>
+																		<td width="35" align="center">250</td>
+																		<td width="35" align="center">600</td>
+																		<td width="35" align="center">100</td>
+																	</tr>
+																	<tr class="oscuro" id="FAMILIA_02-01">
+																		<td width="160" align="left">
+																			<div class="tier2">
+																				<a class="doc"></a>
+																				BAR-E
+																			</div>
+																		</td>
+																		<td width="35" align="center">1.300</td>
+																		<td width="35" align="center">50</td>
+																		<td width="35" align="center">150</td>
+																		<td width="35" align="center">50</td>
+																		<td width="35" align="center">1.000</td>
+																		<td width="35" align="center">100</td>
+																		<td width="35" align="center">900</td>
+																		<td width="35" align="center">150</td>
+																		<td width="35" align="center">600</td>
+																		<td width="35" align="center">150</td>
+																		<td width="35" align="center">600</td>
+																		<td width="35" align="center">150</td>
+																		<td width="35" align="center">1.300</td>
+																		<td width="35" align="center">250</td>
+																		<td width="35" align="center">1.300</td>
+																		<td width="35" align="center">300</td>
+																		<td width="35" align="center">200</td>
+																		<td width="35" align="center">400</td>
+																		<td width="35" align="center">100</td>
+																		<td width="35" align="center">300</td>
+																		<td width="35" align="center">900</td>
+																		<td width="35" align="center">400</td>
+																		<td width="35" align="center">50</td>
+																		<td width="35" align="center">1.100</td>
+																	</tr>	
+																	<tr class="dwt_folder" id="FAMILIA_03">
+																		<td width="160" align="left">
+																			<div class="tier1">
+																				<a href="#" onClick="toggleRows(this)" class="folder"></a>
+																				<label id="PL_NOM_PROYECTO_0">CAMPANAS BIGGI</label>
+																			</div>
+																		</td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+
+																	</tr>
+																	<tr class="claro" id="FAMILIA_03-01">
+																		<td width="160" align="left">
+																			<div class="tier2">
+																				<a class="doc"></a>
+																				C-100
+																			</div>
+																		</td>
+																		<td width="35" align="center">00.00</td>
+																		<td width="35" align="center">1.658</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																	</tr>
+																	<tr class="oscuro" id="FAMILIA_03-01">
+																		<td width="160" align="left">
+																			<div class="tier2">
+																				<a class="doc"></a>
+																				C-150
+																			</div>
+																		</td>
+																		<td width="35" align="center">00.00</td>
+																		<td width="35" align="center">1.658</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																	</tr>	
+																	<tr class="dwt_folder" id="FAMILIA_04">
+																		<td width="160" align="left">
+																			<div class="tier1">
+																				<a href="#" onClick="toggleRows(this)" class="folder"></a>
+																				<label id="PL_NOM_PROYECTO_0">CARROS</label>
+																			</div>
+																		</td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+																		<td width="35" align="center"></td>
+
+																	</tr>
+																	<tr class="claro" id="FAMILIA_04-01">
+																		<td width="160" align="left">
+																			<div class="tier2">
+																				<a class="doc"></a>
+																				CAR-1
+																			</div>
+																		</td>
+																		<td width="35" align="center">00.00</td>
+																		<td width="35" align="center">1.658</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																	</tr>
+																	<tr class="oscuro" id="FAMILIA_04-01">
+																		<td width="160" align="left">
+																			<div class="tier2">
+																				<a class="doc"></a>
+																				CAR-2
+																			</div>
+																		</td>
+																		<td width="35" align="center">00.00</td>
+																		<td width="35" align="center">1.658</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																		<td width="35" align="center">M$</td>
+																		<td width="35" align="center">Cant</td>
+																	</tr>																		
+																	
+																</tbody>
+															</table>
+														</div>
+													</div>
+													<div class="TabbedPanelsContent" style="height: 50px;">
+														<p>
+													</div>
+												</div>
+											</td>
+										</tr>
+									</table>
+									<table width="1850" border="0" align="center">
+										<tr valign="middle">
+											<td width="290">
+												<input name="b_back" id="b_back" src="../../../../commonlib/trunk/images/b_back.jpg" type="image"/>
+											</td>
+											<td align="right">
+												
+													
+											</td>
+											<td align="left">
+												
+												
+											</td>
+											<td width="290"></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</form>
+	
+	</body>
+</html>

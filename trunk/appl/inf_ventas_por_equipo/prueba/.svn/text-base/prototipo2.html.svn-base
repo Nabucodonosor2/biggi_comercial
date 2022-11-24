@@ -1,0 +1,104 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+	<link rel="stylesheet" type="text/css" href="css.css">
+		
+	<style type="text/css">
+		/*
+			 CSS-Tricks Example
+			 by Chris Coyier
+			 http://css-tricks.com
+		*/
+		table               { border-collapse: collapse; width: 100%; margin-top:10px; }
+		td                  { border: 1px solid #ccc; padding: 10px; }
+		thead               { width: 100%; height: 109px; background: url(http://css-tricks.com/examples/FixedHeaderTable/images/header.png) no-repeat; }
+		.slim               { width: 88px; }
+		
+		/* COLOR PARA DESTACAR COLUMNA */
+		.column-hover		{ background:#FFFFCC; }
+		
+		/* COLOR PARA DESTACAR FILA */
+		.row-hover			{ background:#FFFFCC; }
+		
+		/* COLOR PARA DESTACAR LA CELDA DEL MOUSE */
+		/* .cell-hover			{ background:#fffea1; }	*/
+		.cell-hover			{ background:#FFFF99; }	
+	</style>
+	
+	<script type="text/javascript" src="mootools.js"></script>
+	
+	<script type="text/javascript">
+		window.addEvent('domready',function(){
+			var table = document.id('highlight-table');
+			var rows = table.getElements('tr');
+			
+			//for every row...
+			rows.each(function(tr,trCount){
+				//we don't want the header
+				if(tr.getParent().get('tag') == 'thead') { return false; }
+				
+				//add the row class to the row
+				tr.addClass('row-' + trCount);
+				//add the row listener
+				tr.addEvents({
+					'mouseenter': function(){
+						tr.addClass('row-hover');
+					},
+					'mouseleave': function(){
+						tr.removeClass('row-hover');
+					}
+				});
+				//for every cell...
+				tr.getElements('td').each(function(td,tdCount) {
+					//remember column and column items
+					var column = 'col-' + tdCount;
+					var friends = 'td.' + column;
+					//add td's column class
+					td.addClass(column);
+					//add the cell and column event listeners
+					td.addEvents({
+						'mouseenter': function(){
+							$$(friends).erase(td).addClass('column-hover');
+							td.addClass('cell-hover');
+						},
+						'mouseleave': function() {
+							$$(friends).erase(td).removeClass('column-hover');
+							td.removeClass('cell-hover');
+						}
+					});
+				});
+			});
+			
+		});
+	</script>
+
+</head>
+<body>
+	<table id="highlight-table">
+		<tbody>
+			<tr>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+			</tr>
+		</tbody>
+	</table>	
+</body>
+</html>

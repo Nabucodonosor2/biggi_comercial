@@ -1,0 +1,36 @@
+<Report>	
+	<Font name="Arial" size="7" style="" id="ArialSmall"/>
+	<Font name="Arial" size="7" style="" id="ArialSmallBlue" red="0" green="0" blue="128"/>
+	<Font name="Arial" size="17" style="B" id="ArialBoldBigB" red="0" green="0" blue="128"/>
+	<Font name="Arial" size="10" style="B" id="ArialBold"/>
+	<Font name="Arial" size="10" style="" id="Arial"/>
+	<Font name="Arial" size="8" style="B" id="ArialBold_header"/>	
+	<Font name="Arial" size="10" style="B" id="ArialBoldBlue" red="0" green="0" blue="128"/>
+	<Font name="Arial" size="8" style="B" id="ArialBoldBluef" red="0" green="0" blue="128"/>
+	<PageHeader>
+		<Cell text="LISTADO SEGUIMIENTO COTIZACIÓN" width="100%" height="30%" align="C" font="ArialBoldBigB" newline="1"/>
+		<Cell text="FECHA: {strFECHA}" width="100%" height="10%" align="R" font="ArialBoldBluef" newline="1"/>
+		<Cell text="HORA: {strTIME}" width="100%" height="20%" align="R" font="ArialBoldBluef" newline="1"/>	
+		<Cell text="Est." width="10%" align="C" border="LRTB" font="ArialBoldBlue"/>
+		<Cell text="N° Cot." width="6%" align="C" border="LRTB" font="ArialBoldBlue"/>
+		<Cell text="F. Cot." width="7%" align="C" border="LRTB" font="ArialBoldBlue"/>		
+		<Cell text="V." width="4%" align="C" border="LRTB" font="ArialBoldBlue"/>
+		<Cell text="Razón Social" width="19%" align="C" border="LRTB" font="ArialBoldBlue"/>
+		<Cell text="Contacto" width="19%" align="C" border="LRTB" font="ArialBoldBlue"/>
+		<Cell text="Fecha C." width="7%" align="C" border="LRTB" font="ArialBoldBlue"/>		
+		<Cell text="Compromiso" width="19%" align="C" border="LRTB" font="ArialBoldBlue"/>
+		<Cell text="Total Neto" width="9%" align="C" border="LRTB" font="ArialBoldBlue"/>
+		<Cell text="" height="16%" newline="1"/>		
+	</PageHeader>
+	<Content font="Arial">
+		<Cell text="{NOM_ESTADO_COTIZACION}" width="10%" align="L" border="LRTB" font="Arial" redb="1 ? {REDB} : 0" greenb="1 ? {GREENB} : 0" blueb="1 ? {BLUEB} : 0"/>	
+		<Cell text="{COD_COTIZACION}" width="6%" align="L" border="LRTB" font="Arial"/>	
+		<Cell text="{FECHA_COTIZACION}" align="R" width="7%" border="LRTB" font="Arial"/>	
+		<Cell text="{INI_USUARIO}" width="4%" align="L" border="LRTB" font="Arial"/>
+		<Cell text="{NOM_EMPRESA}" width="19%" align="L" border="LRTB" font="Arial"/>
+		<Cell text="{CONTACTO_TELEFONO}" width="19%" align="R" border="LRTB" font="Arial"/>
+		<Cell text="{FECHA_COMPROMISO}" width="7%" align="R" border="LRTB" font="Arial"/>
+		<Cell text="{GLOSA_COMPROMISO}" width="19%" align="R" border="LRTB" font="Arial"/>
+		<Cell text="{TOTAL_NETO}" format="N0,." width="9%" align="R" border="LRTB" font="Arial" newline="1"/>	
+	</Content>
+</Report>

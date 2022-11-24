@@ -1,0 +1,615 @@
+/*CollabNet branding*/
+
+/*font size and family*/
+
+body, h1, h2, h3, h4, h5, h6, p, td, table td, input, select { 
+	font-family: Verdana, Helvetica, Arial, sans-serif;
+}
+
+code, pre {
+	font-family: 'Andale Mono', Courier, monospace;
+}
+
+body, pre, code {
+	font-size: x-small;
+	voice-family: "\"}\"";
+	voice-family: inherit;
+	font-size: small;
+}
+
+#bodycol, #bodycol table td, #bodycol table th {
+	font-size: 95%;
+	line-height:135%;
+}
+
+#bodycol table table td, #bodycol table table th {
+	font-size: 100%;
+}
+
+/* a workaround for netscape 7 bug. has to come right after the previous line-height declaration */
+
+input {
+	line-height: 100%;
+}
+
+/* banner and top tab colors, padding, margin etc*/
+
+#banner, #toptabs {
+  background-color: #663;
+}
+
+#banner {
+  margin-bottom:0px;
+  padding: 0;
+  padding-top: 0x;
+}
+
+#bannertable {
+  padding-left: 8px;
+  padding-top: 10px;
+}
+
+#toptabs {
+  border-bottom: 6px solid #cc9 !important;
+}
+
+#breadcrumbs {
+	background-color: #cc9;
+}
+ 
+#tigrisheading {
+	padding-top: 5px;
+	color: white;
+	background-color: #663;
+	font-size: medium; 
+	font-weight: bolder; 
+	border: none;
+}
+
+#tigrisheading div {
+	padding-top: 3px;
+}
+
+#tigrisheading div.smaller {
+	font-size: small;
+}
+
+.application th, .app th {
+	background-color: #ddc;
+}
+
+.axial th {
+	background-color: #ddc;
+}
+
+#main {
+  padding-right: 6px;
+}
+
+#collabnet {
+  padding-right: 10px;
+}
+
+/* Heading colors */
+
+.h2 h2 {
+  background-color: #663;
+  color: #fff;
+  border-top: 1px solid #440;
+}
+
+.h2 h2 a:link, .h2 h2 a:visited {
+	color: #fff !important;
+	text-decoration: underline;
+}
+
+h3 {
+  color: #663; 
+}
+
+.h2 .h3 h3 {
+  background-color: #dfdf9c;
+  color:#000;
+}
+
+#login, #login a {
+  color: #fff;
+ }	
+
+#login a {
+ text-decoration: underline;
+}
+
+#login a:hover {
+  color: #ccf !important;
+}	
+
+#toptabs th {
+  background-color: #cc9;
+}
+
+.tabs td
+{
+	background: #eed url(../images/gradient_dark.gif) repeat-x;
+}
+
+.tabs th
+{
+	background: #cc9 url(../images/gradient_light.gif) repeat-x !important;
+}
+
+#toptabs {
+  border-bottom: none;
+}
+
+/* IE 7 hack for padding between browser border and My pages tab */
+*:first-child+html #toptabs {
+	padding-left: 16px;
+}
+/**/
+
+.tabset {
+  background-color: #eed;
+}
+
+a:visited, #bodycol a:visited {
+	color: #036;
+	text-decoration: none;
+}
+ 
+a:link, #navcol a:link, #navcol a:visited, #bodycol a:link, .tasknav a:link, .tasknav a:visited {
+	color: #06c;
+	text-decoration: none;
+}
+
+#toptabs .tabs th, #toptabs th a:link, #toptabs th a:visited, .tabs th, .tabs th a:link, .tabs th a:visited {
+  color: #000 !important;
+}
+
+.tabs td, .tabs td a:link, .tabs td a:visited {
+  color: #333 !important;
+}
+
+#toptabs .tabs td, #toptabs td a:link, #toptabs td a:visited {
+	color: #eed !important;
+}
+
+.tabset .b td, .tabset .a td {
+  background-color: #ddd;
+}
+
+.tabset table.tabs {
+   background: none !important;
+   background-color:#eed !important;
+   border-left: 1px solid #ccc;
+}
+
+#navcol a:link, #navcol a:visited {
+  color: #000;
+}
+
+#mytools dt, #projecttools dt, #admintools dt, #communitytools dt, #almleftnav dt, #searchbox dt, #helptext dt, #rightcol .siteinfo h2 {
+  font-weight:bold !important;
+}
+
+#rightcol .siteinfo h2{
+	font-size:12px !important;
+}
+
+a:active, a:hover, #leftcol a:active, #leftcol a:hover, #highlights a:active, #highlights a:hover {
+  color: #036 !important;
+}
+
+#helptext dt {
+  background-color: #dd9 !important;
+}
+
+#highlights {
+  background: #eed;
+  border-right: 1px solid #999;
+  border-bottom: 1px solid #999;
+}        
+
+#highlights a:link, #highlights a:visited {
+  color: black;
+}
+
+#highlights {
+  margin: 0;
+  padding: 6px;
+}
+
+#mainhighlights {
+  margin-top: 1em
+}
+
+#mainhighlights td div {
+  margin: .5em
+}
+
+#mainhighlights th {
+  background: #dd9;
+}
+
+#mainhighlights td {
+  background: #ffc;
+}
+
+#mainhighlights, #mainhighlights td, #mainhighlights th {
+  font-size: xx-small;
+  voice-family: "\"}\"";
+  voice-family: inherit;
+  font-size: x-small;
+}
+
+#mainhighlights td {
+  border-right: 1px solid #cc9;
+  border-bottom: 1px solid #cc9;
+}
+
+#mainhighlights th {
+  border-right: 1px solid #996;
+  border-bottom: 1px solid #996;
+}
+
+.navgroup dt {
+  background: #dd9 !important;
+}
+
+.navgroup {
+  background: #eed !important;
+  color: #000;
+}
+
+#mytools, #projecttools, #almleftnav, #admintools, #communitytools, #mytools dt, #projecttools dt, #almleftnav dt, #admintools dt, #communitytools dt {
+  background-color: #dd9;
+  color: #000 !important;
+}
+
+#searchbox dt, #helptext dt {
+  color: #000 !important;
+}
+
+.a td { 
+  background: #eee;
+}
+
+.b td { 
+  background: #eee;
+}
+
+#domainhome p, #domainhome li, #rightcol p{
+  font-size:1.1em;
+  line-height:1.3em;
+}
+
+#domainhome a:link, #domainhome a:visited {
+	text-decoration: underline !important;
+}
+
+#rightcol .siteinfo a:link, #rightcol .siteinfo a:visited {
+  text-decoration: underline !important;
+}
+
+#rightcol div.siteinfo .a {
+  background: #eee;
+}
+
+#rightcol div.siteinfo h2 {
+  background-color: #663 !important;
+  color: #fff !important;
+}
+
+#bodycol .application a:visited, #bodycol .app a:visited #bodycol .tasknav a:visited {
+  color: purple !important;
+}
+
+.readyset h3, .readyset h4 {
+  padding: 3px;
+  padding-left: 5px;
+  margin-right: 2px;
+  margin-left: 2px;
+  margin-bottom: 0;
+  clear: both;
+}
+
+.readyset .axial th {
+  text-align: right;
+  white-space: nowrap;
+}
+
+dd { 
+  margin-bottom: .67em; 
+}
+
+.tier1 { margin-left: 0; }
+.tier2 { margin-left: 1.5em; }
+.tier3 { margin-left: 3em; }
+.tier4 { margin-left: 4.5em; }
+.tier5 { margin-left: 6em; }
+.tier6 { margin-left: 7.5em; }
+.tier7 { margin-left: 9em; }
+.tier8 { margin-left: 10.5em; }
+.tier9 { margin-left: 12em; }
+.tier10 { margin-left: 13.5em; }
+
+.level1 { padding-left: 0; }
+.level2 { padding-left: 1em; }
+.level3 { padding-left: 2em; }
+.level4 { padding-left: 3em; }
+
+
+/* additions specific to ReadySET */
+
+tr ul, tr ol, tr p { 
+  margin-top: 0; 
+}
+
+tr ul { 
+  margin-left: 0px; padding-left: 2em; 
+}
+
+.sticky {
+  padding: 3px;
+  margin-right: 2px;
+  margin-bottom: 3px;
+  border-right: 1px solid;
+  border-bottom: 1px solid;
+}
+
+.tip {
+  padding: 3px;
+  margin-right: 2px;
+  margin-bottom: 3px;
+  border-right: 1px solid;
+  border-bottom: 1px solid;
+}
+
+.todo {
+  padding: 3px;
+  margin-right: 2px;
+  margin-bottom: 3px;
+  border-right: 1px solid;
+  border-bottom: 1px solid;
+}
+
+#processimpact {
+  border: 1px solid;
+  padding: 3px;
+  margin-right: 2px;
+  margin-bottom: 2px;
+}
+
+.footnote {
+  width: 80%;
+  border-top: solid #aaa 1px;
+  font-size: x-small;
+  padding-top: 3px;
+  margin-top: 3em;
+}
+
+.reusablefragment {
+  padding: 6px;
+  margin-top: 3em;
+  margin-bottom: 3em;
+}
+
+.sample1, .sample2, .sample3, .sample4 {
+  padding-right: 2px;
+  margin-bottom: 4px;
+}
+
+.legal1 {
+  border: 2px solid;
+  padding: 3px;
+  text-align: center !important;
+  font-size: xx-large;
+  font-weight: bold;
+  display: none;
+}
+
+.linklist a { 
+  display: block; 
+}
+
+.sub { 
+  padding-left: 1em;  
+}
+
+:target {
+  border: 2px solid red; 
+}
+
+.footnote {
+/* To hide footnotes, change "block" to "none". */
+ display: block;
+}
+
+.sticky {
+  background: #ffc;
+  border-right-color: #aaa;
+  border-bottom-color: #aaa;
+}
+
+.tip {
+  background: #ffc;
+  background-image: url(http://www.readysetpro.com/css/tip.gif);
+  background-repeat: no-repeat;
+  background-position: top left;
+  border-right-color: #aaa;
+  border-bottom-color: #aaa;
+  padding-left: 36px;
+  min-width: 30px; min-height: 30px;
+/* filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='tip.png',sizingMethod='scale'); */
+}
+
+
+.todo {
+  background: #ffc;
+  background-image: url(http://www.readysetpro.com/css/todo.gif);
+  background-repeat: no-repeat;
+  background-position: top left;
+  border-right-color: #aaa;
+  border-bottom-color: #aaa;
+  padding-left: 36px;
+   min-width: 30px; min-height: 30px;
+/* filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true,src='todo.png',sizingMethod=scale); */
+}
+
+#processimpact {
+  background: #eee;
+  border-color: #aaa;
+  background-image: url(http://www.readysetpro.com/css/gears.gif);
+  background-repeat: no-repeat;
+  background-position: top left;
+  padding-left: 36px;
+  min-width: 30px; min-height: 30px;
+/* filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='gears.png',sizingMethod='scale'); */
+}
+
+.reusablefragment {
+  background: #eee;
+  border: 2px dashed;
+}
+
+.sample1 { border-right: 4px double #500; }
+.sample2 { border-right: 4px double #050; }
+.sample3 { border-right: 4px double #005; }
+.sample4 { border-right: 4px double #505; }
+
+a.def { 
+  text-decoration: none; 
+  border-bottom: dashed 1px blue;
+  cursor: help;
+}
+
+.legal1 {
+  background: #eee;
+  border-color: #aaa;
+}
+
+#navcol div.body  {
+  background-image: none;
+}
+
+#navcol div.body  {
+  padding-bottom: .3em;
+  padding-left: 0px;
+  padding-right: 0px;
+  margin-right: 0;
+}
+
+#navcol div.body  div {
+  margin-top: .3em;
+  padding-bottom: 0;
+}
+
+.navgroup .body {
+  border-top: 1px solid #aaa;
+}
+
+.navgroup .body {
+  padding: 0px;
+  margin: 0em;
+}
+
+.navgroup .label {
+  padding: 4px;
+}
+
+/* EyeBrowse message reader */
+.tabset pre {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding-left: 4px;
+  padding-top: 4px;
+}
+
+/* Styles for message from CollabNet box */
+
+#collabnote {
+  text-align: right;  
+  padding-top: 0px; 
+  padding-bottom: 0px;
+}
+  
+#collabnote table {
+  border-bottom: none;
+  padding: 0px;
+  margin: 0px;
+  margin-right: 6px;
+}
+
+#collabnote table td {
+  padding-left: 10px;
+}	
+
+.collabnoteimage {
+  padding: 0px; 
+  margin: 0px;
+  margin-bottom: -3px; 
+  margin-top: -1px;
+  margin-right: -2px;
+  margin-left:-2px;
+  border: 2px solid #ACAC7B;
+}
+
+#cnlogo {
+  display: block;
+  height: 14px;
+  width: 188px;
+  background: url(../images/product_logo.gif) no-repeat;
+  border-bottom: none;
+  vertical-align: top;
+}
+
+#collabnet {
+  border-bottom: 1px solid #996 !important;
+  height: 5px !important;
+}
+
+div#collabnet {
+  background: none !important;
+  background-color: #000 !important;
+  padding-bottom:12px;
+  padding-top: 2px;
+}
+
+/* Some margin and padding hacks for IE 6.0 */
+* html .collabnoteimage {
+  padding: 0px;
+  margin: 0px;
+  margin-bottom: 0px;
+  margin-top: 0px;
+}
+
+* html #toptabs {
+  padding-top: 20px;
+}
+
+* html #banner #bannertable {
+  position: relative;
+  top:10px
+}
+
+* html div#collabnet {
+  padding-bottom:2px;
+  padding-top: 2px;
+}
+
+/* IE 7 hack for padding for the top of the banner */
+*:first-child+html #banner {
+ padding-left: 8px;
+ padding-top: 5px;
+}
+/**/
+
+/* End styles for message from CollabNet box */
+
+/* Project owner's message */
+
+#ownermessage h2 {
+  color: #000;
+}
+
+

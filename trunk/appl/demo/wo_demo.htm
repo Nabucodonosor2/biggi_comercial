@@ -1,0 +1,568 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="stylesheet" type="text/css" href="CSS.css">
+<style type="text/css">
+body {
+	background-color: #CCCCCC;
+	font-family:Verdana, Arial, Helvetica, sans-serif;		
+}
+
+/** #######	TITULOS SUPERIORES	######*/
+
+.tit_superior {
+	font-size: 10px;
+	font-weight: bold; 
+	color: #666666;
+}
+
+
+.titulo_central {
+	font-size: 22px;
+	font-weight: bold;
+	text-align:left;	
+}
+
+	/** #######	ENCABEZADO DE TABLAS	######*/
+
+
+.encabezado_center{
+	background-color:#919191;
+	font-size: 11px;
+	font-weight:bold;	
+	color: #FFF;
+	text-align:center;
+	height:23px;
+}
+
+.encabezado_left{
+	background-color:#919191;
+	font-size: 11px;
+	font-weight:bold;	
+	color: #FFF;
+	text-align:left;
+	height:23px;
+}
+
+.encabezado_right{
+	background-color:#919191;
+	font-size: 11px;
+	font-weight:bold;	
+	color: #FFF;
+	text-align:right;
+	height:23px;
+}
+
+.encabezado_center_big{
+	background-color:#919191;
+	font-size: 10px;
+	font-weight:bold;	
+	color: #FFF;
+	text-align:center;
+	height:23px;
+}
+
+.titulo_tabla{
+	background-color:#EAEAEA;
+	font-size: 9px;
+	font-weight:bold;	
+	color: #000066;
+	text-align:left;
+	padding-top:9px;
+}
+
+.titulo_2_tabla_center{
+	background-color:#B0B0B0;		
+	color:#000;
+	text-align:center;
+	font-size:11px;
+	font-weight:bolder;
+}
+
+.titulo_2_tabla_right{
+	background-color:#B0B0B0;		
+	color:#000;
+	text-align:right;
+	font-size:11px;
+	font-weight:bolder;
+}
+
+.titulo_2_tabla_left{
+	background-color:#B0B0B0;		
+	color:#000;
+	text-align:left;
+	font-size:11px;
+	font-weight:bolder;
+}
+
+
+.subtitulo_oscuro_right{
+	background-color:#B0B0B0;		
+	color:#000;
+	text-align:right;
+	font-size:12px;
+		
+}
+
+
+/** #######	COLORES DE ELECCION EN TABLAS	######*/
+.claro_center{
+	background-color:#EAEAEA;
+	font-size: 11px;
+	font-weight:100;
+	color:#000000;
+	text-align:center;
+	height:23px;
+}
+
+.claro_left{
+	background-color:#EAEAEA;
+	font-size: 11px;
+	font-weight:100;
+	color:#000000;
+	text-align:left;
+	height:23px;
+}
+
+.claro_right{
+	background-color:#EAEAEA;
+	font-size: 11px;
+	font-weight:100;
+	color:#000000;
+	text-align:right;
+	height:23px;
+}
+
+
+.oscuro_center{
+	background-color:#D8D8D8;
+	font-size: 11px;
+	font-weight:100;
+	color: #000;
+	text-align:center;
+	height:23px;
+}
+
+.oscuro_left{
+	background-color:#D8D8D8;
+	font-size: 11px;
+	font-weight:100;
+	color: #000;
+	text-align:left;
+	height:23px;
+}
+
+.oscuro_right{
+	background-color:#D8D8D8;
+	font-size: 11px;
+	font-weight:100;
+	color: #000;
+	text-align:right;
+	height:23px;
+}
+
+.pie_de_pagina{
+	background-color:#919191;
+	font-size: 10px;
+	font-weight:bold;	
+	color: #FFF;
+	text-align:center;
+}
+
+.link{
+	font-size: 9px;
+	font-weight:bold;	
+	color:#993333;
+}
+
+/** #######	INPUT FORM ######*/
+
+.drop_down{
+	font-size: 9px;
+	text-align:left;
+}
+
+.input_text{
+	font-size: 10px;
+	text-align:left;
+}
+
+.input_num{
+	font-size: 10px;
+	text-align:right;
+}
+
+.button{
+	font-size: 9px;
+	text-align:center;
+}
+
+.cant_paginas {
+	font-size: 12px;
+	font-weight: bold; 
+	color: #666666;
+	text-align:center;
+}
+
+
+/** #######	ESPECIALES OCUPADO EN MENU-PERFILES	######*/
+
+.titulo_detalle {
+	background-color:#B0B0B0;
+	color:#000000;
+	font-size:12px;					
+	font-weight:bold;
+	text-align:left;
+}
+
+.sub_titulo_detalle {
+	background-color:#EAEAEA;
+	font-size: 12px;	
+	color:#000000;
+	text-align:left;
+	padding-left:2em;	
+}
+ /** ocupado en "TABLAS PARAMETRICAS" */
+.sub_titulo_detalle2 {
+	background-color:#EAEAEA;
+	font-size: 11px;	
+	color:#000000;
+	text-align:left;
+	padding-left:6em;
+	/** texto en mayuscula font-variant:small-caps;*/	
+}
+
+
+</style> 
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Sistema Grupo de Empresas Biggi</title>
+<script type="text/javascript">
+<!--
+function MM_swapImgRestore() { //v3.0
+  var i,x,a=document.MM_sr; for(i=0;a&&i<a.length&&(x=a[i])&&x.oSrc;i++) x.src=x.oSrc;
+}
+function MM_preloadImages() { //v3.0
+  var d=document; if(d.images){ if(!d.MM_p) d.MM_p=new Array();
+    var i,j=d.MM_p.length,a=MM_preloadImages.arguments; for(i=0; i<a.length; i++)
+    if (a[i].indexOf("#")!=0){ d.MM_p[j]=new Image; d.MM_p[j++].src=a[i];}}
+}
+
+function MM_findObj(n, d) { //v4.01
+  var p,i,x;  if(!d) d=document; if((p=n.indexOf("?"))>0&&parent.frames.length) {
+    d=parent.frames[n.substring(p+1)].document; n=n.substring(0,p);}
+  if(!(x=d[n])&&d.all) x=d.all[n]; for (i=0;!x&&i<d.forms.length;i++) x=d.forms[i][n];
+  for(i=0;!x&&d.layers&&i<d.layers.length;i++) x=MM_findObj(n,d.layers[i].document);
+  if(!x && d.getElementById) x=d.getElementById(n); return x;
+}
+
+function MM_swapImage() { //v3.0
+  var i,j=0,x,a=MM_swapImage.arguments; document.MM_sr=new Array; for(i=0;i<(a.length-2);i+=3)
+   if ((x=MM_findObj(a[i]))!=null){document.MM_sr[j++]=x; if(!x.oSrc) x.oSrc=x.src; x.src=a[i+2];}
+}
+//-->
+</script>
+<link href="../../css/style.css" rel="stylesheet" type="text/css">
+</head>
+
+<body onLoad="MM_preloadImages('../../images/agregar over.jpg','../../images/buscar over.jpg','../../images/exportar over.jpg','../demo/primero over.jpg','../demo/anterior over.jpg','../demo/siguiente over.jpg','../demo/ultima over.jpg')">
+<!-- DO NOT MOVE! The following AllWebMenus linking code section must always be placed right AFTER the BODY tag-->
+<!-- ******** BEGIN ALLWEBMENUS CODE FOR menu ******** -->
+<script type="text/javascript">var MenuLinkedBy="AllWebMenus [4]",awmMenuName="menu",awmBN="740";awmAltUrl="";</script>
+<script charset="UTF-8" src="../../html/menu.js" type="text/javascript">
+</script><script type="text/javascript">awmBuildMenu();</script>
+<!-- ******** END ALLWEBMENUS CODE FOR menu ******** -->
+<table width="1050" border="0" align="center">
+<tr bgcolor="#FFFFFF">
+	<!-- menu superior-->
+	<td width="1000"  height="51" align="center" id="awmAnchor-menu" style="width:100px; height:50px;"></td>
+</tr>
+<tr bgcolor="#FFFFFF">
+	 <td>
+		<table width="1000" border="0">
+			<tr>
+				<td>
+					<table width="592" border="0">
+					<tr>
+						<td height="100%"><div class="titulo_central">Ventas -&gt; Demo</div></td>
+					</tr>
+					<tr>
+						<td height="0%"><div class="tit_superior"><font color="#999999">Fecha Actual: 12/12/2008</font></div></td>
+					</tr>
+					<tr>
+						<td height="0%"><div class="tit_superior"><font color="#999999">Administrador</font></div></td>
+					</tr>
+					</table>
+				</td> 
+				<td></td>
+				<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td></td>
+        		
+			</tr>
+		</table>
+	</td>
+</tr>
+<tr bgcolor="#FFFFFF">
+	<td>
+		<table width="1000" border="0" align="center" height="570">
+			<tr bgcolor="#FFFFFF" height="536">
+				<td valign="top">
+				<table width="1000" border="0" align="center">
+				<tr class="encabezado_center">
+					<th width="50">Detalle</th>
+			        <th width="90">Nº Demo </th>
+			        <th width="70">Fecha</th>
+			        <th width="70">Rut</th>
+				 	<th width="300">Razón Social</th>
+					<th width="250">Referencia</th>
+			        <th width="100">Responsable</th>
+				    <th width="70">Estado</th>
+				</tr>
+				<tr class="claro_left">
+					<td class="claro_center"><a href="wi_demo.htm">
+					<img src="../demo/Lupa2.jpg" width="15" height="15" border="0" /></a>
+					</td>
+					<td align="center" class="">1</td>
+					<td class="claro_right">17/12/2010</td>
+					<td class="claro_right" width="90">76.054.262-8</td>
+					<td>SOCIEDAD COMERCIAL WALIBI LTDA.</td>
+					<td>COCINA A GAS 6 PLATOS + HORNO </td>
+      			    <td class="claro_center">Juan Riquelme</td>
+				    <td>EMITIDA</td>
+				   
+				</tr>
+				
+				<tr class="claro_left">
+					<td class="claro_center"><img src="../demo/Lupa2.jpg" width="15" height="15" /></td>
+			        <td class="claro_right"></td>
+					<td></td>
+					<td></td>
+					<td></td>
+			        <td></td>
+				    <td></td>
+				    <td></td>
+				    <td></td>
+				</tr>
+			
+				<tr class="oscuro_left">
+					<td class="oscuro_center"><img src="../demo/Lupa2.jpg" width="15" height="15" /></td>
+					<td class="oscuro_right"></td>
+					<td></td>
+					<td></td>
+					<td></td>
+			        <td></td>
+				    <td></td>
+				    <td></td>
+				    <td></td>
+				</tr>
+				<tr class="claro_left">
+					<td class="claro_center"><img src="../demo/Lupa2.jpg" width="15" height="15" /></td>
+			        <td class="claro_right"></td>
+					<td></td>
+					<td></td>
+					<td></td>
+			        <td></td>
+				    <td></td>
+				    <td></td>
+				    <td></td>
+				</tr>
+			
+				<tr class="oscuro_left">
+					<td class="oscuro_center"><img src="../demo/Lupa2.jpg" width="15" height="15" /></td>
+					<td class="oscuro_right"></td>
+					<td></td>
+					<td></td>
+					<td></td>
+			        <td></td>
+				    <td></td>
+				    <td></td>
+				    <td></td>
+				</tr>
+				<tr class="claro_left">
+					<td class="claro_center"><img src="../demo/Lupa2.jpg" width="15" height="15" /></td>
+			        <td class="claro_right"></td>
+					<td></td>
+					<td></td>
+					<td></td>
+			        <td></td>
+				    <td></td>
+				    <td></td>
+				    <td></td>
+				</tr>			
+				<tr class="oscuro_left">
+					<td class="oscuro_center"><img src="../demo/Lupa2.jpg" width="15" height="15" /></td>
+					<td class="oscuro_right"></td>
+					<td></td>
+					<td></td>
+					<td></td>
+			        <td></td>
+				    <td></td>
+				    <td></td>
+				    <td></td>
+				</tr>
+				<tr class="claro_left">
+					<td class="claro_center"><img src="../demo/Lupa2.jpg" width="15" height="15" /></td>
+			        <td class="claro_right"></td>
+					<td></td>
+					<td></td>
+					<td></td>
+			        <td></td>
+				    <td></td>
+				    <td></td>
+				    <td></td>
+				</tr>			
+				<tr class="oscuro_left">
+					<td class="oscuro_center"><img src="../demo/Lupa2.jpg" width="15" height="15" /></td>
+					<td class="oscuro_right"></td>
+					<td></td>
+					<td></td>
+					<td></td>
+			        <td></td>
+				    <td></td>
+				    <td></td>
+				    <td></td>
+				</tr>
+				<tr class="claro_left">
+					<td class="claro_center"><img src="../demo/Lupa2.jpg" width="15" height="15" /></td>
+			        <td class="claro_right"></td>
+					<td></td>
+					<td></td>
+					<td></td>
+			        <td></td>
+				    <td></td>
+				    <td></td>
+				    <td class="claro_right"></td>
+				</tr>			
+				<tr class="oscuro_left">
+					<td class="oscuro_center"><img src="../demo/Lupa2.jpg" width="15" height="15" /></td>
+					<td class="oscuro_right"></td>
+					<td></td>
+					<td></td>
+					<td></td>
+			        <td></td>
+				    <td></td>
+				    <td></td>
+				    <td class="oscuro_right"></td>
+				</tr>
+				<tr class="claro_left">
+					<td class="claro_center"><img src="../demo/Lupa2.jpg" width="15" height="15" /></td>
+			        <td class="claro_right"></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+			        <td></td>
+				    <td></td>
+				    <td class="claro_right"></td>
+				</tr>			
+				<tr class="oscuro_left">
+					<td class="oscuro_center"><img src="../demo/Lupa2.jpg" width="15" height="15" /></td>
+					<td class="oscuro_right"></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+			        <td></td>
+				    <td></td>
+				    <td class="oscuro_right"></td>
+				</tr>
+				<tr class="claro_left">
+					<td class="claro_center"><img src="../demo/Lupa2.jpg" width="15" height="15" /></td>
+			        <td class="claro_right"></td>
+					<td></td>
+					<td></td>
+					<td></td>
+			        <td></td>
+				    <td></td>
+				    <td></td>
+				    <td></td>
+				</tr>
+				<tr class="oscuro_left">
+					<td class="oscuro_center"><img src="../demo/Lupa2.jpg" width="15" height="15" /></td>
+			        <td class="oscuro_right"></td>
+					<td></td>
+					<td></td>
+					<td></td>
+			        <td></td>
+				    <td></td>
+				    <td></td>
+				    <td></td>
+				</tr>
+				<tr class="claro_left">
+					<td class="claro_center"><img src="../demo/Lupa2.jpg" width="15" height="15" /></td>
+			        <td class="claro_right"></td>
+					<td></td>
+					<td></td>
+					<td></td>
+			        <td></td>
+				    <td></td>
+				    <td></td>
+				    <td></td>
+				</tr>
+				<tr class="oscuro_left">
+					<td class="oscuro_center"><img src="../demo/Lupa2.jpg" width="15" height="15" /></td>
+			        <td class="oscuro_right"></td>
+					<td></td>
+					<td></td>
+					<td></td>
+			        <td></td>
+				    <td></td>
+				    <td></td>
+				    <td></td>
+				</tr>
+				<tr class="claro_left">
+					<td class="claro_center"><img src="../demo/Lupa2.jpg" width="15" height="15" /></td>
+			        <td class="claro_right"></td>
+					<td></td>
+					<td></td>
+					<td></td>
+			        <td></td>
+				    <td></td>
+				    <td></td>
+				    <td></td>
+				</tr>
+				<tr class="oscuro_left">
+					<td class="oscuro_center"><img src="../demo/Lupa2.jpg" width="15" height="15" /></td>
+			        <td class="oscuro_right"></td>
+					<td></td>
+					<td></td>
+					<td></td>
+			        <td></td>
+				    <td></td>
+				    <td></td>
+				    <td></td>
+				</tr>
+			
+		    </table>
+				</td>
+			</tr>
+		
+			<tr bgcolor="#FFFFFF" height="28">
+				<td>						
+					<table width="1000" border="0" align="center">
+					<tr valign="middle">
+					  <td width="290" ><div align="left"><a href="../../" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image20','','../demo/volver over.jpg',0)"	
+					  ><img src="../demo/volver1.jpg" name="Image20" width="70" height="26" border="0" id="Image20" /></a></div></td>
+					  <td><div align="right"><a href="#" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image16','','../demo/primero over.jpg',1)"><img src=
+					  "../demo/primero.jpg" name="Image16" width="23" height="19" border="0" id="Image16" /></a><a href="#" onMouseOut="MM_swapImgRestore()" onMouseOver=
+					  "MM_swapImage('Image17','','../demo/anterior over.jpg',1)"><img src="../demo/anterior.jpg" name="Image17" width="23" height="19" border="0" id="Image17" />
+					  </a></div></td>
+					  <td class="cant_paginas" width="120">
+					   <a href="#"> 1 </a>-<a href="#"> 2 </a>-<a href="#"> 3 </a>-<a href="#"> 4 </a>-<a href="#"> 5 </a>				   
+					   </td>
+					  <td><div align="left"><a href="#" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image18','','../demo/siguiente over.jpg',1)"><img src=
+					  "../demo/siguiente.jpg" name="Image18" width="23" height="19" border="0" id="Image18" /></a><a href="#" onMouseOut="MM_swapImgRestore()" onMouseOver=
+					  "MM_swapImage('Image19','','../demo/ultima over.jpg',1)"><img src="../demo/ultima.jpg" name="Image19" width="23" height="19" border="0" id="Image19" />
+					  </a></div></td>
+					  <td width="290" ></td>
+					</tr>
+					</table> 
+				</td>
+			</tr>
+		</table>
+	</td>
+</tr>
+</table>
+</body>
+</html>
+	
+	

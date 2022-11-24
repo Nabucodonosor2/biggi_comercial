@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+		<title>Sistema Grupo de Empresas Biggi</title>
+		<style type="text/css">
+		<!--
+		body {
+			background-color: #C9C9C9;
+		}
+		.factura_hoy{
+			background-color:#FFE920;
+		}
+		.factura_ayer{
+			background-color:#FF8A8A;
+			
+		}
+		.factura_mañana{
+			background-color:#4AE371;
+			
+		}
+		-->
+		</style>
+	</head>
+	<body>
+		<br>
+		<br>
+		Sr(a). {NOM_USUARIO}, hay {COUNT_HOY} Facturas que registran compromisos para hoy {FECHA} o atrasadas: 
+		<br>
+		<br>
+		<table width="80%" rules="none" border="1" bgcolor="#D8D8D8" align="center" class="claro" id="BITACORA_FACTURA_HOY">
+			<tr>
+				<td>
+					<table border="1" width="100%">
+						<tbody>
+							<tr class="encabezado_right">
+								<td width="5%">
+									<div align="center"><strong>N° FA</strong></div>
+								</td>
+								<td width="5%">
+									<div align="center"><strong>Fecha</strong></div>
+								</td>
+								<td width="20%">
+									<div align="center"><strong>Cliente</strong></div>
+								</td>
+								<td width="5%">
+									<div align="center"><strong>Monto</strong></div>
+								</td>
+								<td width="30%">
+									<div align="center"><strong>Compromiso</strong></div>
+								</td>
+								<td width="15%">
+									<div align="center"><strong>Contacto y Teléfono</strong></div>
+								</td>
+							</tr>
+							 <!-- startBlock(BITACORA_FACTURA_HOY) -->
+							<tr class="{DW_TR_CSS}" id="{DW_TR_ID}">
+								<td class="factura_hoy">
+									<div align="right">{NRO_FACTURA}</div>
+								</td>
+								<td>
+									<div align="center">{FECHA}</div>
+								</td>
+								<td>
+									<div align="left">{NOM_EMPRESA}</div>
+								</td>
+								<td>
+									<div align="right">{TOTAL_CON_IVA}</div>
+								</td>
+								<td>
+									<div align="left">{GLOSA_COMPROMISO}</div>
+								</td>
+								<td>
+									<div align="left">{CONTACTO}{FONO}</div>
+								</td>
+							</tr>
+							<!-- endBlock(BITACORA_FACTURA_HOY) -->
+						</tbody>
+					</table>
+				</td>	
+			</tr>
+		</table>
+		<br>
+		<br>
+		<b> Hay {COUNT_AYER} Facturas que registran compromisos para ayer y anteriores</b><br><br>
+		<table width="80%" rules="none" border="1" bgcolor="#D8D8D8" align="center" class="claro" id="BITACORA_FACTURA_AYER">
+			<tr>
+				<td>
+					<table border="1" width="100%">
+						<tbody>
+							<tr class="encabezado_right">
+								<td width="5%">
+									<div align="center"><strong>N° FA</strong></div>
+								</td>
+								<td width="5%">
+									<div align="center"><strong>Fecha</strong></div>
+								</td>
+								<td width="20%">
+									<div align="center"><strong>Cliente</strong></div>
+								</td>
+								<td width="5%">
+									<div align="center"><strong>Monto</strong></div>
+								</td>
+								<td width="30%">
+									<div align="center"><strong>Compromiso</strong></div>
+								</td>
+								<td width="15%">
+									<div align="center"><strong>Contacto y Teléfono</strong></div>
+								</td>
+							</tr>
+							 <!-- startBlock(BITACORA_FACTURA_AYER) -->
+							<tr class="{DW_TR_CSS}" id="{DW_TR_ID}">
+								<td class="factura_ayer">
+									<div align="right">{NRO_FACTURA}</div>
+								</td>
+								<td>
+									<div align="center">{FECHA}</div>
+								</td>
+								<td>
+									<div align="left">{NOM_EMPRESA}</div>
+								</td>
+								<td>
+									<div align="right">{TOTAL_CON_IVA}</div>
+								</td>
+								<td>
+									<div align="left">{GLOSA_COMPROMISO}</div>
+								</td>
+								<td>
+									<div align="left">{CONTACTO}{FONO}</div>
+								</td>
+							</tr>
+							<!-- endBlock(BITACORA_FACTURA_AYER) -->
+						</tbody>
+					</table>
+				</td>	
+			</tr>
+		</table>
+		<br>
+		<br>
+		<b> Hay {COUNT_MANANA} Facturas que registran compromisos para Mañana en adelante</b><br><br>
+		<table width="80%" rules="none" border="1" bgcolor="#D8D8D8" align="center" class="claro" id="BITACORA_FACTURA_MANANA">
+			<tr>
+				<td>
+					<table border="1" width="100%">
+						<tbody>
+							<tr class="encabezado_right">
+								<td width="5%">
+									<div align="center"><strong>N° FA</strong></div>
+								</td>
+								<td width="5%">
+									<div align="center"><strong>Fecha</strong></div>
+								</td>
+								<td width="20%">
+									<div align="center"><strong>Cliente</strong></div>
+								</td>
+								<td width="5%">
+									<div align="center"><strong>Monto</strong></div>
+								</td>
+								<td width="30%">
+									<div align="center"><strong>Compromiso</strong></div>
+								</td>
+								<td width="15%">
+									<div align="center"><strong>Contacto y Teléfono</strong></div>
+								</td>
+							</tr>
+							 <!-- startBlock(BITACORA_FACTURA_MANANA) -->
+							<tr class="{DW_TR_CSS}" id="{DW_TR_ID}">
+								<td class="factura_mañana">
+									<div align="right">{NRO_FACTURA}</div>
+								</td>
+								<td>
+									<div align="center">{FECHA}</div>
+								</td>
+								<td>
+									<div align="left">{NOM_EMPRESA}</div>
+								</td>
+								<td>
+									<div align="right">{TOTAL_CON_IVA}</div>
+								</td>
+								<td>
+									<div align="left">{GLOSA_COMPROMISO}</div>
+								</td>
+								<td>
+									<div align="left">{CONTACTO}{FONO}</div>
+								</td>
+							</tr>
+							<!-- endBlock(BITACORA_FACTURA_MANANA) -->
+						</tbody>
+					</table>
+				</td>	
+			</tr>
+		</table>
+		<p />
+		<table width="100%">
+			<tr>
+				<td>
+					<p>Atte.</p>
+					<p>Comercial Biggi</p>
+					<p>Este mensaje ha sido enviado por nuestro servidor de base de datos.</p>
+					<p><br>
+				</td>
+			</tr>
+		</table>
+		<p /><p />
+	</body>
+</html>

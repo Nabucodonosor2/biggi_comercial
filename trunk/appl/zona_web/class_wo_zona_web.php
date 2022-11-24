@@ -1,0 +1,29 @@
+<?php
+require_once(dirname(__FILE__)."/../../../../commonlib/trunk/php/auto_load.php");
+require_once(dirname(__FILE__)."/../common_appl/class_w_output_biggi.php");
+
+class wo_zona_web extends w_output_biggi
+{
+   function wo_zona_web()
+   {
+      $sql = "select COD_ZONA,
+					  NOM_ZONA,
+					  ECONOLINE,
+					  ORDEN
+				 from ZONA
+				 WHERE COD_ZONA <> 0
+				order by 	COD_ZONA";
+			
+      parent::w_output_biggi('zona_web', $sql, $_REQUEST['cod_item_menu']);
+      
+      // headers
+      $this->add_header(new header_num('COD_ZONA', 'COD_ZONA', 'Código'));
+      $this->add_header(new header_text('NOM_ZONA', 'NOM_ZONA', 'Descripción'));
+      $this->add_header(new header_text('ECONOLINE', 'ECONOLINE', 'Econoline'));
+      $this->add_header(new header_text('ORDEN', 'ORDEN', 'Orden'));
+      
+   }
+	
+    
+}
+?>

@@ -1,0 +1,15 @@
+<?php
+require_once(dirname(__FILE__)."/../../../../commonlib/trunk/php/auto_load.php");
+
+$cod_producto = $_REQUEST["cod_producto"];
+$cod_bodega = $_REQUEST["cod_bodega"];
+
+
+$db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
+$sql = "SELECT	dbo.f_bodega_stock('$cod_producto', $cod_bodega, getdate()) CANTIDAD";
+
+$result = $db->build_results($sql);	
+
+print $result[0]['CANTIDAD'];
+
+?>

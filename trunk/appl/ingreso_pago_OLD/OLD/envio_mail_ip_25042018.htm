@@ -1,0 +1,57 @@
+<html>
+	<head>
+		<title>Sistema Grupo de Empresas Biggi</title>
+	</head>
+	<body bgcolor="FFFFFF" text="171717">
+		<table width="100%" align="left" bordercolor="171717" border="0">
+			<tr height="35">
+				<td>Estimado {NOM_VENDEDOR1_NV}</td>
+			</tr>
+			<tr height="35">
+				<td>Le informamos que se ha generado Ingreso de pago Nº {COD_INGRESO_PAGO} hoy {FECHA_INGRESO_PAGO} a las {HORA_INGRESO_PAGO} hrs.</td>
+			</tr>
+			<tr height="35">
+				<td>Detalle del Ingreso de pago:</td>
+			</tr>
+			<tr height="35">
+				<td>Fecha: {FECHA_INGRESO_PAGO}</td>
+			</tr>
+			<tr height="35">
+				<td>Cliente: {RUT}, {NOM_EMPRESA}</td>
+			</tr>
+			<tr height="35">
+				<td>Monto total pagado: ${TOTAL_INGRESO_PAGO}.-</td>
+			</tr>
+			<tr height="35">
+				<td>Emisor: {NOM_USUARIO}</td>
+			</tr>
+		</table>
+		<table width="40%" border="1">
+			<tr>
+				<td width="15%"><b>Nº Factura</b></td>
+				<td width="15%"><b>Fecha Factura</b></td>
+				<td width="16%"><b>Nº NV</b></td>
+				<td width="24%"><b>Cliente</b></td>
+				<td width="15%"><b>Total con Iva</b></td>
+				<td width="15%"><b>Monto pagado</b></td>
+			</tr>
+		</table>
+		<table width="40%" border="1">
+			<!-- startBlock(INGRESO_PAGO) -->
+				<tr>
+					<td width="15%" align="right">{NRO_FACTURA}</td>
+					<td width="15%" align="right">{FECHA_FACTURA}</td>
+					<td width="16%" align="right">{COD_NOTA_VENTA}</td>
+					<td width="24%">{NOM_EMPRESA_NV}</td>
+					<td width="15%" align="right">{TOTAL_CON_IVA}</td>
+					<td width="15%" align="right">{MONTO_ASIGNADO}</td>
+				</tr>
+			<!-- endBlock(INGRESO_PAGO) -->
+		</table>
+		<table>
+			<tr height="35"><td>Atte.</td></tr>
+			<tr height="35"><td>Comercial Biggi.</td></tr>
+			<tr height="35"><td>Este mensaje ha sido enviado por nuestro servidor de base de datos.</td></tr>
+		</table>
+	</body>
+</html>

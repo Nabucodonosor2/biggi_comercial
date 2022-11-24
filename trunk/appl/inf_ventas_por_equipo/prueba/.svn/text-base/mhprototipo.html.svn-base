@@ -1,0 +1,1161 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+		<title>Sistema Grupo de Empresas Biggi</title>
+		<link href="{W_CSS}" rel="stylesheet" type="text/css">
+		<script charset="iso-8859-1" src="../../../../commonlib/trunk/script_js/general.js" type="text/javascript"></script>
+		<script charset="iso-8859-1" src="inf_por_despachar.js" type="text/javascript"></script>
+		
+		<!-- INI CODIGO AGREGADO -->
+		<link href="http://192.168.2.100/desarrolladores/mherrera/sabbagh/trunk/../../commonlib/trunk/css/style_win.css" rel="stylesheet" type="text/css">
+		<style type="text/css">
+			@import "../../../../commonlib/trunk/css/inst.css"; 
+			@import "../../../../commonlib/trunk/css/nav.css";
+		</style>
+		
+		
+		<style type="text/css">
+			.dwt_folder_mh{
+				background-color:#66CCFF;
+				font-size: 11px;
+				font-weight:100;
+				color:#000000;
+				height:23px;
+			}
+		</style>
+		
+		
+		<script charset="iso-8859-1" src="../../../../commonlib/trunk/script_js/edit_filter.js" type="text/javascript"></script>
+		<script charset="iso-8859-1" src="../../../../commonlib/trunk/script_js/general.js" type="text/javascript"></script>
+		<script charset="iso-8859-1" src="../../../../commonlib/trunk/script_js/datawindow_tree.js" type="text/javascript"></script>
+		<script type="text/javascript">
+			function stopRKey(evt) {
+			var evt = (evt) ? evt : ((event) ? event : null);
+			var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+			if ((evt.keyCode == 13) && (node.type=="text")) {return false;}
+			}
+			document.onkeypress = stopRKey;
+		</script>
+		<!-- FIN CODIGO AGREGADO -->
+		
+		<!-- INICIO CODIGO DESTACAR TABLAS -->
+		
+		<style type="text/css">
+		/*
+			 CSS-Tricks Example
+			 by Chris Coyier
+			 http://css-tricks.com
+		*/
+		/* table               { border-collapse: collapse; width: 100%; margin-top:10px; } */
+		/* td                  { border: 1px solid #ccc; padding: 10px; } */
+		/* thead               { width: 100%; height: 109px; background: url(http://css-tricks.com/examples/FixedHeaderTable/images/header.png) no-repeat; } */
+		/* .slim               { width: 88px; } */
+		
+		/* COLOR PARA DESTACAR COLUMNA */
+		.column-hover		{ background:#FFFFCC; }
+		
+		/* COLOR PARA DESTACAR FILA */
+		.row-hover			{ background:#FFFFCC; }
+		
+		/* COLOR PARA DESTACAR LA CELDA DEL MOUSE */
+		/* .cell-hover			{ background:#fffea1; }	*/
+		.cell-hover			{ background:#FFFF00; }	
+	</style>
+	
+	<script type="text/javascript" src="mootools.js"></script>
+	
+	<script type="text/javascript">
+		window.addEvent('domready',function(){
+			var table = document.id('highlight-table');
+			var rows = table.getElements('tr');
+			
+			//for every row...
+			rows.each(function(tr,trCount){
+				//we don't want the header
+				if(tr.getParent().get('tag') == 'thead') { return false; }
+				
+				//add the row class to the row
+				tr.addClass('row-' + trCount);
+				//add the row listener
+				tr.addEvents({
+					'mouseenter': function(){
+						tr.addClass('row-hover');
+					},
+					'mouseleave': function(){
+						tr.removeClass('row-hover');
+					}
+				});
+				//for every cell...
+				tr.getElements('td').each(function(td,tdCount) {
+					//remember column and column items
+					var column = 'col-' + tdCount;
+					var friends = 'td.' + column;
+					//add td's column class
+					td.addClass(column);
+					//add the cell and column event listeners
+					td.addEvents({
+						'mouseenter': function(){
+							$$(friends).erase(td).addClass('column-hover');
+							td.addClass('cell-hover');
+							
+							// document.getElementById('NOM_PRODUCTO').innerHTML = 'hola' + this.innerHTML;
+							
+							document.getElementById('NOM_PRODUCTO').innerHTML = this.id + this.innerHTML;
+							
+						},
+						'mouseleave': function() {
+							$$(friends).erase(td).removeClass('column-hover');
+							td.removeClass('cell-hover');
+
+							document.getElementById('NOM_PRODUCTO').innerHTML = 'Seleccione una celda';
+						}
+					});
+				});
+			});
+			
+		});
+	</script>
+		
+		
+		
+		
+		<!--  FIN CODIGO DESTACAR TABLAS -->
+		
+	</head>
+	<body {WO_ONLOAD}>
+		<!-- DO NOT MOVE! The following AllWebMenus linking code section must always be placed right AFTER the BODY tag-->
+		<!-- ******** BEGIN ALLWEBMENUS CODE FOR menu ******** -->
+		<script type="text/javascript">var MenuLinkedBy="AllWebMenus [4]",awmMenuName="menu",awmBN="740";awmAltUrl="";</script>
+		<script charset="UTF-8" src="{K_ROOT_URL}menu/menu.js" type="text/javascript"></script>
+		<script type="text/javascript">{W_MENU}</script>
+		<!-- ******** END ALLWEBMENUS CODE FOR menu ******** -->	
+		<form action="" method="post" name="input" id="input" enctype="multipart/form-data"><input name="wi_hidden" id="wi_hidden" type="hidden" value="">
+			<table width="1850" border="0" align="center">
+			
+				<tr bgcolor="#FFFFFF">
+					<!-- menu superior-->
+					<td width="1850" height="51" align="center" id="awmAnchor-menu" style="width: 100px; height: 50px;"></td>
+				</tr>
+				
+				<tr bgcolor="#FFFFFF">
+					<td>
+						<table width="1750" border="0">
+							<tr>
+								<td>
+									<table width="520" border="0">
+										<tr>
+											<td height="100%">
+												<div class="titulo_central">Informes->Facturas por Equipo</div>
+											</td>
+										</tr>
+										<tr>
+											<td height="0%">
+												<div class="tit_superior"><font color="#999999">Fecha Actual: 13/04/2011</font></div>
+											</td>
+										</tr>
+									</table>
+								</td>
+								<td width="900">
+									<table width="900" border="0">
+										<tr>
+											<td>
+												<div class="titulo_central" id="NOM_PRODUCTO">Seleccione una celda</div>
+											</td>
+										</tr>
+									</table>
+								</td>
+								<td width="68"></td>
+								<td width="68"></td>
+								<td width="68"></td>
+								<td width="68"></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				
+				<tr bgcolor="#FFFFFF">
+					<td>
+						<table width="1850" border="0" align="center">
+							<tr valign="top">
+								<td>
+									<div style="overflow-x: hidden; overflow-y: auto; height: 30; width:1850;">
+										<table width="1850" rules="none" border="1" align="center" class="claro">
+											<tr class="encabezado_right">
+												<td width="270">INGRESE A&Ntilde;O:</td>
+												<td width="40" class="claro_left" colspan="5">
+													<input type="TEXT" value="2011"/>
+													<input type="button" value="BUSCAR"/>
+												</td>
+												<td width="1300"></td>
+											</tr>
+										</table>
+									</div>
+									<p>
+									<div style="overflow-x: hidden; overflow-y: auto; height: 60; width:1850;">
+										<table width="1850" rules="none" border="1" align="left" class="claro">
+												<tr class="encabezado_center">
+													<td width="160" align="center"></td>
+													<td colspan="2" width="70" align="center">Enero</td>
+													<td colspan="2" width="70" align="center">Febrero</td>
+													<td colspan="2" width="70" align="center">Marzo</td>
+													<td colspan="2" width="70" align="center">Abril</td>
+													<td colspan="2" width="70" align="center">Mayo</td>			
+													<td colspan="2" width="70" align="center">Junio</td>
+													<td colspan="2" width="70" align="center">Julio</td>
+													<td colspan="2" width="70" align="center">Agosto</td>
+													<td colspan="2" width="70" align="center">Septiembre</td>
+													<td colspan="2" width="70" align="center">Octubre</td>
+													<td colspan="2" width="70" align="center">Noviembre</td>
+													<td colspan="2" width="70" align="center">Diciembre</td>
+												</tr>
+												<tr class="encabezado_center">
+													<td width="160" align="center">Familia</td>
+													<td width="35" align="center">M$</td>
+													<td width="35" align="center">Cant</td>
+													<td width="35" align="center">M$</td>
+													<td width="35" align="center">Cant</td>
+													<td width="35" align="center">M$</td>
+													<td width="35" align="center">Cant</td>
+													<td width="35" align="center">M$</td>
+													<td width="35" align="center">Cant</td>
+													<td width="35" align="center">M$</td>
+													<td width="35" align="center">Cant</td>
+													<td width="35" align="center">M$</td>
+													<td width="35" align="center">Cant</td>
+													<td width="35" align="center">M$</td>
+													<td width="35" align="center">Cant</td>
+													<td width="35" align="center">M$</td>
+													<td width="35" align="center">Cant</td>
+													<td width="35" align="center">M$</td>
+													<td width="35" align="center">Cant</td>
+													<td width="35" align="center">M$</td>
+													<td width="35" align="center">Cant</td>
+													<td width="35" align="center">M$</td>
+													<td width="35" align="center">Cant</td>
+													<td width="35" align="center">M$</td>
+													<td width="35" align="center">Cant</td>
+												</tr>
+										</table>
+									</div>
+									<div style="overflow-x: hidden; overflow-y: auto; height: 580; width:1850;">		
+										<table id="highlight-table" width="1850" rules="none" border="1" align="left" class="claro">		
+
+											<tr class="dwt_folder_mh" id="FAMILIA_01">
+												<td width="160" align="left">
+													<div class="tier1">
+														<a href="#" onClick="toggleRows(this)" class="folder"></a>
+														<label id="PL_NOM_PROYECTO_0">ANAFES Y COCINAS INDUSTRIALES</label>
+													</div>
+												</td>
+												<td id="Familia ANAFES Y COCINAS INDUSTRIALES, Mes Enero, Monto Venta: $ " width="35" align="center">900</td>
+												<td id="Familia ANAFES Y COCINAS INDUSTRIALES, Mes Enero, Cantidad Venta: "width="35" align="center">130</td>
+												
+												<td id="Familia ANAFES Y COCINAS INDUSTRIALES, Mes Febrero, Monto Venta: $ " width="35" align="center">900</td>
+												<td id="Familia ANAFES Y COCINAS INDUSTRIALES, Mes Febrero, Cantidad Venta: "width="35" align="center">130</td>
+												
+												<td id="Familia ANAFES Y COCINAS INDUSTRIALES, Mes Marzo, Monto Venta: $ " width="35" align="center">1.600</td>
+												<td id="Familia ANAFES Y COCINAS INDUSTRIALES, Mes Marzo, Cantidad Venta: "width="35" align="center">130</td>
+												
+												<td id="Familia ANAFES Y COCINAS INDUSTRIALES, Mes Abril, Monto Venta: $ " width="35" align="center">1.000</td>
+												<td id="Familia ANAFES Y COCINAS INDUSTRIALES, Mes Abril, Cantidad Venta: "width="35" align="center">100</td>
+												
+												<td id="Familia ANAFES Y COCINAS INDUSTRIALES, Mes Mayo, Monto Venta: $ " width="35" align="center">1.000</td>
+												<td id="Familia ANAFES Y COCINAS INDUSTRIALES, Mes Mayo, Cantidad Venta: "width="35" align="center">130</td>
+												
+												<td id="Familia ANAFES Y COCINAS INDUSTRIALES, Mes Junio, Monto Venta: $ " width="35" align="center">2.000</td>
+												<td id="Familia ANAFES Y COCINAS INDUSTRIALES, Mes Junio, Cantidad Venta: "width="35" align="center">130</td>
+												
+												<td id="Familia ANAFES Y COCINAS INDUSTRIALES, Mes Julio, Monto Venta: $ " width="35" align="center">1.600</td>
+												<td id="Familia ANAFES Y COCINAS INDUSTRIALES, Mes Julio, Cantidad Venta: "width="35" align="center">130</td>
+												
+												<td id="Familia ANAFES Y COCINAS INDUSTRIALES, Mes Agosto, Monto Venta: $ " width="35" align="center">1.100</td>
+												<td id="Familia ANAFES Y COCINAS INDUSTRIALES, Mes Agosto, Cantidad Venta: "width="35" align="center">130</td>
+												
+												<td id="Familia ANAFES Y COCINAS INDUSTRIALES, Mes Septiembre, Monto Venta: $ " width="35" align="center">1.300</td>
+												<td id="Familia ANAFES Y COCINAS INDUSTRIALES, Mes Septiembre, Cantidad Venta: "width="35" align="center">130</td>
+												
+												<td id="Familia ANAFES Y COCINAS INDUSTRIALES, Mes Octubre, Monto Venta: $ " width="35" align="center">1.100</td>
+												<td id="Familia ANAFES Y COCINAS INDUSTRIALES, Mes Octubre, Cantidad Venta: "width="35" align="center">130</td>
+												
+												<td id="Familia ANAFES Y COCINAS INDUSTRIALES, Mes Noviembre, Monto Venta: $ " width="35" align="center">1.150</td>
+												<td id="Familia ANAFES Y COCINAS INDUSTRIALES, Mes Noviembre, Cantidad Venta: "width="35" align="center">130</td>
+												
+												<td id="Familia ANAFES Y COCINAS INDUSTRIALES, Mes Diciembre, Monto Venta: $ " width="35" align="center">1.300</td>
+												<td id="Familia ANAFES Y COCINAS INDUSTRIALES, Mes Diciembre, Cantidad Venta: "width="35" align="center">130</td>
+
+											</tr>
+											<tr class="claro" id="FAMILIA_01-01">
+												<td width="160" align="left">
+													<div class="tier2">
+														<a class="doc"></a>
+														CE-4C
+													</div>
+												</td>
+												<td id="CE-4C : Mes Enero, Monto venta: $ " width="35" align="center">100</td>
+												<td id="CE-4C : Mes Enero, Cantidad venta: " width="35" align="center">10</td>
+												
+												<td id="CE-4C : Mes Febrero, Monto venta: $ " width="35" align="center">200</td>
+												<td id="CE-4C : Mes Febrero, Cantidad venta: " width="35" align="center">20</td>
+												
+												<td id="CE-4C : Mes Marzo, Monto venta: $ " width="35" align="center">300</td>
+												<td id="CE-4C : Mes Marzo, Cantidad venta: " width="35" align="center">30</td>
+												
+												<td id="CE-4C : Mes Abril, Monto venta: $ " width="35" align="center">400</td>
+												<td id="CE-4C : Mes Abril, Cantidad venta: " width="35" align="center">40</td>
+												
+												<td id="CE-4C : Mes Mayo, Monto venta: $ " width="35" align="center">500</td>
+												<td id="CE-4C : Mes Mayo, Cantidad venta: " width="35" align="center">50</td>
+												
+												<td id="CE-4C : Mes Junio, Monto venta: $ " width="35" align="center">600</td>
+												<td id="CE-4C : Mes Junio, Cantidad venta: " width="35" align="center">60</td>
+												
+												<td id="CE-4C : Mes Julio, Monto venta: $ " width="35" align="center">700</td>
+												<td id="CE-4C : Mes Julio, Cantidad venta: " width="35" align="center">70</td>
+												
+												<td id="CE-4C : Mes Agosto, Monto venta: $ " width="35" align="center">800</td>
+												<td id="CE-4C : Mes Agosto, Cantidad venta: " width="35" align="center">80</td>
+												
+												<td id="CE-4C : Mes Septiembre, Monto venta: $ " width="35" align="center">900</td>
+												<td id="CE-4C : Mes Septiembre, Cantidad venta: " width="35" align="center">90</td>
+												
+												<td id="CE-4C : Mes Octubre, Monto venta: $ " width="35" align="center">1.000</td>
+												<td id="CE-4C : Mes Octubre, Cantidad venta: " width="35" align="center">100</td>
+												
+												<td id="CE-4C : Mes Noviembre, Monto venta: $ " width="35" align="center">1.100</td>
+												<td id="CE-4C : Mes Noviembre, Cantidad venta: " width="35" align="center">110</td>
+												
+												<td id="CE-4C : Mes Diciembre, Monto venta: $ " width="35" align="center">1.200</td>
+												<td id="CE-4C : Mes Diciembre, Cantidad venta: " width="35" align="center">120</td>
+											</tr>
+											<tr class="oscuro" id="FAMILIA_01-01">
+												<td width="160" align="left">
+													<div class="tier2">
+														<a class="doc"></a>
+														CE-6C
+													</div>
+												</td>
+												<td id="CE-6C : Mes Enero, Monto venta: $ " width="35" align="center">800</td>
+												<td id="CE-6C : Mes Enero, Cantidad venta: " width="35" align="center">120</td>
+												
+												<td id="CE-6C : Mes Febrero, Monto venta: $ " width="35" align="center">700</td>
+												<td id="CE-6C : Mes Febrero, Cantidad venta: " width="35" align="center">110</td>
+												
+												<td id="CE-6C : Mes Marzo, Monto venta: $ " width="35" align="center">1.300</td>
+												<td id="CE-6C : Mes Marzo, Cantidad venta: " width="35" align="center">100</td>
+												
+												<td id="CE-6C : Mes Abril, Monto venta: $ " width="35" align="center">600</td>
+												<td id="CE-6C : Mes Abril, Cantidad venta: " width="35" align="center">90</td>
+												
+												<td id="CE-6C : Mes Mayo, Monto venta: $ " width="35" align="center">400</td>
+												<td id="CE-6C : Mes Mayo, Cantidad venta: " width="35" align="center">80</td>
+												
+												<td id="CE-6C : Mes Junio, Monto venta: $ " width="35" align="center">1.400</td>
+												<td id="CE-6C : Mes Junio, Cantidad venta: " width="35" align="center">70</td>
+												
+												<td id="CE-6C : Mes Julio, Monto venta: $ " width="35" align="center">900</td>
+												<td id="CE-6C : Mes Julio, Cantidad venta: " width="35" align="center">60</td>
+												
+												<td id="CE-6C : Mes Agosto, Monto venta: $ " width="35" align="center">300</td>
+												<td id="CE-6C : Mes Agosto, Cantidad venta: " width="35" align="center">50</td>
+												
+												<td id="CE-6C : Mes Septiembre, Monto venta: $ " width="35" align="center">400</td>
+												<td id="CE-6C : Mes Septiembre, Cantidad venta: " width="35" align="center">40</td>
+												
+												<td id="CE-6C : Mes Octubre, Monto venta: $ " width="35" align="center">100</td>
+												<td id="CE-6C : Mes Octubre, Cantidad venta: " width="35" align="center">30</td>
+												
+												<td id="CE-6C : Mes Noviembre, Monto venta: $ " width="35" align="center">50</td>
+												<td id="CE-6C : Mes Noviembre, Cantidad venta: " width="35" align="center">20</td>
+												
+												<td id="CE-6C : Mes Diciembre, Monto venta: $ " width="35" align="center">100</td>
+												<td id="CE-6C : Mes Diciembre, Cantidad venta: " width="35" align="center">10</td>
+											</tr>	
+											<tr class="dwt_folder_mh" id="FAMILIA_02">
+												<td width="160" align="left">
+													<div class="tier1">
+														<a href="#" onClick="toggleRows(this)" class="folder"></a>
+														<label id="PL_NOM_PROYECTO_0">BANDEJEROS</label>
+													</div>
+												</td>
+												<td id="Familia BANDEJEROS, Mes Enero, Monto Venta: $ " width="35" align="center">1.600</td>
+												<td id="Familia BANDEJEROS, Mes Enero, Cantidad Venta: " width="35" align="center">100</td>
+												<td id="Familia BANDEJEROS, Mes Febrero, Monto Venta: $ " width="35" align="center">400</td>
+												<td id="Familia BANDEJEROS, Mes Febrero, Cantidad Venta: " width="35" align="center">150</td>
+												<td id="Familia BANDEJEROS, Mes Marzo, Monto Venta: $ " width="35" align="center">1.600</td>
+												<td id="Familia BANDEJEROS, Mes Marzo, Cantidad Venta: " width="35" align="center">150</td>
+												<td id="Familia BANDEJEROS, Mes Abril, Monto Venta: $ " width="35" align="center">1.000</td>
+												<td id="Familia BANDEJEROS, Mes Abril, Cantidad Venta: " width="35" align="center">250</td>
+												<td id="Familia BANDEJEROS, Mes Mayo, Monto Venta: $ " width="35" align="center">1.900</td>
+												<td id="Familia BANDEJEROS, Mes Mayo, Cantidad Venta: " width="35" align="center">450</td>
+												<td id="Familia BANDEJEROS, Mes Junio, Monto Venta: $ " width="35" align="center">1.400</td>
+												<td id="Familia BANDEJEROS, Mes Junio, Cantidad Venta: " width="35" align="center">450</td>
+												<td id="Familia BANDEJEROS, Mes Julio, Monto Venta: $ " width="35" align="center">2.000</td>
+												<td id="Familia BANDEJEROS, Mes Julio, Cantidad Venta: " width="35" align="center">1.050</td>
+												<td id="Familia BANDEJEROS, Mes Agosto Monto Venta: $ " width="35" align="center">1.700</td>
+												<td id="Familia BANDEJEROS, Mes Agosto, Cantidad Venta: " width="35" align="center">450</td>
+												<td id="Familia BANDEJEROS, Mes Septiembre, Monto Venta: $ " width="35" align="center">250</td>
+												<td id="Familia BANDEJEROS, Mes Septiembre, Cantidad Venta: " width="35" align="center">450</td>
+												<td id="Familia BANDEJEROS, Mes Octubre, Monto Venta: $ " width="35" align="center">1.900</td>
+												<td id="Familia BANDEJEROS, Mes Octubre, Cantidad Venta: " width="35" align="center">450</td>
+												<td id="Familia BANDEJEROS, Mes Noviembre, Monto Venta: $ " width="35" align="center">2.200</td>
+												<td id="Familia BANDEJEROS, Mes Noviembre, Cantidad Venta: " width="35" align="center">650</td>
+												<td id="Familia BANDEJEROS, Mes Diciembre, Monto Venta: $ " width="35" align="center">650</td>
+												<td id="Familia BANDEJEROS, Mes Diciembre, Cantidad Venta: " width="35" align="center">1.200</td>
+
+											</tr>
+											<tr class="claro" id="FAMILIA_02-01">
+												<td width="160" align="left">
+													<div class="tier2">
+														<a class="doc"></a>
+														BAR
+													</div>
+												</td>
+												<td id="BAR : Mes Enero, Monto venta: $ " width="35" align="center">300</td>
+												<td id="BAR : Mes Enero, Cantidad venta: " width="35" align="center">50</td>
+												
+												<td id="BAR : Mes Febrero, Monto venta: $ " width="35" align="center">250</td>
+												<td id="BAR : Mes Febrero, Cantidad venta: " width="35" align="center">100</td>
+												
+												<td id="BAR : Mes Marzo, Monto venta: $ " width="35" align="center">300</td>
+												<td id="BAR : Mes Marzo, Cantidad venta: " width="35" align="center">50</td>
+												
+												<td id="BAR : Mes Abril, Monto venta: $ " width="35" align="center">100</td>
+												<td id="BAR : Mes Abril, Cantidad venta: " width="35" align="center">100</td>
+												
+												<td id="BAR : Mes Mayo, Monto venta: $ " width="35" align="center">1.300</td>
+												<td id="BAR : Mes Mayo, Cantidad venta: " width="35" align="center">300</td>
+												
+												<td id="BAR : Mes Junio, Monto venta: $ " width="35" align="center">800</td>
+												<td id="BAR : Mes Junio, Cantidad venta: " width="35" align="center">300</td>
+												
+												<td id="BAR : Mes Julio, Monto venta: $ " width="35" align="center">700</td>
+												<td id="BAR : Mes Julio, Cantidad venta: " width="35" align="center">800</td>
+												
+												<td id="BAR : Mes Agosto, Monto venta: $ " width="35" align="center">400</td>
+												<td id="BAR : Mes Agosto, Cantidad venta: " width="35" align="center">100</td>
+												
+												<td id="BAR : Mes Septiembre, Monto venta: $ " width="35" align="center">50</td>
+												<td id="BAR : Mes Septiembre, Cantidad venta: " width="35" align="center">50</td>
+												
+												<td id="BAR : Mes Octubre, Monto venta: $ " width="35" align="center">1.800</td>
+												<td id="BAR : Mes Octubre, Cantidad venta: " width="35" align="center">150</td>
+												
+												<td id="BAR : Mes Noviembre, Monto venta: $ " width="35" align="center">1.300</td>
+												<td id="BAR : Mes Noviembre, Cantidad venta: " width="35" align="center">250</td>
+												
+												<td id="BAR : Mes Diciembre, Monto venta: $ " width="35" align="center">600</td>
+												<td id="BAR : Mes Diciembre, Cantidad venta: " width="35" align="center">100</td>
+											</tr>
+											<tr class="oscuro" id="FAMILIA_02-01">
+												<td width="160" align="left">
+													<div class="tier2">
+														<a class="doc"></a>
+														BAR-E
+													</div>
+												</td>
+												<td id="BAR-E : Mes Enero, Monto venta: $ " width="35" align="center">1.300</td>
+												<td id="BAR-E : Mes Enero, Cantidad venta: " width="35" align="center">50</td>
+												
+												<td id="BAR-E : Mes Febrero, Monto venta: $ " width="35" align="center">150</td>
+												<td id="BAR-E : Mes Febrero, Cantidad venta: " width="35" align="center">50</td>
+												
+												<td id="BAR-E : Mes Marzo, Monto venta: $ " width="35" align="center">1.000</td>
+												<td id="BAR-E : Mes Marzo, Cantidad venta: " width="35" align="center">100</td>
+												
+												<td id="BAR-E : Mes Abril, Monto venta: $ " width="35" align="center">900</td>
+												<td id="BAR-E : Mes Abril, Cantidad venta: " width="35" align="center">150</td>
+												
+												<td id="BAR-E : Mes Mayo, Monto venta: $ " width="35" align="center">600</td>
+												<td id="BAR-E : Mes Mayo, Cantidad venta: " width="35" align="center">150</td>
+												
+												<td id="BAR-E : Mes Junio, Monto venta: $ " width="35" align="center">600</td>
+												<td id="BAR-E : Mes Junio, Cantidad venta: " width="35" align="center">150</td>
+												
+												<td id="BAR-E : Mes Julio, Monto venta: $ " width="35" align="center">1.300</td>
+												<td id="BAR-E : Mes Julio, Cantidad venta: " width="35" align="center">250</td>
+												
+												<td id="BAR-E : Mes Agosto, Monto venta: $ " width="35" align="center">1.300</td>
+												<td id="BAR-E : Mes Agosto, Cantidad venta: " width="35" align="center">300</td>
+												
+												<td id="BAR-E : Mes Septiembre, Monto venta: $ " width="35" align="center">200</td>
+												<td id="BAR-E : Mes Septiembre, Cantidad venta: " width="35" align="center">400</td>
+												
+												<td id="BAR-E : Mes Octubre, Monto venta: $ " width="35" align="center">100</td>
+												<td id="BAR-E : Mes Octubre, Cantidad venta: " width="35" align="center">300</td>
+												
+												<td id="BAR-E : Mes Noviembre, Monto venta: $ " width="35" align="center">900</td>
+												<td id="BAR-E : Mes Noviembre, Cantidad venta: " width="35" align="center">400</td>
+												
+												<td id="BAR-E : Mes Diciembre, Monto venta: $ " width="35" align="center">50</td>
+												<td id="BAR-E : Mes Diciembre, Cantidad venta: " width="35" align="center">1.100</td>
+											</tr>
+											<tr class="dwt_folder_mh" id="FAMILIA_03">
+												<td width="160" align="left">
+													<div class="tier1">
+														<a href="#" onClick="toggleRows(this)" class="folder"></a>
+														<label id="PL_NOM_PROYECTO_0">CAMPANAS BIGGI</label>
+													</div>
+												</td>
+												<td id="Familia CAMPANAS BIGGI, Mes Enero, Monto Venta: $ " width="35" align="center">900</td>
+												<td id="Familia CAMPANAS BIGGI, Mes Enero, Cantidad Venta: " width="35" align="center">130</td>
+												
+												<td id="Familia CAMPANAS BIGGI, Mes Febrero, Monto Venta: $ " width="35" align="center">900</td>
+												<td id="Familia CAMPANAS BIGGI, Mes Febrero, Cantidad Venta: " width="35" align="center">130</td>
+												
+												<td id="Familia CAMPANAS BIGGI, Mes Marzo, Monto Venta: $ " width="35" align="center">1.600</td>
+												<td id="Familia CAMPANAS BIGGI, Mes Marzo, Cantidad Venta: " width="35" align="center">130</td>
+												
+												<td id="Familia CAMPANAS BIGGI, Mes Abril, Monto Venta: $ " width="35" align="center">1.000</td>
+												<td id="Familia CAMPANAS BIGGI, Mes Abril, Cantidad Venta: " width="35" align="center">130</td>
+												
+												<td id="Familia CAMPANAS BIGGI, Mes Mayo, Monto Venta: $ " width="35" align="center">1.000</td>
+												<td id="Familia CAMPANAS BIGGI, Mes Mayo, Cantidad Venta: " width="35" align="center">130</td>
+												
+												<td id="Familia CAMPANAS BIGGI, Mes Junio, Monto Venta: $ " width="35" align="center">2.000</td>
+												<td id="Familia CAMPANAS BIGGI, Mes Junio, Cantidad Venta: " width="35" align="center">130</td>
+												
+												<td id="Familia CAMPANAS BIGGI, Mes Julio, Monto Venta: $ " width="35" align="center">1.600</td>
+												<td id="Familia CAMPANAS BIGGI, Mes Julio, Cantidad Venta: " width="35" align="center">130</td>
+												
+												<td id="Familia CAMPANAS BIGGI, Mes Agosto Monto Venta: $ " width="35" align="center">1.100</td>
+												<td id="Familia CAMPANAS BIGGI, Mes Agosto, Cantidad Venta: " width="35" align="center">130</td>
+												
+												<td id="Familia CAMPANAS BIGGI, Mes Septiembre, Monto Venta: $ " width="35" align="center">1.300</td>
+												<td id="Familia CAMPANAS BIGGI, Mes Septiembre, Cantidad Venta: " width="35" align="center">130</td>
+												
+												<td id="Familia CAMPANAS BIGGI, Mes Octubre, Monto Venta: $ " width="35" align="center">100</td>
+												<td id="Familia CAMPANAS BIGGI, Mes Octubre, Cantidad Venta: " width="35" align="center">180</td>
+												
+												<td id="Familia CAMPANAS BIGGI, Mes Noviembre, Monto Venta: $ " width="35" align="center">1.150</td>
+												<td id="Familia CAMPANAS BIGGI, Mes Noviembre, Cantidad Venta: " width="35" align="center">130</td>
+												
+												<td id="Familia CAMPANAS BIGGI, Mes Diciembre, Monto Venta: $ " width="35" align="center">1.300</td>
+												<td id="Familia CAMPANAS BIGGI, Mes Diciembre, Cantidad Venta: " width="35" align="center">130</td>
+											</tr>
+											<tr class="claro" id="FAMILIA_03-01">
+												<td width="160" align="left">
+													<div class="tier2">
+														<a class="doc"></a>
+														C-100
+													</div>
+												</td>
+												<td id="C-100 : Mes Enero, Monto venta: $ " width="35" align="center">100</td>
+												<td id="C-100 : Mes Enero, Cantidad venta: " width="35" align="center">10</td>
+												
+												<td id="C-100 : Mes Febrero, Monto venta: $ " width="35" align="center">200</td>
+												<td id="C-100 : Mes Febrero, Cantidad venta: " width="35" align="center">20</td>
+												
+												<td id="C-100 : Mes Marzo, Monto venta: $ " width="35" align="center">300</td>
+												<td id="C-100 : Mes Marzo, Cantidad venta: " width="35" align="center">30</td>
+												
+												<td id="C-100 : Mes Abril, Monto venta: $ " width="35" align="center">400</td>
+												<td id="C-100 : Mes Abril, Cantidad venta: " width="35" align="center">40</td>
+												
+												<td id="C-100 : Mes Mayo, Monto venta: $ " width="35" align="center">500</td>
+												<td id="C-100 : Mes Mayo, Cantidad venta: " width="35" align="center">50</td>
+												
+												<td id="C-100 : Mes Junio, Monto venta: $ " width="35" align="center">600</td>
+												<td id="C-100 : Mes Junio, Cantidad venta: " width="35" align="center">60</td>
+												
+												<td id="C-100 : Mes Julio, Monto venta: $ " width="35" align="center">700</td>
+												<td id="C-100 : Mes Julio, Cantidad venta: " width="35" align="center">70</td>
+												
+												<td id="C-100 : Mes Agosto, Monto venta: $ " width="35" align="center">800</td>
+												<td id="C-100 : Mes Agosto, Cantidad venta: " width="35" align="center">80</td>
+												
+												<td id="C-100 : Mes Septiembre, Monto venta: $ " width="35" align="center">900</td>
+												<td id="C-100 : Mes Septiembre, Cantidad venta: " width="35" align="center">90</td>
+												
+												<td id="C-100 : Mes Octubre, Monto venta: $ " width="35" align="center">1.000</td>
+												<td id="C-100 : Mes Octubre, Cantidad venta: " width="35" align="center">100</td>
+												
+												<td id="C-100 : Mes Noviembre, Monto venta: $ " width="35" align="center">1.100</td>
+												<td id="C-100 : Mes Noviembre, Cantidad venta: " width="35" align="center">110</td>
+												
+												<td id="C-100 : Mes Diciembre, Monto venta: $ " width="35" align="center">1.200</td>
+												<td id="C-100 : Mes Diciembre, Cantidad venta: " width="35" align="center">120</td>
+											</tr>
+											<tr class="oscuro" id="FAMILIA_03-01">
+												<td width="160" align="left">
+													<div class="tier2">
+														<a class="doc"></a>
+														C-150
+													</div>
+												</td>
+												<td id="C-150 : Mes Enero, Monto venta: $ " width="35" align="center">800</td>
+												<td id="C-150 : Mes Enero, Cantidad venta: " width="35" align="center">120</td>
+												
+												<td id="C-150 : Mes Febrero, Monto venta: $ " width="35" align="center">700</td>
+												<td id="C-150 : Mes Febrero, Cantidad venta: " width="35" align="center">110</td>
+												
+												<td id="C-150 : Mes Marzo, Monto venta: $ " width="35" align="center">1.300</td>
+												<td id="C-150 : Mes Marzo, Cantidad venta: " width="35" align="center">100</td>
+												
+												<td id="C-150 : Mes Abril, Monto venta: $ " width="35" align="center">600</td>
+												<td id="C-150 : Mes Abril, Cantidad venta: " width="35" align="center">90</td>
+												
+												<td id="C-150 : Mes Mayo, Monto venta: $ " width="35" align="center">400</td>
+												<td id="C-150 : Mes Mayo, Cantidad venta: " width="35" align="center">80</td>
+												
+												<td id="C-150 : Mes Junio, Monto venta: $ " width="35" align="center">1.400</td>
+												<td id="C-150 : Mes Junio, Cantidad venta: " width="35" align="center">70</td>
+												
+												<td id="C-150 : Mes Julio, Monto venta: $ " width="35" align="center">900</td>
+												<td id="C-150 : Mes Julio, Cantidad venta: " width="35" align="center">60</td>
+												
+												<td id="C-150 : Mes Agosto, Monto venta: $ " width="35" align="center">300</td>
+												<td id="C-150 : Mes Agosto, Cantidad venta: " width="35" align="center">50</td>
+												
+												<td id="C-150 : Mes Septiembre, Monto venta: $ " width="35" align="center">400</td>
+												<td id="C-150 : Mes Septiembre, Cantidad venta: " width="35" align="center">40</td>
+												
+												<td id="C-150 : Mes Octubre, Monto venta: $ " width="35" align="center">100</td>
+												<td id="C-150 : Mes Octubre, Cantidad venta: " width="35" align="center">30</td>
+												
+												<td id="C-150 : Mes Noviembre, Monto venta: $ " width="35" align="center">50</td>
+												<td id="C-150 : Mes Noviembre, Cantidad venta: " width="35" align="center">20</td>
+												
+												<td id="C-150 : Mes Diciembre, Monto venta: $ " width="35" align="center">100</td>
+												<td id="C-150 : Mes Diciembre, Cantidad venta: " width="35" align="center">10</td>
+											</tr>
+											<tr class="dwt_folder_mh" id="FAMILIA_04">
+												<td width="160" align="left">
+													<div class="tier1">
+														<a href="#" onClick="toggleRows(this)" class="folder"></a>
+														<label id="PL_NOM_PROYECTO_0">CARROS</label>
+													</div>
+												</td>
+												<td id="Familia CARROS, Mes Enero, Monto Venta: $ " width="35" align="center">1.600</td>
+												<td id="Familia CARROS, Mes Enero, Cantidad Venta: " width="35" align="center">100</td>
+												
+												<td id="Familia CARROS, Mes Febrero, Monto Venta: $ " width="35" align="center">400</td>
+												<td id="Familia CARROS, Mes Febrero, Cantidad Venta: " width="35" align="center">150</td>
+												
+												<td id="Familia CARROS, Mes Marzo, Monto Venta: $ " width="35" align="center">1.600</td>
+												<td id="Familia CARROS, Mes Marzo, Cantidad Venta: " width="35" align="center">150</td>
+												
+												<td id="Familia CARROS, Mes Abril, Monto Venta: $ " width="35" align="center">1.000</td>
+												<td id="Familia CARROS, Mes Abril, Cantidad Venta: " width="35" align="center">250</td>
+												
+												<td id="Familia CARROS, Mes Mayo, Monto Venta: $ " width="35" align="center">1.900</td>
+												<td id="Familia CARROS, Mes Mayo, Cantidad Venta: " width="35" align="center">450</td>
+												
+												<td id="Familia CARROS, Mes Junio, Monto Venta: $ " width="35" align="center">1.400</td>
+												<td id="Familia CARROS, Mes Junio, Cantidad Venta: " width="35" align="center">450</td>
+												
+												<td id="Familia CARROS, Mes Julio, Monto Venta: $ " width="35" align="center">2.000</td>
+												<td id="Familia CARROS, Mes Julio, Cantidad Venta: " width="35" align="center">1.050</td>
+												
+												<td id="Familia CARROS, Mes Agosto Monto Venta: $ " width="35" align="center">1.700</td>
+												<td id="Familia CARROS, Mes Agosto, Cantidad Venta: " width="35" align="center">450</td>
+												
+												<td id="Familia CARROS, Mes Septiembre, Monto Venta: $ " width="35" align="center">250</td>
+												<td id="Familia CARROS, Mes Septiembre, Cantidad Venta: " width="35" align="center">450</td>
+												
+												<td id="Familia CARROS, Mes Octubre, Monto Venta: $ " width="35" align="center">1.900</td>
+												<td id="Familia CARROS, Mes Octubre, Cantidad Venta: " width="35" align="center">450</td>
+												
+												<td id="Familia CARROS, Mes Noviembre, Monto Venta: $ " width="35" align="center">1.200</td>
+												<td id="Familia CARROS, Mes Noviembre, Cantidad Venta: " width="35" align="center">650</td>
+												
+												<td id="Familia CARROS, Mes Diciembre, Monto Venta: $ " width="35" align="center">350</td>
+												<td id="Familia CARROS, Mes Diciembre, Cantidad Venta: " width="35" align="center">1.200</td>
+											</tr>
+											<tr class="claro" id="FAMILIA_04-01">
+												<td width="160" align="left">
+													<div class="tier2">
+														<a class="doc"></a>
+														CAR-1
+													</div>
+												</td>
+												<td id="CAR-1 : Mes Enero, Monto venta: $ " width="35" align="center">300</td>
+												<td id="CAR-1 : Mes Enero, Cantidad venta: " width="35" align="center">50</td>
+												
+												<td id="CAR-1 : Mes Febrero, Monto venta: $ " width="35" align="center">250</td>
+												<td id="CAR-1 : Mes Febrero, Cantidad venta: " width="35" align="center">100</td>
+												
+												<td id="CAR-1 : Mes Marzo, Monto venta: $ " width="35" align="center">300</td>
+												<td id="CAR-1 : Mes Marzo, Cantidad venta: " width="35" align="center">50</td>
+												
+												<td id="CAR-1 : Mes Abril, Monto venta: $ " width="35" align="center">100</td>
+												<td id="CAR-1 : Mes Abril, Cantidad venta: " width="35" align="center">100</td>
+												
+												<td id="CAR-1 : Mes Mayo, Monto venta: $ " width="35" align="center">1.300</td>
+												<td id="CAR-1 : Mes Mayo, Cantidad venta: " width="35" align="center">300</td>
+												
+												<td id="CAR-1 : Mes Junio, Monto venta: $ " width="35" align="center">800</td>
+												<td id="CAR-1 : Mes Junio, Cantidad venta: " width="35" align="center">300</td>
+												
+												<td id="CAR-1 : Mes Julio, Monto venta: $ " width="35" align="center">700</td>
+												<td id="CAR-1 : Mes Julio, Cantidad venta: " width="35" align="center">800</td>
+												
+												<td id="CAR-1 : Mes Agosto, Monto venta: $ " width="35" align="center">400</td>
+												<td id="CAR-1 : Mes Agosto, Cantidad venta: " width="35" align="center">100</td>
+												
+												<td id="CAR-1 : Mes Septiembre, Monto venta: $ " width="35" align="center">50</td>
+												<td id="CAR-1 : Mes Septiembre, Cantidad venta: " width="35" align="center">50</td>
+												
+												<td id="CAR-1 : Mes Octubre, Monto venta: $ " width="35" align="center">1.800</td>
+												<td id="CAR-1 : Mes Octubre, Cantidad venta: " width="35" align="center">150</td>
+												
+												<td id="CAR-1 : Mes Noviembre, Monto venta: $ " width="35" align="center">1.300</td>
+												<td id="CAR-1 : Mes Noviembre, Cantidad venta: " width="35" align="center">250</td>
+												
+												<td id="CAR-1 : Mes Diciembre, Monto venta: $ " width="35" align="center">600</td>
+												<td id="CAR-1 : Mes Diciembre, Cantidad venta: " width="35" align="center">100</td>
+											</tr>
+											<tr class="oscuro" id="FAMILIA_04-01">
+												<td width="160" align="left">
+													<div class="tier2">
+														<a class="doc"></a>
+														CAR-2
+													</div>
+												</td>
+												<td id="CAR-2 : Mes Enero, Monto venta: $ " width="35" align="center">1.300</td>
+												<td id="CAR-2 : Mes Enero, Cantidad venta: " width="35" align="center">50</td>
+												
+												<td id="CAR-2 : Mes Febrero, Monto venta: $ " width="35" align="center">150</td>
+												<td id="CAR-2 : Mes Febrero, Cantidad venta: " width="35" align="center">50</td>
+												
+												<td id="CAR-2 : Mes Marzo, Monto venta: $ " width="35" align="center">1.000</td>
+												<td id="CAR-2 : Mes Marzo, Cantidad venta: " width="35" align="center">100</td>
+												
+												<td id="CAR-2 : Mes Abril, Monto venta: $ " width="35" align="center">900</td>
+												<td id="CAR-2 : Mes Abril, Cantidad venta: " width="35" align="center">150</td>
+												
+												<td id="CAR-2 : Mes Mayo, Monto venta: $ " width="35" align="center">600</td>
+												<td id="CAR-2 : Mes Mayo, Cantidad venta: " width="35" align="center">150</td>
+												
+												<td id="CAR-2 : Mes Junio, Monto venta: $ " width="35" align="center">600</td>
+												<td id="CAR-2 : Mes Junio, Cantidad venta: " width="35" align="center">150</td>
+												
+												<td id="CAR-2 : Mes Julio, Monto venta: $ " width="35" align="center">1.300</td>
+												<td id="CAR-2 : Mes Julio, Cantidad venta: " width="35" align="center">250</td>
+												
+												<td id="CAR-2 : Mes Agosto, Monto venta: $ " width="35" align="center">1.300</td>
+												<td id="CAR-2 : Mes Agosto, Cantidad venta: " width="35" align="center">300</td>
+												
+												<td id="CAR-2 : Mes Septiembre, Monto venta: $ " width="35" align="center">200</td>
+												<td id="CAR-2 : Mes Septiembre, Cantidad venta: " width="35" align="center">400</td>
+												
+												<td id="CAR-2 : Mes Octubre, Monto venta: $ " width="35" align="center">100</td>
+												<td id="CAR-2 : Mes Octubre, Cantidad venta: " width="35" align="center">300</td>
+												
+												<td id="CAR-2 : Mes Noviembre, Monto venta: $ " width="35" align="center">900</td>
+												<td id="CAR-2 : Mes Noviembre, Cantidad venta: " width="35" align="center">400</td>
+												
+												<td id="CAR-2 : Mes Diciembre, Monto venta: $ " width="35" align="center">50</td>
+												<td id="CAR-2 : Mes Diciembre, Cantidad venta: " width="35" align="center">1.100</td>
+											</tr>
+											<tr class="dwt_folder_mh" id="FAMILIA_05">
+												<td width="160" align="left">
+													<div class="tier1">
+														<a href="#" onClick="toggleRows(this)" class="folder"></a>
+														<label id="PL_NOM_PROYECTO_0">COCINAS SEMI INDUSTRIALES</label>
+													</div>
+												</td>
+												<td id="Familia COCINAS SEMI INDUSTRIALES, Mes Enero, Monto Venta: $ " width="35" align="center">1.400</td>
+												<td id="Familia COCINAS SEMI INDUSTRIALES, Mes Enero, Cantidad Venta: " width="35" align="center">100</td>
+												
+												<td id="Familia COCINAS SEMI INDUSTRIALES, Mes Febrero, Monto Venta: $ " width="35" align="center">150</td>
+												<td id="Familia COCINAS SEMI INDUSTRIALES, Mes Febrero, Cantidad Venta: " width="35" align="center">50</td>
+												
+												<td id="Familia COCINAS SEMI INDUSTRIALES, Mes Marzo, Monto Venta: $ " width="35" align="center">1.150</td>
+												<td id="Familia COCINAS SEMI INDUSTRIALES, Mes Marzo, Cantidad Venta: " width="35" align="center">150</td>
+												
+												<td id="Familia COCINAS SEMI INDUSTRIALES, Mes Abril, Monto Venta: $ " width="35" align="center">1.500</td>
+												<td id="Familia COCINAS SEMI INDUSTRIALES, Mes Abril, Cantidad Venta: " width="35" align="center">350</td>
+												
+												<td id="Familia COCINAS SEMI INDUSTRIALES, Mes Mayo, Monto Venta: $ " width="35" align="center">600</td>
+												<td id="Familia COCINAS SEMI INDUSTRIALES, Mes Mayo, Cantidad Venta: " width="35" align="center">600</td>
+												
+												<td id="Familia COCINAS SEMI INDUSTRIALES, Mes Junio, Monto Venta: $ " width="35" align="center">600</td>
+												<td id="Familia COCINAS SEMI INDUSTRIALES, Mes Junio, Cantidad Venta: " width="35" align="center">250</td>
+												
+												<td id="Familia COCINAS SEMI INDUSTRIALES, Mes Julio, Monto Venta: $ " width="35" align="center">1.500</td>
+												<td id="Familia COCINAS SEMI INDUSTRIALES, Mes Julio, Cantidad Venta: " width="35" align="center">2.050</td>
+												
+												<td id="Familia COCINAS SEMI INDUSTRIALES, Mes Agosto Monto Venta: $ " width="35" align="center">1.900</td>
+												<td id="Familia COCINAS SEMI INDUSTRIALES, Mes Agosto, Cantidad Venta: " width="35" align="center">400</td>
+												
+												<td id="Familia COCINAS SEMI INDUSTRIALES, Mes Septiembre, Monto Venta: $ " width="35" align="center">200</td>
+												<td id="Familia COCINAS SEMI INDUSTRIALES, Mes Septiembre, Cantidad Venta: " width="35" align="center">400</td>
+												
+												<td id="Familia COCINAS SEMI INDUSTRIALES, Mes Octubre, Monto Venta: $ " width="35" align="center">100</td>
+												<td id="Familia COCINAS SEMI INDUSTRIALES, Mes Octubre, Cantidad Venta: " width="35" align="center">300</td>
+												
+												<td id="Familia COCINAS SEMI INDUSTRIALES, Mes Noviembre, Monto Venta: $ " width="35" align="center">1.700</td>
+												<td id="Familia COCINAS SEMI INDUSTRIALES, Mes Noviembre, Cantidad Venta: " width="35" align="center">650</td>
+												
+												<td id="Familia COCINAS SEMI INDUSTRIALES, Mes Diciembre, Monto Venta: $ " width="35" align="center">200</td>
+												<td id="Familia COCINAS SEMI INDUSTRIALES, Mes Diciembre, Cantidad Venta: " width="35" align="center">1.200</td>
+											</tr>
+											<tr class="claro" id="FAMILIA_05-01">
+												<td width="160" align="left">
+													<div class="tier2">
+														<a class="doc"></a>
+														CG-4
+													</div>
+												</td>
+												<td id="CG-4 : Mes Enero, Monto venta: $ " width="35" align="center">100</td>
+												<td id="CG-4 : Mes Enero, Cantidad venta: " width="35" align="center">50</td>
+												
+												<td id="CG-4 : Mes Febrero, Monto venta: $ " width="35" align="center">0</td>
+												<td id="CG-4 : Mes Febrero, Cantidad venta: " width="35" align="center">0</td>
+												
+												<td id="CG-4 : Mes Marzo, Monto venta: $ " width="35" align="center">150</td>
+												<td id="CG-4 : Mes Marzo, Cantidad venta: " width="35" align="center">50</td>
+												
+												<td id="CG-4 : Mes Abril, Monto venta: $ " width="35" align="center">600</td>
+												<td id="CG-4 : Mes Abril, Cantidad venta: " width="35" align="center">100</td>
+												
+												<td id="CG-4 : Mes Mayo, Monto venta: $ " width="35" align="center">0</td>
+												<td id="CG-4 : Mes Mayo, Cantidad venta: " width="35" align="center">0</td>
+												
+												<td id="CG-4 : Mes Junio, Monto venta: $ " width="35" align="center">0</td>
+												<td id="CG-4 : Mes Junio, Cantidad venta: " width="35" align="center">0</td>
+												
+												<td id="CG-4 : Mes Julio, Monto venta: $ " width="35" align="center">200</td>
+												<td id="CG-4 : Mes Julio, Cantidad venta: " width="35" align="center">800</td>
+												
+												<td id="CG-4 : Mes Agosto, Monto venta: $ " width="35" align="center">600</td>
+												<td id="CG-4 : Mes Agosto, Cantidad venta: " width="35" align="center">100</td>
+												
+												<td id="CG-4 : Mes Septiembre, Monto venta: $ " width="35" align="center">0</td>
+												<td id="CG-4 : Mes Septiembre, Cantidad venta: " width="35" align="center">0</td>
+												
+												<td id="CG-4 : Mes Octubre, Monto venta: $ " width="35" align="center">0</td>
+												<td id="CG-4 : Mes Octubre, Cantidad venta: " width="35" align="center">0</td>
+												
+												<td id="CG-4 : Mes Noviembre, Monto venta: $ " width="35" align="center">800</td>
+												<td id="CG-4 : Mes Noviembre, Cantidad venta: " width="35" align="center">250</td>
+												
+												<td id="CG-4 : Mes Diciembre, Monto venta: $ " width="35" align="center">150</td>
+												<td id="CG-4 : Mes Diciembre, Cantidad venta: " width="35" align="center">100</td>
+											</tr>
+											<tr class="oscuro" id="FAMILIA_05-01">
+												<td width="160" align="left">
+													<div class="tier2">
+														<a class="doc"></a>
+														CG-4H
+													</div>
+												</td>
+												<td id="CG-4H : Mes Enero, Monto venta: $ " width="35" align="center">1.300</td>
+												<td id="CG-4H : Mes Enero, Cantidad venta: " width="35" align="center">50</td>
+												
+												<td id="CG-4H : Mes Febrero, Monto venta: $ " width="35" align="center">150</td>
+												<td id="CG-4H : Mes Febrero, Cantidad venta: " width="35" align="center">50</td>
+												
+												<td id="CG-4H : Mes Marzo, Monto venta: $ " width="35" align="center">1.000</td>
+												<td id="CG-4H : Mes Marzo, Cantidad venta: " width="35" align="center">100</td>
+												
+												<td id="CG-4H : Mes Abril, Monto venta: $ " width="35" align="center">900</td>
+												<td id="CG-4H : Mes Abril, Cantidad venta: " width="35" align="center">150</td>
+												
+												<td id="CG-4H : Mes Mayo, Monto venta: $ " width="35" align="center">600</td>
+												<td id="CG-4H : Mes Mayo, Cantidad venta: " width="35" align="center">150</td>
+												
+												<td id="CG-4H : Mes Junio, Monto venta: $ " width="35" align="center">600</td>
+												<td id="CG-4H : Mes Junio, Cantidad venta: " width="35" align="center">150</td>
+												
+												<td id="CG-4H : Mes Julio, Monto venta: $ " width="35" align="center">1.300</td>
+												<td id="CG-4H : Mes Julio, Cantidad venta: " width="35" align="center">250</td>
+												
+												<td id="CG-4H : Mes Agosto, Monto venta: $ " width="35" align="center">1.300</td>
+												<td id="CG-4H : Mes Agosto, Cantidad venta: " width="35" align="center">300</td>
+												
+												<td id="CG-4H : Mes Septiembre, Monto venta: $ " width="35" align="center">200</td>
+												<td id="CG-4H : Mes Septiembre, Cantidad venta: " width="35" align="center">400</td>
+												
+												<td id="CG-4H : Mes Octubre, Monto venta: $ " width="35" align="center">100</td>
+												<td id="CG-4H : Mes Octubre, Cantidad venta: " width="35" align="center">300</td>
+												
+												<td id="CG-4H : Mes Noviembre, Monto venta: $ " width="35" align="center">900</td>
+												<td id="CG-4H : Mes Noviembre, Cantidad venta: " width="35" align="center">400</td>
+												
+												<td id="CG-4H : Mes Diciembre, Monto venta: $ " width="35" align="center">50</td>
+												<td id="CG-4H : Mes Diciembre, Cantidad venta: " width="35" align="center">1.100</td>
+											</tr>	
+											<tr class="dwt_folder_mh" id="FAMILIA_06">
+												<td width="160" align="left">
+													<div class="tier1">
+														<a href="#" onClick="toggleRows(this)" class="folder"></a>
+														<label id="PL_NOM_PROYECTO_0">ESTANTES</label>
+													</div>
+												</td>
+												<td id="Familia ESTANTES, Mes Enero, Monto Venta: $ " width="35" align="center">900</td>
+												<td id="Familia ESTANTES, Mes Enero, Cantidad Venta: " width="35" align="center">130</td>
+												
+												<td id="Familia ESTANTES, Mes Febrero, Monto Venta: $ " width="35" align="center">900</td>
+												<td id="Familia ESTANTES, Mes Febrero, Cantidad Venta: " width="35" align="center">130</td>
+												
+												<td id="Familia ESTANTES, Mes Marzo, Monto Venta: $ " width="35" align="center">1.600</td>
+												<td id="Familia ESTANTES, Mes Marzo, Cantidad Venta: " width="35" align="center">130</td>
+												
+												<td id="Familia ESTANTES, Mes Abril, Monto Venta: $ " width="35" align="center">1.000</td>
+												<td id="Familia ESTANTES, Mes Abril, Cantidad Venta: " width="35" align="center">100</td>
+												
+												<td id="Familia ESTANTES, Mes Mayo, Monto Venta: $ " width="35" align="center">1.000</td>
+												<td id="Familia ESTANTES, Mes Mayo, Cantidad Venta: " width="35" align="center">130</td>
+												
+												<td id="Familia ESTANTES, Mes Junio, Monto Venta: $ " width="35" align="center">2.000</td>
+												<td id="Familia ESTANTES, Mes Junio, Cantidad Venta: " width="35" align="center">130</td>
+												
+												<td id="Familia ESTANTES, Mes Julio, Monto Venta: $ " width="35" align="center">1.600</td>
+												<td id="Familia ESTANTES, Mes Julio, Cantidad Venta: " width="35" align="center">130</td>
+												
+												<td id="Familia ESTANTES, Mes Agosto Monto Venta: $ " width="35" align="center">1.100</td>
+												<td id="Familia ESTANTES, Mes Agosto, Cantidad Venta: " width="35" align="center">130</td>
+												
+												<td id="Familia ESTANTES, Mes Septiembre, Monto Venta: $ " width="35" align="center">1.300</td>
+												<td id="Familia ESTANTES, Mes Septiembre, Cantidad Venta: " width="35" align="center">130</td>
+												
+												<td id="Familia ESTANTES, Mes Octubre, Monto Venta: $ " width="35" align="center">1.100</td>
+												<td id="Familia ESTANTES, Mes Octubre, Cantidad Venta: " width="35" align="center">130</td>
+												
+												<td id="Familia ESTANTES, Mes Noviembre, Monto Venta: $ " width="35" align="center">1.150</td>
+												<td id="Familia ESTANTES, Mes Noviembre, Cantidad Venta: " width="35" align="center">130</td>
+												
+												<td id="Familia ESTANTES, Mes Diciembre, Monto Venta: $ " width="35" align="center">1.300</td>
+												<td id="Familia ESTANTES, Mes Diciembre, Cantidad Venta: " width="35" align="center">130</td>
+
+											</tr>
+											<tr class="claro" id="FAMILIA_06-01">
+												<td width="160" align="left">
+													<div class="tier2">
+														<a class="doc"></a>
+														P-1
+													</div>
+												</td>
+												<td id="P-1 : Mes Enero, Monto venta: $ " width="35" align="center">100</td>
+												<td id="P-1 : Mes Enero, Cantidad venta: " width="35" align="center">10</td>
+												
+												<td id="P-1 : Mes Febrero, Monto venta: $ " width="35" align="center">200</td>
+												<td id="P-1 : Mes Febrero, Cantidad venta: " width="35" align="center">20</td>
+												
+												<td id="P-1 : Mes Marzo, Monto venta: $ " width="35" align="center">300</td>
+												<td id="P-1 : Mes Marzo, Cantidad venta: " width="35" align="center">30</td>
+												
+												<td id="P-1 : Mes Abril, Monto venta: $ " width="35" align="center">400</td>
+												<td id="P-1 : Mes Abril, Cantidad venta: " width="35" align="center">40</td>
+												
+												<td id="P-1 : Mes Mayo, Monto venta: $ " width="35" align="center">500</td>
+												<td id="P-1 : Mes Mayo, Cantidad venta: " width="35" align="center">50</td>
+												
+												<td id="P-1 : Mes Junio, Monto venta: $ " width="35" align="center">600</td>
+												<td id="P-1 : Mes Junio, Cantidad venta: " width="35" align="center">60</td>
+												
+												<td id="P-1 : Mes Julio, Monto venta: $ " width="35" align="center">700</td>
+												<td id="P-1 : Mes Julio, Cantidad venta: " width="35" align="center">70</td>
+												
+												<td id="P-1 : Mes Agosto, Monto venta: $ " width="35" align="center">800</td>
+												<td id="P-1 : Mes Agosto, Cantidad venta: " width="35" align="center">80</td>
+												
+												<td id="P-1 : Mes Septiembre, Monto venta: $ " width="35" align="center">900</td>
+												<td id="P-1 : Mes Septiembre, Cantidad venta: " width="35" align="center">90</td>
+												
+												<td id="P-1 : Mes Octubre, Monto venta: $ " width="35" align="center">1.100</td>
+												<td id="P-1 : Mes Octubre, Cantidad venta: " width="35" align="center">100</td>
+												
+												<td id="P-1 : Mes Noviembre, Monto venta: $ " width="35" align="center">1.100</td>
+												<td id="P-1 : Mes Noviembre, Cantidad venta: " width="35" align="center">110</td>
+												
+												<td id="P-1 : Mes Diciembre, Monto venta: $ " width="35" align="center">1.200</td>
+												<td id="P-1 : Mes Diciembre, Cantidad venta: " width="35" align="center">120</td>
+											</tr>
+											<tr class="oscuro" id="FAMILIA_06-01">
+												<td width="160" align="left">
+													<div class="tier2">
+														<a class="doc"></a>
+														EC-120
+													</div>
+												</td>
+												<td id="EC-120 : Mes Enero, Monto venta: $ " width="35" align="center">800</td>
+												<td id="EC-120 : Mes Enero, Cantidad venta: " width="35" align="center">120</td>
+												
+												<td id="EC-120 : Mes Febrero, Monto venta: $ " width="35" align="center">700</td>
+												<td id="EC-120 : Mes Febrero, Cantidad venta: " width="35" align="center">110</td>
+												
+												<td id="EC-120 : Mes Marzo, Monto venta: $ " width="35" align="center">1.300</td>
+												<td id="EC-120 : Mes Marzo, Cantidad venta: " width="35" align="center">100</td>
+												
+												<td id="EC-120 : Mes Abril, Monto venta: $ " width="35" align="center">600</td>
+												<td id="EC-120 : Mes Abril, Cantidad venta: " width="35" align="center">90</td>
+												
+												<td id="EC-120 : Mes Mayo, Monto venta: $ " width="35" align="center">400</td>
+												<td id="EC-120 : Mes Mayo, Cantidad venta: " width="35" align="center">80</td>
+												
+												<td id="EC-120 : Mes Junio, Monto venta: $ " width="35" align="center">1.400</td>
+												<td id="EC-120 : Mes Junio, Cantidad venta: " width="35" align="center">70</td>
+												
+												<td id="EC-120 : Mes Julio, Monto venta: $ " width="35" align="center">900</td>
+												<td id="EC-120 : Mes Julio, Cantidad venta: " width="35" align="center">60</td>
+												
+												<td id="EC-120 : Mes Agosto, Monto venta: $ " width="35" align="center">300</td>
+												<td id="EC-120 : Mes Agosto, Cantidad venta: " width="35" align="center">50</td>
+												
+												<td id="EC-120 : Mes Septiembre, Monto venta: $ " width="35" align="center">400</td>
+												<td id="EC-120 : Mes Septiembre, Cantidad venta: " width="35" align="center">40</td>
+												
+												<td id="EC-120 : Mes Octubre, Monto venta: $ " width="35" align="center">100</td>
+												<td id="EC-120 : Mes Octubre, Cantidad venta: " width="35" align="center">30</td>
+												
+												<td id="EC-120 : Mes Noviembre, Monto venta: $ " width="35" align="center">50</td>
+												<td id="EC-120 : Mes Noviembre, Cantidad venta: " width="35" align="center">20</td>
+												
+												<td id="EC-120 : Mes Diciembre, Monto venta: $ " width="35" align="center">100</td>
+												<td id="EC-120 : Mes Diciembre, Cantidad venta: " width="35" align="center">10</td>
+											</tr>
+											<tr class="dwt_folder_mh" id="FAMILIA_07">
+												<td width="160" align="left">
+													<div class="tier1">
+														<a href="#" onClick="toggleRows(this)" class="folder"></a>
+														<label id="PL_NOM_PROYECTO_0">EXTRACTORES CAMPANAS BIGGI</label>
+													</div>
+												</td>
+												<td id="Familia EXTRACTORES CAMPANAS BIGGI, Mes Enero, Monto Venta: $ " width="35" align="center">900</td>
+												<td id="Familia EXTRACTORES CAMPANAS BIGGI, Mes Enero, Cantidad Venta: " width="35" align="center">130</td>
+												
+												<td id="Familia EXTRACTORES CAMPANAS BIGGI, Mes Febrero, Monto Venta: $ " width="35" align="center">900</td>
+												<td id="Familia EXTRACTORES CAMPANAS BIGGI, Mes Febrero, Cantidad Venta: " width="35" align="center">130</td>
+												
+												<td id="Familia EXTRACTORES CAMPANAS BIGGI, Mes Marzo, Monto Venta: $ " width="35" align="center">1.600</td>
+												<td id="Familia EXTRACTORES CAMPANAS BIGGI, Mes Marzo, Cantidad Venta: " width="35" align="center">130</td>
+												
+												<td id="Familia EXTRACTORES CAMPANAS BIGGI, Mes Abril, Monto Venta: $ " width="35" align="center">1.000</td>
+												<td id="Familia EXTRACTORES CAMPANAS BIGGI, Mes Abril, Cantidad Venta: " width="35" align="center">100</td>
+												
+												<td id="Familia EXTRACTORES CAMPANAS BIGGI, Mes Mayo, Monto Venta: $ " width="35" align="center">1.000</td>
+												<td id="Familia EXTRACTORES CAMPANAS BIGGI, Mes Mayo, Cantidad Venta: " width="35" align="center">130</td>
+												
+												<td id="Familia EXTRACTORES CAMPANAS BIGGI, Mes Junio, Monto Venta: $ " width="35" align="center">2.000</td>
+												<td id="Familia EXTRACTORES CAMPANAS BIGGI, Mes Junio, Cantidad Venta: " width="35" align="center">130</td>
+												
+												<td id="Familia EXTRACTORES CAMPANAS BIGGI, Mes Julio, Monto Venta: $ " width="35" align="center">1.600</td>
+												<td id="Familia EXTRACTORES CAMPANAS BIGGI, Mes Julio, Cantidad Venta: " width="35" align="center">130</td>
+												
+												<td id="Familia EXTRACTORES CAMPANAS BIGGI, Mes Agosto Monto Venta: $ " width="35" align="center">1.100</td>
+												<td id="Familia EXTRACTORES CAMPANAS BIGGI, Mes Agosto, Cantidad Venta: " width="35" align="center">130</td>
+												
+												<td id="Familia EXTRACTORES CAMPANAS BIGGI, Mes Septiembre, Monto Venta: $ " width="35" align="center">1.300</td>
+												<td id="Familia EXTRACTORES CAMPANAS BIGGI, Mes Septiembre, Cantidad Venta: " width="35" align="center">130</td>
+												
+												<td id="Familia EXTRACTORES CAMPANAS BIGGI, Mes Octubre, Monto Venta: $ " width="35" align="center">1.100</td>
+												<td id="Familia EXTRACTORES CAMPANAS BIGGI, Mes Octubre, Cantidad Venta: " width="35" align="center">130</td>
+												
+												<td id="Familia EXTRACTORES CAMPANAS BIGGI, Mes Noviembre, Monto Venta: $ " width="35" align="center">1.150</td>
+												<td id="Familia EXTRACTORES CAMPANAS BIGGI, Mes Noviembre, Cantidad Venta: " width="35" align="center">130</td>
+												
+												<td id="Familia EXTRACTORES CAMPANAS BIGGI, Mes Diciembre, Monto Venta: $ " width="35" align="center">1.300</td>
+												<td id="Familia EXTRACTORES CAMPANAS BIGGI, Mes Diciembre, Cantidad Venta: " width="35" align="center">130</td>
+
+											</tr>
+											<tr class="claro" id="FAMILIA_07-01">
+												<td width="160" align="left">
+													<div class="tier2">
+														<a class="doc"></a>
+														EC-150
+													</div>
+												</td>
+												<td id="EC-150 : Mes Enero, Monto venta: $ " width="35" align="center">100</td>
+												<td id="EC-150 : Mes Enero, Cantidad venta: " width="35" align="center">10</td>
+												
+												<td id="EC-150 : Mes Febrero, Monto venta: $ " width="35" align="center">200</td>
+												<td id="EC-150 : Mes Febrero, Cantidad venta: " width="35" align="center">20</td>
+												
+												<td id="EC-150 : Mes Marzo, Monto venta: $ " width="35" align="center">300</td>
+												<td id="EC-150 : Mes Marzo, Cantidad venta: " width="35" align="center">30</td>
+												
+												<td id="EC-150 : Mes Abril, Monto venta: $ " width="35" align="center">400</td>
+												<td id="EC-150 : Mes Abril, Cantidad venta: " width="35" align="center">40</td>
+												
+												<td id="EC-150 : Mes Mayo, Monto venta: $ " width="35" align="center">500</td>
+												<td id="EC-150 : Mes Mayo, Cantidad venta: " width="35" align="center">50</td>
+												
+												<td id="EC-150 : Mes Junio, Monto venta: $ " width="35" align="center">600</td>
+												<td id="EC-150 : Mes Junio, Cantidad venta: " width="35" align="center">60</td>
+												
+												<td id="EC-150 : Mes Julio, Monto venta: $ " width="35" align="center">700</td>
+												<td id="EC-150 : Mes Julio, Cantidad venta: " width="35" align="center">70</td>
+												
+												<td id="EC-150 : Mes Agosto, Monto venta: $ " width="35" align="center">800</td>
+												<td id="EC-150 : Mes Agosto, Cantidad venta: " width="35" align="center">80</td>
+												
+												<td id="EC-150 : Mes Septiembre, Monto venta: $ " width="35" align="center">900</td>
+												<td id="EC-150 : Mes Septiembre, Cantidad venta: " width="35" align="center">90</td>
+												
+												<td id="EC-150 : Mes Octubre, Monto venta: $ " width="35" align="center">1.100</td>
+												<td id="EC-150 : Mes Octubre, Cantidad venta: " width="35" align="center">100</td>
+												
+												<td id="EC-150 : Mes Noviembre, Monto venta: $ " width="35" align="center">1.100</td>
+												<td id="EC-150 : Mes Noviembre, Cantidad venta: " width="35" align="center">110</td>
+												
+												<td id="EC-150 : Mes Diciembre, Monto venta: $ " width="35" align="center">1.200</td>
+												<td id="EC-150 : Mes Diciembre, Cantidad venta: " width="35" align="center">120</td>
+											</tr>
+											<tr class="oscuro" id="FAMILIA_07-01">
+												<td width="160" align="left">
+													<div class="tier2">
+														<a class="doc"></a>
+														P-2
+													</div>
+												</td>
+												<td id="P-2 : Mes Enero, Monto venta: $ " width="35" align="center">800</td>
+												<td id="P-2 : Mes Enero, Cantidad venta: " width="35" align="center">120</td>
+												
+												<td id="P-2 : Mes Febrero, Monto venta: $ " width="35" align="center">700</td>
+												<td id="P-2 : Mes Febrero, Cantidad venta: " width="35" align="center">110</td>
+												
+												<td id="P-2 : Mes Marzo, Monto venta: $ " width="35" align="center">1.300</td>
+												<td id="P-2 : Mes Marzo, Cantidad venta: " width="35" align="center">100</td>
+												
+												<td id="P-2 : Mes Abril, Monto venta: $ " width="35" align="center">600</td>
+												<td id="P-2 : Mes Abril, Cantidad venta: " width="35" align="center">90</td>
+												
+												<td id="P-2 : Mes Mayo, Monto venta: $ " width="35" align="center">400</td>
+												<td id="P-2 : Mes Mayo, Cantidad venta: " width="35" align="center">80</td>
+												
+												<td id="P-2 : Mes Junio, Monto venta: $ " width="35" align="center">1.400</td>
+												<td id="P-2 : Mes Junio, Cantidad venta: " width="35" align="center">70</td>
+												
+												<td id="P-2 : Mes Julio, Monto venta: $ " width="35" align="center">900</td>
+												<td id="P-2 : Mes Julio, Cantidad venta: " width="35" align="center">60</td>
+												
+												<td id="P-2 : Mes Agosto, Monto venta: $ " width="35" align="center">300</td>
+												<td id="P-2 : Mes Agosto, Cantidad venta: " width="35" align="center">50</td>
+												
+												<td id="P-2 : Mes Septiembre, Monto venta: $ " width="35" align="center">400</td>
+												<td id="P-2 : Mes Septiembre, Cantidad venta: " width="35" align="center">40</td>
+												
+												<td id="P-2 : Mes Octubre, Monto venta: $ " width="35" align="center">100</td>
+												<td id="P-2 : Mes Octubre, Cantidad venta: " width="35" align="center">30</td>
+												
+												<td id="P-2 : Mes Noviembre, Monto venta: $ " width="35" align="center">50</td>
+												<td id="P-2 : Mes Noviembre, Cantidad venta: " width="35" align="center">20</td>
+												
+												<td id="P-2 : Mes Diciembre, Monto venta: $ " width="35" align="center">100</td>
+												<td id="P-2 : Mes Diciembre, Cantidad venta: " width="35" align="center">10</td>
+											</tr>									
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+						<table width="1850" border="0" align="center">
+							<tr valign="middle">
+								<td width="290">
+									<input name="b_back" id="b_back" src="../../../../commonlib/trunk/images/b_back.jpg" type="image"/>
+								</td>
+								<td align="right"></td>
+								<td align="left"></td>
+								<td width="290"></td>
+							</tr>
+						</table>
+					</td>					
+				</tr>
+			</table>
+		</form>
+	
+	</body>
+</html>

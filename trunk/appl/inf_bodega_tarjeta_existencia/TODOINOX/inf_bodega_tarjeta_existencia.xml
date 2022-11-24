@@ -1,0 +1,56 @@
+<Report>
+	<Font name="Arial" size="7" style="" id="ArialSmall"/>
+	<Font name="Arial" size="17" style="B" id="ArialBoldBigB" red="0" green="0" blue="128"/>
+	<Font name="Arial" size="8" style="B" id="ArialBold"/>
+	<Font name="Arial" size="8" style="B" id="ArialBold_header"/>	
+	<Font name="Arial" size="10" style="" id="ArialSmallBlue" red="0" green="0" blue="128"/>
+	<Font name="Arial" size="9" style="" id="Arial"/>
+	<PageHeader>	
+		<Cell text="" height="55%" newline="1"/>		
+		<Cell text="PAG. {SectionPageNumber}/{snb}" align="R" font="ArialSmall" newline="1" />
+		<Cell text="TARJETA DE EXISTENCIA" width="100%"  align="C" newline="1" font="ArialBoldBigB"/>
+	</PageHeader>
+	<Content font="Arial">
+		<Cell text="{FECHA_STR}" width="9%" align="L" border="LRTB" font="Arial"/>
+		<Cell text="{COD_DOC}" width="7%" align="R" border="LRTB" font="Arial"/>
+		<Cell text="{TIPO_DOC}" width="6%" align="C" border="LRTB" font="Arial"/>
+		<Cell text="{REFERENCIA}" nowrap="yes" width="25%" align="L" border="LRTB" font="Arial"/>
+		<Cell text="{PRECIO_UNITARIO}" nowrap="yes" width="11%" align="L" border="LRTB" format="N0" font="Arial"/>
+		<Cell text="" width="6%" align="R" border="LRTB" format="N0" font="Arial" visible="{CANTIDAD_ENTRADA_UNIDADES} == 0"/>
+		<Cell text="{CANTIDAD_ENTRADA_UNIDADES}" width="6%" align="R" border="LRTB" format="N0" font="Arial" visible="{CANTIDAD_ENTRADA_UNIDADES} != 0"/>
+		<Cell text="" width="6%" align="R" border="LRTB" format="N0" font="Arial" visible="{CANTIDAD_SALIDA_UNIDADES} == 0"/>
+		<Cell text="{CANTIDAD_SALIDA_UNIDADES}" width="6%" align="R" border="LRTB" format="N0" font="Arial" visible="{CANTIDAD_SALIDA_UNIDADES} != 0"/>
+		<Cell text="" width="7%" align="R" border="LRTB" format="N0" font="Arial" visible="{CANTIDAD_STOCK_UNIDADES} == 0"/>
+		<Cell text="{CANTIDAD_STOCK_UNIDADES}" width="7%" align="R" border="LRTB" format="N0" font="Arial" visible="{CANTIDAD_STOCK_UNIDADES} != 0"/>
+		<Cell text="" width="8%" align="R" border="LRTB" format="N0" font="Arial" visible="{CANTIDAD_ENTRADA_VALORES} == 0"/>
+		<Cell text="{CANTIDAD_ENTRADA_VALORES}" width="8%" align="R" border="LRTB" format="N0" font="Arial" visible="{CANTIDAD_ENTRADA_VALORES} != 0"/>
+		<Cell text="" width="7%" align="R" border="LRTB" format="N0" font="Arial" visible="{CANTIDAD_SALIDA_VALORES} == 0"/>
+		<Cell text="{CANTIDAD_SALIDA_VALORES}" width="7%" align="R" border="LRTB" format="N0" font="Arial" visible="{CANTIDAD_SALIDA_VALORES} != 0"/>
+		<Cell text="" width="9%" align="R" border="LRTB" format="N0" font="Arial" visible="{CANTIDAD_SALDO_VALORES} == 0"/>
+		<Cell text="{CANTIDAD_SALDO_VALORES}" width="9%" align="R" border="LRTB" format="N0" font="Arial" visible="{CANTIDAD_SALDO_VALORES} != 0"  newline="1"/>
+	</Content>
+	<Group>
+		<Cell text="{FECHA_INICIO} - {FECHA_TERMINO}" width="100%" align="C" font="ArialSmallBlue" newline="1"/>
+		<Cell text="" width="9%" align="L" font="Arial"/>
+		<Cell text="{COD_PRODUCTO}" width="15%" align="L" border="B" font="ArialSmallBlue"/>
+		<Cell text="{NOM_PRODUCTO}" width="53%" align="L" border="B" font="ArialSmallBlue" newline="1"/>
+		<Cell text="" height="10" newline="1"/>
+		<Cell text="" height="10" newline="1"/>
+		<Cell width="58%" align="C" font="ArialSmallBlue"/>
+		<Cell text="UNIDADES" width="19%" align="C" border="LRTB" font="ArialSmallBlue"/>		
+		<Cell text="VALORES" width="24%" align="C" border="LRTB" font="ArialSmallBlue" newline="1"/>
+		<GroupHeader>
+			<Cell text="FECHA" width="9%" align="C" border="LRTB" font="ArialSmallBlue"/>		
+			<Cell text="Nº DOC" width="7%" align="C" border="LRTB" font="ArialSmallBlue"/>
+			<Cell text="T DOC" width="6%" align="C" border="LRTB" font="ArialSmallBlue"/>
+			<Cell text="DETALLE" width="25%" align="C" border="LRTB" font="ArialSmallBlue"/>
+			<Cell text="P.UNITARIO" width="11%" align="C" border="LRTB" font="ArialSmallBlue"/>		
+			<Cell text="ENT." width="6%" align="C" border="LRTB" font="ArialSmallBlue"/>
+			<Cell text="SAL." width="6%" align="C" border="LRTB" font="ArialSmallBlue"/>
+			<Cell text="SALDO" width="7%" align="C" border="LRTB" font="ArialSmallBlue"/>
+			<Cell text="ENT." width="8%" align="C" border="LRTB" font="ArialSmallBlue"/>
+			<Cell text="SAL." width="7%" align="C" border="LRTB" font="ArialSmallBlue"/>
+			<Cell text="SALDO" width="9%" align="C" border="LRTB" font="ArialSmallBlue" newline="1"/>
+		</GroupHeader>
+	</Group>
+</Report>

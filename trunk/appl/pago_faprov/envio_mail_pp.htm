@@ -1,0 +1,50 @@
+<html>
+	<head>
+		<title>Sistema Grupo de Empresas Biggi</title>
+	</head>
+	<body bgcolor="FFFFFF" text="171717">
+		<table width="100%" align="left" bordercolor="171717" border="0">
+			<tr height="35">
+				<td>Señor(es) {NOM_EMPRESA}</td>
+			</tr>
+			<tr height="35">
+				<td>Ref.: Liquidación de Pago rut Nº.: {RUT}</td>
+			</tr>
+			<tr height="35">
+				<td>Con fecha {FECHA_PAGO_FAPROV} estamos efectuando el pago de los documentos que se indican a continuación:</td>
+			</tr>
+			<tr height="35">
+				<td>FORMA DE PAGO: Cheque al día Nº {NRO_CHEQUE} por un total de ${MONTO_CHEQUE}.-</td>
+			</tr>
+			<tr height="35">
+				<td>DOCUMENTOS A PAGAR</td>
+			</tr>
+		</table>
+		<table width="40%" border="1">
+			<tr>
+				<td width="25%"><b>Documento</b></td>
+				<td width="25%"><b>Fecha Documento</b></td>
+				<td width="25%"><b>Nro. Orden Compra</b></td>
+				<td width="25%"><b>Monto Total</b></td>
+			</tr>
+		</table>
+		<table width="40%" border="1">
+			<!-- startBlock(ITEM_PAGO_FAPROV) -->
+				<tr>
+					<td width="25%">{DOCUMENTO}</td>
+					<td width="25%" align="center">{FECHA_DOC}</td>
+					<td width="25%" align="center">{NRO_ORDEN_COMPRA}</td>
+					<td width="25%" align="right">{TOTAL_CON_IVA}</td>
+				</tr>
+			<!-- endBlock(ITEM_PAGO_FAPROV) -->
+		</table>
+		<br/>
+		<br/>
+		<table>
+			<tr><td>Saluda atentamente,</td></tr>
+			<tr><td>Dpto administración y finanzas</td></tr>
+			<tr><td>Comercial Biggi Chile S.A.</td></tr>
+			<tr><td><a href="www.biggi.cl">www.biggi.cl</a></td></tr>
+		</table>
+	</body>
+</html>

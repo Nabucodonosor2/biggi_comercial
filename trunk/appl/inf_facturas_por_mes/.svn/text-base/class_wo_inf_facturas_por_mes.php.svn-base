@@ -1,0 +1,84 @@
+<?php
+require_once(dirname(__FILE__)."/../../../../commonlib/trunk/php/auto_load.php");
+
+class wo_inf_facturas_por_mes extends w_informe_pantalla {
+   function wo_inf_facturas_por_mes() {
+   		$this->b_print_visible = false;
+		$ano = session::get("inf_facturas_por_mes.ANO");
+		session::un_set("inf_facturas_por_mes.ANO");
+   		/* El cod_usuario debe leerese desde la sesion porque no se puede usar $this->cod_usuario
+   		   hasta despues de llamar al ancestro
+   		 */  
+   		$cod_usuario =  session::get("COD_USUARIO");
+		$sql = "select	F.COD_FACTURA
+						,F.NRO_FACTURA
+						,MONTH(F.FECHA_FACTURA) MES
+						,year(F.FECHA_FACTURA) ANO
+						,convert(varchar, F.FECHA_FACTURA, 103) FECHA_FACTURA
+						,F.FECHA_FACTURA DATE_FACTURA
+						,F.NOM_EMPRESA
+						,F.TOTAL_NETO
+						,F.MONTO_IVA
+						,F.TOTAL_CON_IVA
+						,dbo.f_fa_saldo(F.COD_FACTURA) SALDO
+						,1 CANTIDAD_FA
+						,U.INI_USUARIO
+				FROM FACTURA F, USUARIO U
+				WHERE dbo.f_get_tiene_acceso(".$cod_usuario.", 'FACTURA',F.COD_USUARIO_VENDEDOR1, F.COD_USUARIO_VENDEDOR2) = 1 
+				  and F.COD_ESTADO_DOC_SII in (2,3)
+				  and year(F.FECHA_FACTURA) = $ano
+				  and U.COD_USUARIO = F.COD_USUARIO_VENDEDOR1
+				ORDER BY DATE_FACTURA";
+		
+		parent::w_informe_pantalla('inf_facturas_por_mes', $sql, $_REQUEST['cod_item_menu']);
+		
+		// headers
+		$this->add_header($h_mes = new header_mes('MES', 'MONTH(F.FECHA_FACTURA)', 'Mes'));
+		$this->add_header(new header_num('NRO_FACTURA', 'F.NRO_FACTURA', 'Nro'));
+		$this->add_header($control = new header_date('FECHA_FACTURA', 'F.FECHA_FACTURA', 'Fecha'));
+		$control->field_bd_order = 'DATE_FACTURA';
+		$this->add_header(new header_text('NOM_EMPRESA', "F.NOM_EMPRESA", 'Cliente'));
+		$sql = "select distinct U.COD_USUARIO, U.NOM_USUARIO from FACTURA F, USUARIO U where F.COD_USUARIO_VENDEDOR1 = U.COD_USUARIO and U.ES_VENDEDOR = 'S' order by NOM_USUARIO";
+		$this->add_header(new header_drop_down('INI_USUARIO', 'F.COD_USUARIO_VENDEDOR1', 'V1', $sql));
+		$this->add_header(new header_num('TOTAL_NETO', 'F.TOTAL_NETO', 'Neto', 0, true, 'SUM'));
+		$this->add_header(new header_num('MONTO_IVA', 'F.MONTO_IVA', 'Iva', 0, true, 'SUM'));
+		$this->add_header(new header_num('TOTAL_CON_IVA', 'F.TOTAL_CON_IVA', 'Total', 0, true, 'SUM'));
+		$this->add_header(new header_num('SALDO', 'dbo.f_fa_saldo(F.COD_FACTURA)', 'Saldo', 0, true, 'SUM'));
+		$this->add_header(new header_num('CANTIDAD_FA', '1', '', 0, true, 'SUM'));
+
+		// controls
+		$this->dw->add_control(new static_num('TOTAL_NETO'));
+		$this->dw->add_control(new static_num('MONTO_IVA'));
+		$this->dw->add_control(new static_num('TOTAL_CON_IVA'));
+		$this->dw->add_control(new static_num('SALDO'));
+
+		// Filtro inicial
+		$mes_desde = session::get("inf_facturas_por_mes.MES_DESDE");
+		$mes_hasta = session::get("inf_facturas_por_mes.MES_HASTA");
+		session::un_set("inf_facturas_por_mes.MES_DESDE");
+		session::un_set("inf_facturas_por_mes.MES_HASTA");
+		$h_mes->valor_filtro = $mes_desde;
+		$h_mes->valor_filtro2 = $mes_hasta;
+		
+		$this->make_filtros();	// filtro incial
+   }
+	function print_informe() {
+		// reporte
+		$sql = $this->dw->get_sql();
+		$xml = session::get('K_ROOT_DIR').'appl/inf_facturas_por_cobrar/inf_facturas_por_cobrar_global.xml';
+		$labels = array();
+		$labels['str_fecha'] = $this->current_date();
+		$labels['str_filtro'] = $this->nom_filtro;
+		$rpt = new reporte($sql, $xml, $labels, "Facturas por cobrar", true);
+
+		$this->_redraw();
+	}
+	function detalle_record($rec_no) {
+		session::set('DESDE_wo_factura', 'desde output');	// para indicar que viene del output
+		session::set('DESDE_wo_inf_facturas_por_mes', 'true');
+		$ROOT = $this->root_url;
+		$url = $ROOT.'appl/factura';
+		header ('Location:'.$url.'/wi_factura.php?rec_no='.$rec_no.'&cod_item_menu=1535');
+	}
+}
+?>

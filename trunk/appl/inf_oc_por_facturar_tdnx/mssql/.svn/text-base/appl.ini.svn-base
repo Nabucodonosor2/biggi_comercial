@@ -1,0 +1,10 @@
+<?php
+define("K_ROOT_URL", "http://192.168.2.140/desarrolladores/hreyna/biggi/trunk/");
+define("K_ROOT_DIR", "L:/desarrolladores/hreyna/biggi/trunk/");
+define("K_APPL", "biggi");
+define("K_TIPO_BD", "mssql");
+define("K_SERVER", "192.168.2.140");
+define("K_BD", "BIGGI");
+define("K_USER", "sa");
+define("K_PASS", "ctrl");
+?>

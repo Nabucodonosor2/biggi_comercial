@@ -1,0 +1,292 @@
+<html>
+	<head>
+		<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		<title>Sistema Grupo de Empresas Biggi</title>
+		<style type="text/css">
+			<!--
+			body {
+				background-color: #C9C9C9;
+			}
+			-->
+		</style>
+	</head>
+	<body>
+		<br>
+		<br>
+		<b>Sr(a). {NOM_USUARIO}:
+		<br><br> Hay {COUNT} Cotizacion(es) que registran compromisos para hoy {FECHA} o atrasadas. </b>
+		<br>
+		<br>
+		<table width="80%" rules="none" border="1" bgcolor="#D8D8D8" align="center" class="claro" id="BITACORA_COTIZACION_HOY">
+			<tr>
+				<td>
+					<table border="1">
+						<tbody>
+							<tr class="encabezado_right">
+								<td width="8%">
+									<div align="center"><strong>N° Cotización</strong></div>
+								</td>
+								<td width="5%">
+									<div align="center"><strong>Fecha</strong></div>
+								</td>
+								<td width="20%">
+									<div align="center"><strong>Cliente</strong></div>
+								</td>
+								<td width="5%">
+									<div align="center"><strong>Monto</strong></div>
+								</td>
+								<td width="30%">
+									<div align="center"><strong>Compromiso</strong></div>
+								</td>
+								<td width="10%">
+									<div align="center"><strong>Contácto y Teléfono</strong></div>
+								</td>
+								<td width="15%">
+									<div align="center"><strong>Vendedor</strong></div>
+								</td>
+								<td width="15%">
+									<div align="center"><strong>Fecha Compromiso</strong></div>
+								</td>
+							</tr>
+							 <!-- startBlock(BITACORA_COTIZACION_HOY) -->
+							<tr class="{DW_TR_CSS}" id="{DW_TR_ID}">
+								<td>
+									<div align="right">{COD_COTIZACION}</div>
+								</td>
+								<td>
+									<div align="center">{FECHA}</div>
+								</td>
+								<td>
+									<div align="left">{NOM_EMPRESA}</div>
+								</td>
+								<td>
+									<div align="right">{TOTAL_CON_IVA}</div>
+								</td>
+								<td>
+									<div align="left">{GLOSA_COMPROMISO}</div>
+								</td>
+								<td>
+									<div align="left">{CONTACTO}{FONO}</div>
+								</td>
+								<td>
+									<div align="left">{VENDEDOR}</div>
+								</td>
+								<td>
+									<div align="left">{FECHA_COMPROMISO}</div>
+								</td>
+							</tr>
+							<!-- endBlock(BITACORA_COTIZACION_HOY) -->
+						</tbody>
+					</table>
+				</td>	
+			</tr>
+		</table>
+		<br><br><b> Hay {COUNT2} Cotizacion(es) que registran compromisos para Mañana en adelante</b><br><br>
+		<table width="80%" rules="none" border="1" bgcolor="#D8D8D8" align="center" class="claro" id="BITACORA_COTIZACION_MAÑANA">
+			<tr>
+				<td>
+					<table border="1">
+						<tbody>
+							<tr class="encabezado_right">
+								<td width="8%">
+									<div align="center"><strong>N° Cotización</strong></div>
+								</td>
+								<td width="5%">
+									<div align="center"><strong>Fecha</strong></div>
+								</td>
+								<td width="20%">
+									<div align="center"><strong>Cliente</strong></div>
+								</td>
+								<td width="5%">
+									<div align="center"><strong>Monto</strong></div>
+								</td>
+								<td width="30%">
+									<div align="center"><strong>Compromiso</strong></div>
+								</td>
+								<td width="10%">
+									<div align="center"><strong>Contácto y Teléfono</strong></div>
+								</td>
+								<td width="15%">
+									<div align="center"><strong>Vendedor</strong></div>
+								</td>
+								<td width="15%">
+									<div align="center"><strong>Fecha Compromiso</strong></div>
+								</td>
+							</tr>
+							 <!-- startBlock(BITACORA_COTIZACION_MAÑANA) -->
+							<tr class="{DW_TR_CSS}" id="{DW_TR_ID}">
+								<td>
+									<div align="right">{COD_COTIZACION}</div>
+								</td>
+								<td>
+									<div align="center">{FECHA}</div>
+								</td>
+								<td>
+									<div align="left">{NOM_EMPRESA}</div>
+								</td>
+								<td>
+									<div align="right">{TOTAL_CON_IVA}</div>
+								</td>
+								<td>
+									<div align="left">{GLOSA_COMPROMISO}</div>
+								</td>
+								<td>
+									<div align="left">{CONTACTO}{FONO}</div>
+								</td>
+								<td>
+									<div align="left">{VENDEDOR}</div>
+								</td>
+								<td>
+									<div align="left">{FECHA_COMPROMISO}</div>
+								</td>
+							</tr>
+							<!-- endBlock(BITACORA_COTIZACION_MAÑANA) -->
+						</tbody>
+					</table>
+				</td>	
+			</tr>
+		</table>
+		<br><br><b> Hay {COUNT3} Cotizacion(es) que registran compromisos para ayer y anteriores</b><br><br>
+		<table width="80%" rules="none" border="1" bgcolor="#D8D8D8" align="center" class="claro" id="BITACORA_COTIZACION_AYER">
+			<tr>
+				<td>
+					<table border="1">
+						<tbody>
+							<tr class="encabezado_right">
+								<td width="8%">
+									<div align="center"><strong>N° Cotización</strong></div>
+								</td>
+								<td width="5%">
+									<div align="center"><strong>Fecha</strong></div>
+								</td>
+								<td width="20%">
+									<div align="center"><strong>Cliente</strong></div>
+								</td>
+								<td width="5%">
+									<div align="center"><strong>Monto</strong></div>
+								</td>
+								<td width="30%">
+									<div align="center"><strong>Compromiso</strong></div>
+								</td>
+								<td width="10%">
+									<div align="center"><strong>Contácto y Teléfono</strong></div>
+								</td>
+								<td width="15%">
+									<div align="center"><strong>Vendedor</strong></div>
+								</td>
+								<td width="15%">
+									<div align="center"><strong>Fecha Compromiso</strong></div>
+								</td>
+							</tr>
+							 <!-- startBlock(BITACORA_COTIZACION_AYER) -->
+							<tr class="{DW_TR_CSS}" id="{DW_TR_ID}">
+								<td>
+									<div align="right">{COD_COTIZACION}</div>
+								</td>
+								<td>
+									<div align="center">{FECHA}</div>
+								</td>
+								<td>
+									<div align="left">{NOM_EMPRESA}</div>
+								</td>
+								<td>
+									<div align="right">{TOTAL_CON_IVA}</div>
+								</td>
+								<td>
+									<div align="left">{GLOSA_COMPROMISO}</div>
+								</td>
+								<td>
+									<div align="left">{CONTACTO}{FONO}</div>
+								</td>
+								<td>
+									<div align="left">{VENDEDOR}</div>
+								</td>
+								<td>
+									<div align="left">{FECHA_COMPROMISO}</div>
+								</td>
+							</tr>
+							<!-- endBlock(BITACORA_COTIZACION_AYER) -->
+						</tbody>
+					</table>
+				</td>	
+			</tr>
+		</table>
+		<br><br><b> Hay {COUNT4} Cotizacion(es) que registran compromisos rechazados en los ultimos 30 dias</b><br><br>
+		<table width="80%" rules="none" border="1" bgcolor="#D8D8D8" align="center" class="claro" id="BITACORA_COTIZACION_RECHAZO">
+			<tr>
+				<td>
+					<table border="1">
+						<tbody>
+							<tr class="encabezado_right">
+								<td width="8%">
+									<div align="center"><strong>N° Cotización</strong></div>
+								</td>
+								<td width="5%">
+									<div align="center"><strong>Fecha</strong></div>
+								</td>
+								<td width="20%">
+									<div align="center"><strong>Cliente</strong></div>
+								</td>
+								<td width="5%">
+									<div align="center"><strong>Monto</strong></div>
+								</td>
+								<td width="30%">
+									<div align="center"><strong>Compromiso</strong></div>
+								</td>
+								<td width="10%">
+									<div align="center"><strong>Contácto y Teléfono</strong></div>
+								</td>
+								<td width="15%">
+									<div align="center"><strong>Vendedor</strong></div>
+								</td>
+								<td width="15%">
+									<div align="center"><strong>Fecha Compromiso</strong></div>
+								</td>
+							</tr>
+							 <!-- startBlock(BITACORA_COTIZACION_RECHAZO) -->
+							<tr class="{DW_TR_CSS}" id="{DW_TR_ID}">
+								<td>
+									<div align="right">{COD_COTIZACION}</div>
+								</td>
+								<td>
+									<div align="center">{FECHA}</div>
+								</td>
+								<td>
+									<div align="left">{NOM_EMPRESA}</div>
+								</td>
+								<td>
+									<div align="right">{TOTAL_CON_IVA}</div>
+								</td>
+								<td>
+									<div align="left">{GLOSA_COMPROMISO}</div>
+								</td>
+								<td>
+									<div align="left">{CONTACTO}{FONO}</div>
+								</td>
+								<td>
+									<div align="left">{VENDEDOR}</div>
+								</td>
+								<td>
+									<div align="left">{FECHA_COMPROMISO}</div>
+								</td>
+							</tr>
+							<!-- endBlock(BITACORA_COTIZACION_RECHAZO) -->
+						</tbody>
+					</table>
+				</td>	
+			</tr>
+		</table>
+		<p />
+		<table width="100%">
+			<tr>
+				<td>
+					<p><b>Atte.</b></p>
+					<p><b>Comercial Biggi </b></p>
+					<p><b>Este mensaje ha sido enviado por nuestro servidor de base de datos.</b></p>
+					<p><br>
+				</td>
+			</tr>
+		</table>
+		<p /><p />
+	</body>
+</html>

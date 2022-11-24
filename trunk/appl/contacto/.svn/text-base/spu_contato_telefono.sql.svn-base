@@ -1,0 +1,35 @@
+------------------spu_contacto_persona----------------
+alter PROCEDURE spu_contacto_telefono(@ve_operacion varchar(20)
+									,@ve_cod_contacto_telefono numeric
+									,@ve_cod_contacto numeric=NULL
+									,@ve_nom_contacto varchar(100)=NULL
+									@ve_telefono varchar(100)=NULL	
+									)
+AS
+BEGIN
+	declare @vl_cod_contacto_persona numeric
+
+	if (@ve_operacion='INSERT') begin
+		insert into contacto_telefono (cod_contacto
+									 ,nom_contacto_telefono
+									 ,telefono)
+							 values (@ve_cod_contacto
+							 		 ,@ve_nom_contacto
+							 		 ,@ve_telefono)
+		
+	end 
+	if (@ve_operacion='UPDATE') begin
+		update contacto_telefono 
+		set nom_contacto_telefono = @ve_nom_contacto
+			,telefono = @ve_telefono
+	    where cod_contacto_telefono = @ve_cod_contacto_telefono
+
+		
+	end
+	else if (@ve_operacion='DELETE') begin
+		delete contacto_telefono 
+    	where cod_contacto_telefono = @ve_cod_contacto_telefono
+	end
+	
+END
+go

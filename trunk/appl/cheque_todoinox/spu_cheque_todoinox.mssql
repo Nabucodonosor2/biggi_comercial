@@ -1,0 +1,43 @@
+
+alter PROCEDURE spu_cheque_todoinox(@ve_operacion				varchar(20)
+							, @cod_cheque_todoinox			numeric
+							, @cod_usuario			numric(3)
+							, @rut_proveedor	numeric
+							, @dig_verif	numeric
+							, @boleta_factura varchar(100)
+							, @lista_fatura varchar(100))
+AS
+BEGIN
+	if (@ve_operacion='INSERT') begin
+		insert into cheque_todoinox 
+			(fecha_todoinox
+			,cod_usuario
+			,rut_proveedor
+			,dig_verif
+			,boleta_factura
+			,lista_factura)
+		values
+			( getdate()
+			, @cod_usuario
+			, @rut_proveedor
+			, @dig_verif
+			, @boleta_factura
+			, @lista_fatura)
+	end
+	if (@ve_operacion='UPDATE') begin
+		update cheque_todoinox 
+		set rut_proveedor = @rut_proveedor
+			,dig_verif = @dig_verif
+			,boleta_factura = @boleta_factura
+			,lista_factura = @lista_fatura 
+		where cod_cheque_todoinox = @cod_cheque_todoinox
+
+	end
+	else if (@ve_operacion='DELETE') begin
+		delete cheque_todoinox 
+		where cod_cheque_todoinox = @cod_cheque_todoinox
+
+		delete cheque_todoinox 
+		where cod_cheque_todoinox = @cod_cheque_todoinox
+	end		
+END

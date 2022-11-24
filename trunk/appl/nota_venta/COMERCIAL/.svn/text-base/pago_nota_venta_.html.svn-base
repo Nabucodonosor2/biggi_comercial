@@ -1,0 +1,200 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head> 
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+<title>Sistema Grupo de Empresas Biggi</title>
+<link href="{W_CSS}" rel="stylesheet" type="text/css">
+{WI_JAVA_SCRIPT}
+</head>
+<body>
+<!-- DO NOT MOVE! The following AllWebMenus linking code section must always be placed right AFTER the BODY tag-->
+<!-- ******** BEGIN ALLWEBMENUS CODE FOR menu ******** -->
+<script type="text/javascript">var MenuLinkedBy="AllWebMenus [4]",awmMenuName="menu",awmBN="740";awmAltUrl="";</script>
+<script charset="UTF-8" src="{K_ROOT_URL}menu/menu.js" type="text/javascript"></script>
+<script type="text/javascript">{W_MENU}</script>
+<style type="text/css">
+.btn {
+  background: #85888a;
+  background-image: -webkit-linear-gradient(top, #85888a, #797d80);
+  background-image: -moz-linear-gradient(top, #85888a, #797d80);
+  background-image: -ms-linear-gradient(top, #85888a, #797d80);
+  background-image: -o-linear-gradient(top, #85888a, #797d80);
+  background-image: linear-gradient(to bottom, #85888a, #797d80);
+  -webkit-border-radius: 28;
+  -moz-border-radius: 28;
+  border-radius: 28px;
+  font-family: Arial;
+  color: #fafafa;
+  font-size: 20px;
+  padding: 10px 20px 10px 20px;
+  text-decoration: none;
+}
+
+.btn:hover {
+  background: #e8eaeb;
+  background-image: -webkit-linear-gradient(top, #e8eaeb, #969b9e);
+  background-image: -moz-linear-gradient(top, #e8eaeb, #969b9e);
+  background-image: -ms-linear-gradient(top, #e8eaeb, #969b9e);
+  background-image: -o-linear-gradient(top, #e8eaeb, #969b9e);
+  background-image: linear-gradient(to bottom, #e8eaeb, #969b9e);
+  text-decoration: none;
+}
+.obs {
+    color: #000000;
+    font-size: 11px;
+    font-weight: 100;
+}
+</style>
+<!-- ******** END ALLWEBMENUS CODE FOR menu ******** -->
+<center>
+<table width='10%'>
+	<tr>
+		<td colspan="3">
+		<center>
+			<img src="{K_ROOT_URL}images_appl/Header_venta_biggi.png" widht="100%">
+			<font color="red"><h3>Ambiente de pago WebPay Comercial Biggi S.A./Pago Nota de Venta Nº {COD_NOTA_VENTA}</h3></font>
+		</center>	
+		</td>
+	</tr>
+	<tr>
+		<td colspan="3">	
+			<table width="1000" rules="none" border="1" align="center">
+			
+				<tr class="titulo_tabla">				
+					<td colspan="6">EMPRESA</td>
+				</tr>
+				<tr class="encabezado_right">
+					<td width="166">Rut:</td>
+					<td width="167" class="claro" align="left" colspan="5">{RUT}-{DIG_VERIF}</td>
+				</tr>
+				<tr class="encabezado_right">
+					<td>Razon Social:</td>
+					<td colspan="5" class="oscuro" align="left">{NOM_EMPRESA}</td>
+				</tr>				
+				<tr class="encabezado_right">
+					<td>Giro:</td>
+					<td colspan="5" class="claro" align="left">{GIRO}</td>
+				</tr>
+				<tr class="encabezado_right">
+					<td>Facturar a:</td>
+					<td class="oscuro" colspan="5" align="left">{DIRECCION_FACTURA}</td>
+				</tr>
+				<tr class="encabezado_right">
+					<td>(*) Despachar  a:</td>
+					<td class="claro" colspan="5" align="left">{DIRECCION_DESPACHO}</td>
+				</tr>																
+				<tr class="encabezado_right">
+					<td>Atencion:</td>
+					<td class="oscuro" align="left" width="15%">{COD_PERSONA}</td>
+					<td colspan="4" class="oscuro" align="left">{MAIL_CARGO_PERSONA}</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="3">		
+			<br>
+			<table width="1000" rules="none" border="1" align="center" class="claro"> 
+				<tr class="titulo_tabla">
+					<td colspan="9">ITEMS</td>
+				</tr>
+				<tr class="encabezado_center">
+					<th width="10%">Sec</th>
+					<th width="9%">IT</th>
+					<th width="11%">Modelo</th>
+					<th width="25%">Descripcion</th>
+					<th width="8%">Cantidad</th>
+					<th width="13%">Precio Unitario</th>
+					<th width="8%">Total</th>
+					<th width="8%">Gas</th>
+					<th width="8%">Elec.</th>
+				</tr>
+			</table>
+			<table width="1000" rules="none" border="1" align="center" class="claro" id="ITEM_NOTA_VENTA">								
+				<!-- startBlock(ITEM_NOTA_VENTA) -->
+					<tr class="{DW_TR_CSS}" id="{DW_TR_ID}">
+						<td width="10%" align="center">{COD_ITEM_NOTA_VENTA}{ORDEN}</td>
+						<td width="9%" align="center">{IS_NEW}{ITEM}</td>
+						<td width="11%" align="left">{COD_PRODUCTO}</td>
+						<td width="25%" align="left">{NOM_PRODUCTO}</td>
+						<td width="8%" align="right">{CANTIDAD} </td>
+						<td width="13%" align="right">${PRECIO}{MOTIVO}</td>
+						<td width="8%" align="right">${TOTAL}</td>
+						<td width="8%" align="left" class="drop_down">{COD_TIPO_GAS}</td>
+						<td width="8%" align="left" class="drop_down">{COD_TIPO_ELECTRICIDAD}</td>
+					</tr>	
+				<!-- endBlock(ITEM_NOTA_VENTA) -->
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td width="70%"></td>
+		<td width="30%">	
+			<br>
+			<table border="1">
+				<tr class="claro">
+					<th colspan="2" class="titulo_tabla">TOTALES</th>
+				</tr>
+				<tr class="encabezado_right">
+					<td width="160">Sub-Total:</td>
+					<td width="90" class="oscuro" align="right">${SUM_TOTAL}</td>
+				 </tr>
+				 <tr class="encabezado_right" style="display:{TR_DESCTO1};">
+					<td><div style="display:{DISPLAY_PORC1};">{PORC_DSCTO1}% Descto. 1:</div></td>
+					<td class="{CLASS_CLARO_UNO}"><div style="display:{DISPLAY_MONTO1};">${MONTO_DSCTO1}</div></td>
+				 </tr>
+				 <tr class="encabezado_right" style="display:{TR_DESCTO2};">
+				 	<td><div style="display:{DISPLAY_PORC2};">{PORC_DSCTO2}% Descto. 2:</div></td>
+			 	 	<td class="{CLASS_CLARO_DOS}"><div style="display:{DISPLAY_MONTO2};">${MONTO_DSCTO2}</div></td>
+				 </tr>
+				 <tr class="encabezado_right">
+					<td width="160">Total Neto:</td>
+					<td width="90" class="oscuro" align="right">${TOTAL_NETO}</td>
+				 </tr>
+				  <tr class="encabezado_right">
+					<td>{PORC_IVA}% IVA:</td>
+					<td class="oscuro" align="right">${MONTO_IVA}</td>
+				 </tr>
+				 <tr class="encabezado_right">
+					<td>Total c/IVA:</td>
+					<td class="oscuro" align="right">${TOTAL_CON_IVA}</td>
+			  	 </tr>
+ 				 <tr class="encabezado_right">
+					<td>Monto Acordado a Pagar:</td>
+					<td class="oscuro" align="right">${TBK_MONTO}</td>
+			  	 </tr>
+	 	 	</table>
+	 	</td>
+	 </tr>	 		
+	<tr>
+		<td colspan="3">
+			<form action="http://190.96.2.190/cgi_biggi/datos/procesa_datos.php" method="post" name="input" id="input">
+			<input name="TBK_MONTO" id="TBK_MONTO" type="hidden" value={TBK_MONTO}>
+			<input name="TBK_TRANSACCION" id="TBK_TRANSACCION" type="hidden" value={TBK_COD_WP_TRANSACCION}>
+			<table width="1150" align= "center" >
+			<br> 
+				<tr  align=center >
+		 			<td width="100%">
+		 				<img src="{K_ROOT_URL}images_appl/Fondo_venta_big.png">
+			 		</td>
+				</tr>	
+				<tr>
+					<td align="center">
+						<input type="submit" class="btn" value="CLICK AQUI PARA IR AL PAGO WEBPAY">
+					</td>
+				</tr>
+				
+			</table>
+			</form>
+		</td>
+	</tr>
+	<tr>
+		<td class="obs">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(*) Solo si aplica.</td>
+	</tr>
+	<tr>
+		<td class="obs">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(*)Los acentos y caracteres especiales fueron omitidos para su correcta lectura en cualquier medio electrónico</td>
+	</tr>
+</table>
+</center>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<Report>
+	<Font name="Arial" size="7" style="" id="ArialSmall"/>
+	<Font name="Arial" size="8" style="" id="ArialSmallBlue" red="0" green="0" blue="128"/>
+	<Font name="Arial" size="17" style="B" id="ArialBoldBigB" red="0" green="0" blue="128"/>
+	<Font name="Arial" size="10" style="BU" id="ArialBoldU"/>
+	<Font name="Arial" size="10" style="B" id="ArialBold"/>
+	<Font name="Arial" size="10" style="B" id="ArialBoldBlue" red="0" green="0" blue="128"/>
+	<Font name="Arial" size="11" style="B" id="ArialBoldBlueBig" red="0" green="0" blue="128"/>	
+	<Font name="Arial" size="9" style="" id="Arial"/>
+	<Font name="Arial" size="10" style="B" id="Arial_cheque"/>
+	<Font name="Arial" size="9" style="" id="ArialBlue" red="0" green="0" blue="128"/>
+	<Font name="Arial" size="8.5" style="" id="ArialItem"/>
+	<Font name="Arial" size="8" style="" id="ArialCheque"/>-->
+	<Font name="Arial" size="9" style="BU" id="ArialBoldUItem"/>
+	
+	<PageHeader>	
+		<Cell text="" height="7" newline="1" />
+		<Cell text="" height="0" newline="1"/>		
+	</PageHeader>
+	<Content font="Arial">
+		<Cell text=""/>		
+	</Content>
+	<Group local="COD_PAGO_FAPROV">
+		<GroupHeader>
+			<Cell text="CHEQUE SANTANDER" width="100%" newline="1" font="ArialBoldBigB" />
+			<Cell text="" border="B" newline="1" height="1" redl="199" greenl="199" bluel="199"/> 
+			<Cell text="" height="4" newline="1"/>
+			
+			<Cell text="Santiago, {DIA_PAGO_DOCUMENTO} {MES_PAGO_DOCUMENTO} de {ANO_PAGO_DOCUMENTO}" align="L" font="ArialBoldBlue"  newline="1"/>
+			<Cell text="" height="4" newline="1"/>
+			
+			<Cell text="Datos Generales" font="ArialBoldBlueBig" newline="1"/>
+			<Cell text="" height="5" width="100%" border="LRT" redl="192" greenl="192" bluel="192" newline="1" />			
+			<Cell text="" width="2%" border="L"  redl="192" greenl="192" bluel="192"/>
+			
+			<Cell text="Fecha   :  " width="11%" align="L" font="ArialBoldBlue"/>
+			<Cell text="{FECHA_COMPLETA}" width="64%" align="L" font="Arial"/>
+			
+			<Cell text="N° Cheque: " width="15%" align="R" font="ArialBoldBlue"/>
+			<Cell text="{NRO_CHEQUE}" width="8%" border="R" font="Arial" redl="192" greenl="192" bluel="192" newline="1"/>
+			
+			<Cell text="" width="2%" border="L"  redl="192" greenl="192" bluel="192"/>
+			<Cell text="Banco   :" width="11%" align="L" font="ArialBoldBlue"/>
+			<Cell text="{BANCO}" width="64%" align="L" font="Arial"/>
+			
+			<Cell text="N° C.Cont.: " width="15%" align="R" font="ArialBoldBlue"/>
+			<Cell text="{C_CONT}" width="8%" border="R" font="Arial" redl="192" greenl="192" bluel="192" newline="1"/>
+			
+			<Cell text="" width="2%" border="L"  redl="192" greenl="192" bluel="192"/>
+			<Cell text="Monto   :" width="11%" font="ArialBoldBlue"/>
+			<Cell text="{MONTO_DOCUMENTO}" align="L" border="R" width="87%" font="Arial" format="N0,." redl="192" greenl="192" bluel="192"  newline="1"/>
+			
+			<Cell text="" height="4" border="LRB" redl="192" greenl="192" bluel="192" newline="1" />					
+			<Cell text="" height="4" newline="1"/>
+			
+			<Cell text="" newline="1" height="5" width="100%" border="LRT" redl="192" greenl="192" bluel="192"/>			
+			<Cell text="" width="2%" border="L"  redl="192" greenl="192" bluel="192"/>
+			
+			<Cell text="N° Factura" align="C" width="11%" font="ArialBoldBlue" border="LRTB"/>
+			<Cell text="N/C" align="C" width="11%" font="ArialBoldBlue" border="RTB"/>
+			<Cell text="Ref." align="C" width="41%" font="ArialBoldBlue" border="RTB"/>
+			<Cell text="Monto" align="C" width="11%" font="ArialBoldBlue" border="RTB"/>
+			<Cell text="Res. %" align="C" width="11%" font="ArialBoldBlue" border="RTB"/>
+			<Cell text="OC" width="11%" align="C" font="ArialBoldBlue" border="RTB" />
+			<Cell text="" width="2%" border="R"  redl="192" greenl="192" bluel="192" newline="1"/>
+			
+			<Cell text="" width="2%" border="L"  redl="192" greenl="192" bluel="192"/>
+			<Cell text="{NRO_FACTURA1}" align="C" width="11%" font="Arial"  border="LRTB"/>
+			<Cell text="{N_C1}" align="C" width="11%" font="Arial"  border="RTB"/>
+			<Cell text="{REF1}" align="C" width="41%" font="Arial"  border="RTB"/>
+			<Cell text="{MONTO_FA1}" align="R" width="11%" font="Arial"  border="RTB"/>
+			<Cell text="{RES1}" align="C" width="11%" font="Arial"  border="RTB"/>
+			<Cell text="{OC1}" width="11%" align="C" font="Arial"  border="RTB" />
+			<Cell text="" width="2%" border="R"  redl="192" greenl="192" bluel="192" newline="1"/>
+			
+			<Cell text="" width="2%" border="L"  redl="192" greenl="192" bluel="192"/>
+			<Cell text="{NRO_FACTURA2}" align="C" width="11%" font="Arial"  border="LRTB"/>
+			<Cell text="{N_C2}" align="C" width="11%" font="Arial"  border="RTB"/>
+			<Cell text="{REF2}" align="C" width="41%" font="Arial"  border="RTB"/>
+			<Cell text="{MONTO_FA2}" align="R" width="11%" font="Arial"  border="RTB"/>
+			<Cell text="{RES2}" align="C" width="11%" font="Arial"  border="RTB"/>
+			<Cell text="{OC2}" width="11%" align="C" font="Arial"  border="RTB" />
+			<Cell text="" width="2%" border="R"  redl="192" greenl="192" bluel="192" newline="1"/>
+			
+			<Cell text="" width="2%" border="L"  redl="192" greenl="192" bluel="192"/>
+			<Cell text="{NRO_FACTURA3}" align="C" width="11%" font="Arial"  border="LRTB"/>
+			<Cell text="{N_C3}" align="C" width="11%" font="Arial"  border="RTB"/>
+			<Cell text="{REF3}" align="C" width="41%" font="Arial"  border="RTB"/>
+			<Cell text="{MONTO_FA3}" align="R" width="11%" font="Arial"  border="RTB"/>
+			<Cell text="{RES3}" align="C" width="11%" font="Arial"  border="RTB"/>
+			<Cell text="{OC3}" width="11%" align="C" font="Arial"  border="RTB" />
+			<Cell text="" width="2%" border="R"  redl="192" greenl="192" bluel="192" newline="1"/>
+			
+			<Cell text="" width="2%" border="L"  redl="192" greenl="192" bluel="192"/>
+			<Cell text="{NRO_FACTURA4}" align="C" width="11%" font="Arial"  border="LRTB"/>
+			<Cell text="{N_C4}" align="C" width="11%" font="Arial"  border="RTB"/>
+			<Cell text="{REF4}" align="C" width="41%" font="Arial"  border="RTB"/>
+			<Cell text="{MONTO_FA4}" align="R" width="11%" font="Arial"  border="RTB"/>
+			<Cell text="{RES4}" align="C" width="11%" font="Arial"  border="RTB"/>
+			<Cell text="{OC4}" width="11%" align="C" font="Arial"  border="RTB" />
+			<Cell text="" width="2%" border="R"  redl="192" greenl="192" bluel="192" newline="1"/>
+			
+			<Cell text="" width="2%" border="L"  redl="192" greenl="192" bluel="192"/>
+			<Cell text="{NRO_FACTURA5}" align="C" width="11%" font="Arial"  border="LRTB"/>
+			<Cell text="{N_C5}" align="C" width="11%" font="Arial"  border="RTB"/>
+			<Cell text="{REF5}" align="C" width="41%" font="Arial"  border="RTB"/>
+			<Cell text="{MONTO_FA5}" align="R" width="11%" font="Arial"  border="RTB"/>
+			<Cell text="{RES5}" align="C" width="11%" font="Arial"  border="RTB"/>
+			<Cell text="{OC5}" width="11%" align="C" font="Arial"  border="RTB" />
+			<Cell text="" width="2%" border="R"  redl="192" greenl="192" bluel="192" newline="1"/>
+			
+			<Cell text="" width="2%" border="L"  redl="192" greenl="192" bluel="192"/>
+			<Cell text="{NRO_FACTURA6}" align="C" width="11%" font="Arial"  border="LRTB"/>
+			<Cell text="{N_C6}" align="C" width="11%" font="Arial"  border="RTB"/>
+			<Cell text="{REF6}" align="C" width="41%" font="Arial"  border="RTB"/>
+			<Cell text="{MONTO_FA6}" align="R" width="11%" font="Arial"  border="RTB"/>
+			<Cell text="{RES6}" align="C" width="11%" font="Arial"  border="RTB"/>
+			<Cell text="{OC6}" width="11%" align="C" font="Arial"  border="RTB" />
+			<Cell text="" width="2%" border="R"  redl="192" greenl="192" bluel="192" newline="1"/> 
+			
+			<Cell text="" width="100%" border="LR"  redl="192" greenl="192" bluel="192" newline="1"/>
+			
+			<Cell text="" width="2%" border="L"  redl="192" greenl="192" bluel="192"/>
+			<Cell text="TOTAL" width="63%" align="R" font="ArialBoldBlue"/>
+		 	<Cell text="{TOTAL}" width="11%" format="N0,." font="Arial"  redl="192" align="R" greenl="192" bluel="192" />  
+		 	<Cell text="" width="24%" border="R"  redl="192" greenl="192" bluel="192" newline="1"/> 
+		 	
+			<Cell text="" width="100%" border="LR"  redl="192" greenl="192" bluel="192" newline="1"/>
+			
+			<Cell text="" width="2%" border="L"  redl="192" greenl="192" bluel="192"/>
+			<Cell text="Referencia general:" width="18%" font="ArialBoldBlue"/>
+			<Cell text="{REFERENCIA_GRAL}" width="78%" font="Arial" redl="192" greenl="192" bluel="192"/>
+			<Cell text="" width="2%" border="R"  redl="192" greenl="192" bluel="192" newline="1"/>
+			
+			<Cell text="" width="100%" border="LRB"  redl="192" greenl="192" bluel="192" newline="1"/>
+			
+				
+		</GroupHeader>
+		<GroupFooter> 
+
+		</GroupFooter>
+	</Group>
+	<PageFooter>		
+		<Cell text="" border="" font="ArialSmall" absY="-40" redl="199" greenl="199" bluel="199" newline="1" />
+	</PageFooter>
+</Report>

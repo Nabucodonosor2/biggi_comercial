@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title></title>
+<script charset="iso-8859-1" src="../../../../commonlib/trunk/script_js/general.js" type="text/javascript"></script>
+<script charset="iso-8859-1" src="../../../../commonlib/trunk/script_js/edit_filter.js" type="text/javascript"></script>
+<script charset="iso-8859-1" src="request_agrega_part.js" type="text/javascript"></script>
+<link href="{W_CSS}" rel="stylesheet" type="text/css">
+<style type="text/css">
+body {
+	background-color: #E5E5E5;
+	text-align:center;
+	font-size:14px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+}
+</style>
+</head>
+<body>
+	<table width="100%">
+		<tr>
+			<td>
+				<table rules="none" border="1" class="claro" width="980">							
+					<tr class="titulo_tabla">				
+						<td colspan="4">Lista de {TITLE_DOC}{MAX_ITEM}{COD_NOTA_VENTA}</td>
+					</tr>
+					<tr class="encabezado_center">
+						<th width="5%"></th>
+						<th width="15%">Participación</th>
+						<th width="20%">Fecha</th>
+						<th width="25%">Vendedor</th>	
+						<th width="20%">Estado</th>
+						<th width="15%">Monto</th>
+					</tr>
+				</table>
+				<div style="overflow-x: hidden; overflow-y: auto; height: 200px;">
+					<table rules="none" width="980" border="1" class="claro" id="ITEM_CARTOLA_PARTICIPACION">	
+					<!-- startBlock(ITEM_CARTOLA_PARTICIPACION) -->
+						<tr class="{DW_TR_CSS}" id="{DW_TR_ID}">
+							<td width="5%" align="center">{SELECCION}</td>
+							<td width="15%" align="center">{COD_PARTICIPACION}</td>
+							<td width="20%" align="center">{FECHA_PARTICIPACION}</td>
+							<td width="25%" align="center">{NOM_USUARIO_VENDEDOR}</td>
+							<td width="20%" align="center">{NOM_ESTADO_PARTICIPACION}</td>
+							<td width="15%" align="right">{TOTAL_CON_IVA}{MES}</td>
+							
+						</tr>
+					<!-- endBlock(ITEM_CARTOLA_PARTICIPACION) -->	
+					</table>
+				</div>
+				<table rules="none" border="0" class="claro" width="980">
+					<tr>
+						<td align="left">
+							<input type="button" class="button" value="Seleccionar todo" onClick="sel_todo('S');"/>
+							<input type="button" class="button" value="Dejar selección" onClick="dej_sel();"/>
+							<input type="button" class="button" value="Desmarcar todo" onClick="sel_todo('N');"/>
+						</td>
+						<td>
+							Cantidad items seleccionados: <label id="CANT_SEL_0">0</label>
+						</td>
+						<td align="right">
+							<input type="button" class="button" value="Aceptar" onClick="okMe();"/>
+							<input type="button" class="button" value="Cancelar" onClick="closeMe();"/>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>		
+</body>
+</html>
+
+				

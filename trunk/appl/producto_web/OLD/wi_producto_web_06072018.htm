@@ -1,0 +1,529 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+<title>Sistema Grupo de Empresas Biggi</title>
+<link href="{W_CSS}" rel="stylesheet" type="text/css">
+<script src="../../../../commonlib/trunk/script_js/SpryTabbedPanels.js" type="text/javascript"></script>
+<link href="../../../../commonlib/trunk/css/SpryTabbedPanels.css" rel="stylesheet" type="text/css"/>
+<script charset="iso-8859-1" src="../../../../commonlib/trunk/script_js/edit_filter.js" type="text/javascript"></script>
+<script charset="iso-8859-1" src="../../../../commonlib/trunk/script_js/general.js" type="text/javascript"></script>
+<script charset="iso-8859-1" src="../empresa/help_empresa.js" type="text/javascript"></script>
+<script charset="iso-8859-1" src="producto_web.js" type="text/javascript"></script>
+<script charset="UTF-8" src="producto.js" type="text/javascript"></script>
+<style type="text/css">
+<!--
+.Estilo1 {
+	color: #FF0000;
+	font-weight: bold;
+}
+
+.Estilo2 {
+	color: #993300;
+	font-weight: bold;
+	align: right;
+}
+-->
+</style>
+{WI_JAVA_SCRIPT}
+</head>
+<body {WI_ONLOAD}>
+<!-- DO NOT MOVE! The following AllWebMenus linking code section must always be placed right AFTER the BODY tag-->
+<!-- ******** BEGIN ALLWEBMENUS CODE FOR menu ******** -->
+<script type="text/javascript">var MenuLinkedBy="AllWebMenus [4]",awmMenuName="menu",awmBN="740";awmAltUrl="";</script>
+<script charset="UTF-8" src="{K_ROOT_URL}menu/menu.js" type="text/javascript"></script>
+<script type="text/javascript">{W_MENU}</script>
+<!-- ******** END ALLWEBMENUS CODE FOR menu ******** -->
+<form action="" method="post" name="input" id="input" enctype="multipart/form-data">
+<input name="wi_hidden" id="wi_hidden" type="hidden" value="">
+<input name="wi_current_tab_page" id="wi_current_tab_page" type="hidden" value="">
+<table width="1050" border="0" align="center">
+	<tr bgcolor="#FFFFFF">
+	<!-- menu superior-->
+		<td width="1000"  height="51" align="center" id="awmAnchor-menu" style="width:100px; height:50px;">
+			<div style="color:blue; text-align:right; height:29px;"></div>
+			<div style="color:blue;text-align:right; font-family: Verdana,Arial,Helvetica,sans-serif;">{K_NOMBRE}</div>
+		</td>
+	</tr>
+	<tr bgcolor="#FFFFFF">
+		<td>
+			<table width="1000" border="0">
+				<tr>
+					<td>
+						<table width="520" border="0">
+							<tr>
+								<td height="100%"><div class="titulo_central">{WI_RUTA_MENU}</div></td>
+							</tr>
+							<tr>
+								<td height="0%"><div class="tit_superior"><font color="#999999">{WI_FECHA_ACTUAL}</font></div></td>
+							</tr>
+							<tr>
+								<td height="0%"><div class="tit_superior"><font color="#999999">{WI_FECHA_MODIF}</font></div></td>
+							</tr>
+						</table>
+					</td>
+					<td width="68"></td>
+					<td width="68">{WI_PRINT}</td>
+					<td width="68">{WI_NO_SAVE}</td>
+					<td width="68">{WI_SAVE}</td>
+					<td width="68">{WI_MODIFY}</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr bgcolor="#FFFFFF">
+		<td>
+			<table width="1000" border="0" align="center">
+				<tr>
+					<td height="95">
+						<table width="1015" border="0" align="center" >
+							<tr valign="top">
+								<td>
+									<div id="TabbedPanels1" class="TabbedPanels">
+										<ul class="TabbedPanelsTabGroup">
+											<li class="TabbedPanelsTab" tabindex="0" style="display:{TAB_101005}">Equipo</li>
+											<li class="TabbedPanelsTab" tabindex="0" style="display:{TAB_101010}">Familia</li>
+											<li class="TabbedPanelsTab" tabindex="0" style="display:{TAB_101045}">Especificaciones</li>
+											<li class="TabbedPanelsTab" tabindex="0" style="display:{TAB_101050}">Web</li>
+											<li class="TabbedPanelsTab" tabindex="0" style="display:{TAB_101055}">Oferta</li>
+									   	</ul>
+										<div class="TabbedPanelsContentGroup">
+											<!--INI EQUIPO-->
+											<div class="TabbedPanelsContent" style="height:492px;">
+												<table width="1000" rules="none" border="1" align="center" class="claro">
+													<tr class="titulo_tabla">
+														<td >DATOS GENERALES</td>
+													</tr>
+													<tr class="encabezado_right">
+														<td width="151">Modelo:</td>
+														<td colspan="3" width="162" class="claro" align="left" id="cod_producto3">{COD_PRODUCTO_NO_ING}</td>
+														<td width="124">Tipo Producto :</td>
+														<td width="252" class="claro" align="left" id="nom_tipo_producto3">{NOM_TIPO_PRODUCTO}</td>
+													</tr>
+													<tr class="encabezado_right">
+														<td>Descripción:</td>
+														<td colspan="3" class="oscuro" align="left" id="nom_producto1">{NOM_PRODUCTO_PRINCIPAL}</td>
+														<td>Precio:</td>
+														<td colspan="2" class="oscuro" align="left">{PRECIO_VENTA_PUBLICO_NO_ING}</td>
+													</tr>
+												</table>
+												<p>
+												<table width="1000" rules="none" border="1" align="center" class="claro">
+													<tr class="titulo_tabla">
+														<td width="160">DIMENSIONES</td>
+														<td width="150"></td>
+														<td width="90"></td>
+														<td width="150"></td>
+														<td width="90"></td>
+														<td width="150"></td>
+													</tr>
+													<tr class="encabezado_center">
+														<td></td>
+														<td>Largo[CMS]</td>
+														<td>Ancho[CMS]</td>
+														<td>Alto[CMS]</td>
+														<td>Peso[KG]</td>
+														<td>Volumen[Mt3]</td>
+													</tr>
+													<tr class="{DW_TR_CSS}">
+														<td class="claro"><strong>Equipo:</strong></td>
+														<td class="claro" align="center">{LARGO}</td>
+														<td class="claro" align="center">{ANCHO}</td>
+														<td class="claro" align="center">{ALTO}</td>
+														<td class="claro" align="center">{PESO}</td>
+														<td class="claro" align="center">{VOLUMEN}</td>
+													</tr>
+													<tr class="{DW_TR_CSS}">
+														<td class="oscuro"><strong>Embalaje:</strong></td>
+														<td class="oscuro" align="center">{LARGO_EMBALADO}</td>
+														<td class="oscuro" align="center">{ANCHO_EMBALADO}</td>
+														<td class="oscuro" align="center">{ALTO_EMBALADO}</td>
+														<td class="oscuro" align="center">{PESO_EMBALADO}</td>
+														<td class="oscuro" align="center">{VOLUMEN_EMBALADO}</td>
+													</tr>
+												</table>
+												<p>
+												<table width="1000" rules="none" border="1">
+													<tr class="titulo_tabla">
+														<td width="160">ATRIBUTOS</td>
+													</tr>
+													<tr class="encabezado_center">
+														<td width="70">Orden</td>
+														<td width="480">Atributos</td>
+														<td width="50" align="center">Eliminar</td>
+													</tr>
+												</table>
+											<div style="overflow-x:hidden; overflow-y:auto; height:300;">
+												<table width="1000" rules="none" border="1" align="left" class="claro" id="ATRIBUTO_PRODUCTO">
+												<!-- startBlock(ATRIBUTO_PRODUCTO) -->
+													<tr class="{DW_TR_CSS}" id="{DW_TR_ID}">
+														<td width="70" align="center">{AP_ORDEN}</td>
+														<td width="440" align="left">{NOM_ATRIBUTO_PRODUCTO}</td>
+														<td width="50" align="center">{ELIMINAR_ATRIBUTO_PRODUCTO}</td>
+													</tr>
+												<!-- endBlock(ATRIBUTO_PRODUCTO) -->
+												</table>
+												<table width="1000" rules="none" border="0" class="claro">
+													<tr class="claro">
+														<td align="left" width="500">{AGREGAR_ATRIBUTO_PRODUCTO}</td>
+													</tr>
+												</table>
+											</div>
+												
+											</div>
+											<!--FIN EQUIPO-->
+											<!--INI PRECIO-->
+											<div class="TabbedPanelsContent" style="height:492px;">
+												<table width="1000" rules="none" border="1" align="center" class="claro">
+													<tr class="titulo_tabla">
+														<td colspan="6">DATOS GENERALES</td>
+													</tr>
+													<tr class="encabezado_right">
+														<td width="151">Modelo:</td>
+														<td colspan="3" width="162" class="claro" align="left" id="cod_producto3">{COD_PRODUCTO_NO_ING}</td>
+														<td width="124">Tipo Producto :</td>
+														<td width="252" class="claro" align="left" id="nom_tipo_producto3">{NOM_TIPO_PRODUCTO}</td>
+													</tr>
+													<tr class="encabezado_right">
+														<td>Descripción:</td>
+														<td colspan="3" class="oscuro" align="left" id="nom_producto1">{NOM_PRODUCTO_NO_ING}</td>
+														<td>Precio:</td>
+														<td colspan="2" class="oscuro" align="left">{PRECIO_VENTA_PUBLICO_NO_ING}</td>
+													</tr>
+												</table>
+												<p>
+										<div id="pc" >
+												<table width="1000" rules="none" border="1" align="center" class="claro">
+													<tr class="titulo_tabla">
+														<td colspan="5" width="80">FAMILIA PRODUCTO</td>
+													</tr>
+													<tr class="encabezado_center">
+														<th width="20%">Orden</th>
+														<th width="60%">Familia</th>
+														<th width="20%">Eliminar</th>	
+													</tr>
+												</table>												
+												<div style="overflow-x:hidden; overflow-y:auto; height:100;">
+												<table width="1000" rules="none" border="1" align="center" class="claro" id="FAMILIA_PRODUCTO">
+													<!-- startBlock(FAMILIA_PRODUCTO) -->
+													<tr class="{DW_TR_CSS}" id="{DW_TR_ID}">
+														<td width="20%" align="right">{FP_ORDEN}</td>
+														<td width="60%" align="center">{COD_FAMILIA}</td>
+														<td width="20%" align="center">{ELIMINAR_FAMILIA_PRODUCTO}</td>
+													</tr>
+													<!-- endBlock(FAMILIA_PRODUCTO) -->
+												</table>
+												</div>
+												<table width="1000" rules="none" border="1" align="center" class="claro">
+													<tr class="claro">
+														<td colspan="4" align="left">{AGREGAR_FAMILIA_PRODUCTO}</td>
+													</tr>
+												</table>	
+												<p>
+												</p>
+												<table width="1000" rules="none" border="1" align="center" class="claro">
+													<tr class="titulo_tabla">
+														<td colspan="5" width="80">FAMILIA ACCESORIO</td>
+													</tr>
+													<tr class="encabezado_center">
+														<th width="20%">Orden</th>
+														<th width="60%">Familia Producto</th>
+														<th width="20%">Eliminar</th>	
+													</tr>
+												</table>												
+												<div style="overflow-x:hidden; overflow-y:auto; height:120;">
+												<table width="1000" rules="none" border="1" align="center" class="claro" id="FAMILIA_ACCESORIO">
+													<!-- startBlock(FAMILIA_ACCESORIO) -->
+													<tr class="{DW_TR_CSS}" id="{DW_TR_ID}">
+														<td width="20%" align="right">{FA_ORDEN}</td>
+														<td width="60%" align="center">{COD_FAMILIA_ACC}</td>
+														<td width="20%" align="center">{ELIMINAR_FAMILIA_ACCESORIO}</td>
+													</tr>
+													<!-- endBlock(FAMILIA_ACCESORIO) -->
+												</table>
+												</div>
+												<table width="1000" rules="none" border="1" align="center" class="claro">
+													<tr class="claro">
+														<td colspan="4" align="left">{AGREGAR_FAMILIA_ACCESORIO}</td>
+													</tr>
+												</table>																					
+										</div>
+											</div>
+											<!--FIN PRECIO-->
+											<!--INI ESPECIFICACIONES-->
+											<div class="TabbedPanelsContent" style="height:492px;">
+												<table width="1000" rules="none" border="1" align="center" class="claro">
+													<tr class="titulo_tabla">
+														<td colspan="6">DATOS GENERALES</td>
+													</tr>
+													<tr class="encabezado_right">
+														<td width="151">Modelo:</td>
+														<td colspan="3" width="162" class="claro" align="left" id="cod_producto3">{COD_PRODUCTO_NO_ING}</td>
+														<td width="124">Tipo Producto :</td>
+														<td width="252" class="claro" align="left" id="nom_tipo_producto3">{NOM_TIPO_PRODUCTO}</td>
+													</tr>
+													<tr class="encabezado_right">
+														<td>Descripción:</td>
+														<td colspan="3" class="oscuro" align="left"  id="nom_producto3">{NOM_PRODUCTO_NO_ING}</td>
+														<td>Precio:</td>
+														<td class="oscuro" align="left">{PRECIO_VENTA_PUBLICO_NO_ING}</td>
+													</tr>
+												</table>
+												<p>
+												<table width="1000" rules="none" border="1" align="center" class="claro">
+													<tr class="titulo_tabla">
+														<td width="160">ESPECIFICACIONES TÉCNICAS</td>
+														<td width="150"></td>
+														<td width="90"></td>
+														<td width="150"></td>
+														<td width="90"></td>
+														<td width="150"></td>
+														<td width="90"></td>
+													</tr>
+													<tr class="subtitulo_oscuro_right">
+														<td rowspan="4" class="encabezado_center">ELECTRICIDAD</td>
+														<td class="titulo_2_tabla_right">Electricidad:</td>
+														<td align="center" class="claro">{USA_ELECTRICIDAD}</td>
+														<td class="titulo_2_tabla_right"> Fases:</td>
+														<td colspan="3" align="center" class="claro">{MONOFASICO}&nbsp;&nbsp;&nbsp;{TRIFASICO}</td>
+												    </tr>
+													<tr class="titulo_2_tabla_right">
+														<td class="titulo_2_tabla_right">Consumo[KW]:</td>
+														<td class="oscuro">{CONSUMO_ELECTRICIDAD}</td>
+														<td class="titulo_2_tabla_right">Rango Temperatura:</td>
+														<td colspan="3" class="oscuro" align="left">{RANGO_TEMPERATURA}</td>
+													</tr>
+													<tr class="titulo_2_tabla_right">
+														<td class="titulo_2_tabla_right">Voltaje[V]:</td>
+														<td class="claro">{VOLTAJE}</td>
+														<td class="titulo_2_tabla_right">Frecuencia[HZ]:</td>
+														<td colspan="3" class="claro" align="left">{FRECUENCIA}</td>
+													</tr>
+													<tr>
+														<td class="titulo_2_tabla_right">Nº Certificado:</td>
+														<td colspan="5" class="oscuro">{NRO_CERTIFICADO_ELECTRICO}</td>
+													</tr>
+													<tr height="3">
+														<td class="titulo_tabla" colspan="7"></td>
+													</tr>
+													<tr class="titulo_2_tabla_right">
+														<td rowspan="3" class="encabezado_center">GAS</td>
+														<td class="titulo_2_tabla_right">Gas:</td>
+														<td align="center" class="claro" colspan="1">{USA_GAS}</td>
+														
+														<td class="titulo_2_tabla_right">Potencia[KW]:</td>
+														<td align="center" class="claro">{POTENCIA_KW}</td>
+													</tr>
+													<tr class="titulo_2_tabla_right">
+														<td class="titulo_2_tabla_right">Potencia[MCal/hr]:</td>
+														<td class="oscuro">{POTENCIA}</td>
+														<td align="left" class="titulo_2_tabla_right">Consumo[g/hr]:</td>
+														<td align="left" colspan="3" class="oscuro">{CONSUMO_GAS}</td>
+													</tr>
+													<tr>
+														<td class="titulo_2_tabla_right">Nº Certificado:</td>
+														<td colspan="5" class="claro">{NRO_CERTIFICADO_GAS}</td>
+													</tr>
+													<tr height="3">
+														<td class="titulo_tabla" colspan="7"></td>
+													</tr>
+													<tr class="titulo_2_tabla_right">
+														<td class="encabezado_center">VAPOR</td>
+														<td class="titulo_2_tabla_right">Vapor:</td>
+														<td class="oscuro" align="center">{USA_VAPOR}</td>
+														<td class="titulo_2_tabla_right">Consumo[KVapor/hr]:</td>
+														<td align="left" class="oscuro">{CONSUMO_VAPOR}</td>
+														<td class="titulo_2_tabla_right">Psi:</td>
+														<td align="left" class="oscuro">{PRESION_VAPOR}</td>
+													</tr>
+													<tr height="3">
+														<td class="titulo_tabla" colspan="7"></td>
+													</tr>
+													<tr class="titulo_2_tabla_right">
+														<td rowspan="2" class="encabezado_center">AGUA</td>
+														<td class="titulo_2_tabla_right">Fría:</td>
+														<td class="claro" align="center">{USA_AGUA_FRIA}</td>
+														<td class="titulo_2_tabla_right">Caliente:</td>
+														<td class="claro" align="center">{USA_AGUA_CALIENTE}</td>
+														<td colspan="2" class="claro" align="center">&nbsp;</td>
+													</tr>
+													<tr class="titulo_2_tabla_right">
+														<td class="titulo_2_tabla_right">Caudal[lt/h]:</td>
+														<td class="oscuro">{CAUDAL}</td>
+														<td class="titulo_2_tabla_right">Presión[psi]:</td>
+														<td class="oscuro" align="left">{PRESION_AGUA}</td>
+														<td class="titulo_2_tabla_right">Diám. cañería[pulg]:</td>
+														<td align="left" class="oscuro">{DIAMETRO_CANERIA}</td>
+													</tr>
+													<tr height="3">
+														<td class="titulo_tabla" colspan="7"></td>
+													</tr>
+													<tr class="titulo_2_tabla_right">
+														<td rowspan="2" class="encabezado_center">VENTILACIÓN</td>
+														<td class="titulo_2_tabla_right">Ventilación:</td>
+														<td class="claro" align="center">{USA_VENTILACION}</td>
+														<td class="titulo_2_tabla_right">Volumen[m3/hr]:</td>
+														<td align="left" colspan="3" class="claro">{VOLUMEN_ESP}</td>
+													</tr>
+													<tr class="titulo_2_tabla_right" style="height: 20px">
+														<td class="titulo_2_tabla_right">Caída presión[mmCA]:</td>
+														<td class="oscuro">{CAIDA_PRESION}</td>
+														<td class="titulo_2_tabla_right">Diámetro ducto[mm]:</td>
+														<td align="left" class="oscuro">{DIAMETRO_DUCTO}</td>
+														<td class="titulo_2_tabla_right">Nº Filtros:</td>
+														<td align="left" class="oscuro">{NRO_FILTROS}</td>
+													</tr>
+													<tr height="3">
+														<td class="titulo_tabla" colspan="7"></td>
+													</tr>
+													<tr class="titulo_2_tabla_right" style="height: 20px">
+														<td class="encabezado_center">DESAGUE</td>
+														<td class="titulo_2_tabla_right">Desague:</td>
+														<td class="claro" align="center">{USA_DESAGUE}</td>
+														<td class="titulo_2_tabla_right">Diámetro[pulg]:</td>
+														<td align="left" colspan="3" class="claro">{DIAMETRO_DESAGUE}</td>
+													</tr>
+												</table>
+											</div>
+											<!--FIN ESPECIFICACIONES-->
+											<!--INI WEB-->
+											<div class="TabbedPanelsContent" style="height:592px;">
+												<table width="1000" rules="none" border="1" align="center" class="claro">
+													<tr class="titulo_tabla">
+														<td colspan="6">DATOS GENERALES</td>
+													</tr>
+													<tr class="encabezado_right">
+														<td width="151">Modelo:</td>
+														<td colspan="3" width="162" class="claro" align="left" id="cod_producto5">{COD_PRODUCTO_NO_ING}</td>
+														<td width="124">Tipo Producto :</td>
+														<td width="252" class="claro" align="left" id="nom_tipo_producto5">{NOM_TIPO_PRODUCTO}</td>
+													</tr>
+													<tr class="encabezado_right">
+														<td>Descripción:</td>
+														<td colspan="3" class="oscuro" align="left" id="nom_producto5">{NOM_PRODUCTO_NO_ING}</td>
+														<td>Precio:</td>
+														<td class="oscuro" align="left">{PRECIO_VENTA_PUBLICO_NO_ING}</td>
+													</tr>
+												</table>
+												<p>
+												<table width="1000" rules="none" border="1" align="center">
+													<tr>
+														<td>
+															<div id="TabbedPanels2" class="TabbedPanels">
+																<ul class="TabbedPanelsTabGroup">
+																	<li class="TabbedPanelsTab" tabindex="1">Fotos</li>
+																</ul>
+																<div class="TabbedPanelsContentGroup">
+																	<div class="TabbedPanelsContent"><!--INI FOTOS DENTRO DE WEB-->
+																		<table width="700" rules="none" border="1">
+																			<tr height="300" align="center" valign="middle" class="oscuro_center">
+																				<td width="300" align="center">
+																					<table rules="none" border="1" align="center">
+																						<tr>
+																							<td><img height="400" width="300" src="imagen_grande.php?cod_producto={COD_PRODUCTO_NO_ING}"></td>
+																						</tr>
+																					</table>																				</td>
+																				<td width="350" align="center">
+																					<table rules="none" border="1" align="center">
+																						<tr>
+																							<td><img height="130" width="130" src="imagen_chica.php?cod_producto={COD_PRODUCTO_NO_ING}"></td>
+																						</tr>
+																					</table>															  				</td>
+																			</tr>
+																			<tr class="claro_left">
+																  				<td class="claro_left">
+																					<div align="center"><span class="Estilo2">Tamaño Foto 300x400 px </span> </div></td>
+																  				<td class="claro_left">
+																					<div align="center"><span class="Estilo2">Tamaño Foto 130x130 px </span> </div></td>
+														  					</tr>
+																			<tr class="oscuro_center">
+																				<td width="362"><div align="center">
+																				  {FOTO_CON_CAMBIO}<input type="file" name="FOTO_GRANDE" id="FOTO_GRANDE" class="Button" {DISABLE_BUTTON} onclick="document.getElementById('FOTO_CON_CAMBIO_0').value = 'S'; ">
+																				  </div></td>
+																				<td width="362"><div align="center">
+																				  <input type="file" name="FOTO_CHICA" id="FOTO_CHICA"class="Button" {DISABLE_BUTTON} onclick="document.getElementById('FOTO_CON_CAMBIO_0').value = 'S'; ">
+																				  </div></td>
+																			</tr>
+																		</table>
+																	</div><!--FIN FOTOS DENTRO DE WEB-->
+																</div><!--FIN TabbedPanelsContentGroup -->
+															</div><!--FIN TabbedPanels -->
+														</td>
+													</tr>
+												</table>
+											</div>
+											<!--FIN WEB-->
+												<!--INI OFERTA-->
+											<div class="TabbedPanelsContent" style="height:492px;">
+												<table width="1000" rules="none" border="1" align="center" class="claro">
+													<tr class="titulo_tabla">
+														<td colspan="6">DATOS GENERALES</td>
+													</tr>
+													<tr class="encabezado_right">
+														<td width="151">Modelo:</td>
+														<td colspan="3" width="162" class="claro" align="left" id="cod_producto3">{COD_PRODUCTO_NO_ING}</td>
+														<td width="124">Tipo Producto :</td>
+														<td width="252" class="claro" align="left" id="nom_tipo_producto3">{NOM_TIPO_PRODUCTO}</td>
+													</tr>
+													<tr class="encabezado_right">
+														<td>Descripción:</td>
+														<td colspan="3" class="oscuro" align="left"  id="nom_producto3">{NOM_PRODUCTO_NO_ING}</td>
+														<td>Precio:</td>
+														<td class="oscuro" align="left">{PRECIO_VENTA_PUBLICO_NO_ING}</td>
+													</tr>
+												</table>
+												<p>
+												<table width="1000" rules="none" border="1" align="center" class="claro">
+													<tr class="encabezado_right">
+														<td width="170">Publicar como oferta:</td>
+														<td  class="oscuro" align="left">{ES_OFERTA}</td>
+													</tr>
+													<tr class="encabezado_right">
+														<td width="170">Precio oferta:</td>
+														<td class="claro" align="left">{PRECIO_OFERTA}</td>
+													</tr>
+													<tr class="encabezado_right">
+														<td width="170">Precio antes de oferta:</td>
+														<td class="oscuro" align="left">{PRECIO_ANTES_DE_OFERTA}</td>
+													</tr>
+													<tr class="encabezado_right">
+														<td width="170">Es reciclado:</td>
+														<td class="claro" align="left">{ES_RECICLADO}</td>
+													</tr>
+													<tr id="DISPLAY_HOME_0" class="encabezado_right" style="display:{DISPLAY_TR};">
+														<td width="170">Publicar en Home:</td>
+														<td class="oscuro" align="left">{PUBLICAR_EN_HOME}</td>
+													</tr>
+												</table>
+											</div>
+											<!--FIN OFERTA-->
+										</div>
+										<!--FIN TabbedPanelsContentGroup-->
+									</div>
+									<!--FIN TabbedPanels-->
+								</td>
+							</tr>
+						</table>
+						<table width="1000" border="0" align="center">
+							<tr valign="middle">
+								<td width="290" >{WI_BACK}</td>
+								<td align="right">{WI_FIRST}{WI_PREV}</td>
+								<td align="left">{WI_NEXT}{WI_LAST}</td>
+								<td width="290"></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+</form>
+<script type="text/javascript">
+<!--
+var TabbedPanels1 = new Spry.Widget.TabbedPanels("TabbedPanels1");
+var TabbedPanels2 = new Spry.Widget.TabbedPanels("TabbedPanels2");
+//-->
+</script>
+</body>
+</html>

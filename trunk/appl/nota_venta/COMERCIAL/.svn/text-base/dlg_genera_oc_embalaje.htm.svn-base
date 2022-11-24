@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<script charset="iso-8859-1" src="../../../../../commonlib/trunk/script_js/general.js" type="text/javascript"></script>
+<script charset="iso-8859-1" src="../../../../../commonlib/trunk/script_js/edit_filter.js" type="text/javascript"></script>
+
+<title>Confirma Email </title>
+<link href="{W_CSS}" rel="stylesheet" type="text/css">
+<style type="text/css">
+<!--
+body {
+	background-color: #E5E5E5;
+	text-align:center;
+	font-size:14px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+}
+
+-->
+</style>
+<script charset="iso-8859-1" src="dlg_genera_oc_embalaje.js" type="text/javascript"></script>
+</head>
+<body>
+<table width="100%">
+	<tr>
+		<td>
+			<table width="100%" rules="none" border="1" align="left" class="claro">							
+				<tr class="titulo_tabla">				
+					<td colspan="4" >Genera Orden de compra de Embalaje:</td>
+				</tr>
+				<tr >				
+					<td colspan="2" >Ingrese el monto neto del embalaje para crear la OC</td>
+				</tr>
+				<tr>
+					<td align="right" width="30%" class="claro">Monto Neto:{COD_NOTA_VENTA}{COD_USUARIO} </td>
+					<td align="left" width="70%"class="claro" align="center">{MONTO_NETO}</td>
+				</tr>
+				<tr class="encabezado_right">
+					<td class="claro" align="right" colspan="2">
+						<input name="OK" type="button" value="OK" onclick="genera_oc();"/> 
+						<input name="Cancelar" type="button" value="Cancelar" onclick="window.close();"/>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+</body>
+</html>

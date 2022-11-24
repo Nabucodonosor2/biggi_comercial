@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Sistema Grupo de Empresas Biggi</title>
+<link href="{W_CSS}" rel="stylesheet" type="text/css"/>
+<script charset="iso-8859-1" src="{K_ROOT_URL}../../commonlib/trunk/script_js/general.js" type="text/javascript"></script>
+<script charset="UTF-8" src="{K_ROOT_URL}jquery/jquery.js" type="text/javascript"></script>
+<script src="{K_ROOT_URL}highcharts/js/highcharts.js"></script>
+<script src="{K_ROOT_URL}highcharts/js/highcharts-3d.js"></script>
+<script src="{K_ROOT_URL}highcharts/js/modules/exporting.js"></script>
+<script type="text/javascript">
+$(function (){
+	var ajax = nuevoAjax();
+	ajax.open("GET", "ajax_chart_ventas.php", false);
+	ajax.send(null);
+	var resp = URLDecode(ajax.responseText);
+	var result = eval("(" + resp + ")");
+	var sum_2014 = result[0]['ENE_2014'] + result[0]['FEB_2014']+ result[0]['MAR_2014']+ result[0]['ABR_2014']+ result[0]['MAY_2014']+ result[0]['JUN_2014']+ result[0]['JUL_2014']+ result[0]['AGO_2014']+ result[0]['SEP_2014']+ result[0]['OCT_2014']+ result[0]['NOV_2014']+ result[0]['DIC_2014'];
+	var sum_2015 = result[0]['ENE_2015'] + result[0]['FEB_2015']+ result[0]['MAR_2015']+ result[0]['ABR_2015']+ result[0]['MAY_2015']+ result[0]['JUN_2015']+ result[0]['JUL_2015']+ result[0]['AGO_2015']+ result[0]['SEP_2015']+ result[0]['OCT_2015']+ result[0]['NOV_2015']+ result[0]['DIC_2015'];
+	var sum_2016 = result[0]['ENE_2016'] + result[0]['FEB_2016']+ result[0]['MAR_2016']+ result[0]['ABR_2016']+ result[0]['MAY_2016']+ result[0]['JUN_2016']+ result[0]['JUL_2016']+ result[0]['AGO_2016']+ result[0]['SEP_2016']+ result[0]['OCT_2016']+ result[0]['NOV_2016']+ result[0]['DIC_2016'];
+	var sum_2017 = result[0]['ENE_2017'] + result[0]['FEB_2017']+ result[0]['MAR_2017']+ result[0]['ABR_2017']+ result[0]['MAY_2017']+ result[0]['JUN_2017']+ result[0]['JUL_2017']+ result[0]['AGO_2017']+ result[0]['SEP_2017']+ result[0]['OCT_2017']+ result[0]['NOV_2017']+ result[0]['DIC_2017'];
+	
+	sum_2014 = number_format(sum_2014, 0, ',', '.');
+	sum_2015 = number_format(sum_2015, 0, ',', '.');
+	sum_2016 = number_format(sum_2016, 0, ',', '.');
+	sum_2017 = number_format(sum_2017, 0, ',', '.');
+	
+	Highcharts.setOptions({
+	    lang: {
+	        decimalPoint: ',',
+	        thousandsSep: '.'
+	    },
+	    colors: ['#FF2828', '#0B0B61', '#FAAC58', '#696161']
+	});
+	
+    $('#container').highcharts({
+        chart: {
+            type: 'column',
+            margin: 100,
+            options3d: {
+                enabled: true,
+                alpha: 10,
+                beta: 25,
+                depth: 70
+            }
+        },
+        title: {
+            text: 'Ventas Netas Anuales 2014 / 2015 / 2016 / 2017'
+        },
+        plotOptions: {
+            column: {
+                depth: 25
+            }
+        },
+        tooltip: {
+            pointFormat:'<span style="color:{series.color}">»</span> {series.name}: <b>${point.y}</b><br/>'
+        },
+        xAxis: {
+           labels: {
+               rotation: -20,
+               style: {
+                  fontSize: '11px'
+               }
+           },
+            categories: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+        },
+        yAxis: {
+            title: { text: 'Montos Netos $' }
+        },
+        legend: {
+            align: 'left',
+            verticalAlign: 'center',
+            x: 40,
+            y: 316,
+            floating: true,
+            title: {
+				text: 'Total Ventas Año 2014: $'+sum_2014.substring(0, 5)+'.- MM'+'<br>Total Ventas Año 2015: $'+sum_2015.substring(0, 5)+'.- MM<br>Total Ventas Año 2016: $'+sum_2016.substring(0, 5)+'.- MM<br>Total Ventas Año 2017: $'+sum_2017.substring(0, 5)+'.- MM',
+				style: {fontWeight: 'normal',
+						fill: '#606260'}
+			}
+        },
+        series: [{
+            name: '2014',
+            data: [result[0]['ENE_2014'], result[0]['FEB_2014'], result[0]['MAR_2014'], result[0]['ABR_2014'], result[0]['MAY_2014'], result[0]['JUN_2014'], result[0]['JUL_2014'], result[0]['AGO_2014'], result[0]['SEP_2014'], result[0]['OCT_2014'], result[0]['NOV_2014'], result[0]['DIC_2014']]     
+        },{
+            name: '2015',
+            data: [result[0]['ENE_2015'], result[0]['FEB_2015'], result[0]['MAR_2015'], result[0]['ABR_2015'], result[0]['MAY_2015'], result[0]['JUN_2015'], result[0]['JUL_2015'], result[0]['AGO_2015'], result[0]['SEP_2015'], result[0]['OCT_2015'], result[0]['NOV_2015'], result[0]['DIC_2015']]     
+        },{
+            name: '2016',
+            data: [result[0]['ENE_2016'], result[0]['FEB_2016'], result[0]['MAR_2016'], result[0]['ABR_2016'], result[0]['MAY_2016'], result[0]['JUN_2016'], result[0]['JUL_2016'], result[0]['AGO_2016'], result[0]['SEP_2016'], result[0]['OCT_2016'], result[0]['NOV_2016'], result[0]['DIC_2016']]     
+        },{
+            name: '2017',
+            data: [result[0]['ENE_2017'], result[0]['FEB_2017'], result[0]['MAR_2017'], result[0]['ABR_2017'], result[0]['MAY_2017'], result[0]['JUN_2017'], result[0]['JUL_2017'], result[0]['AGO_2017'], result[0]['SEP_2017'], result[0]['OCT_2017'], result[0]['NOV_2017'], result[0]['DIC_2017']]
+        }]
+    });
+});
+</script>
+<style type="text/css">
+#container {
+	height: 500px; 
+	min-width: 310px; 
+	max-width: 900px;
+	margin: 0 auto;
+}
+</style>
+</head>
+<body>
+<!-- DO NOT MOVE! The following AllWebMenus linking code section must always be placed right AFTER the BODY tag-->
+<!-- ******** BEGIN ALLWEBMENUS CODE FOR menu ******** -->
+<script type="text/javascript">var MenuLinkedBy="AllWebMenus [4]",awmMenuName="menu",awmBN="740";awmAltUrl="";</script>
+<script charset="UTF-8" src="{K_ROOT_URL}menu/menu.js" type="text/javascript">
+</script>
+<script type="text/javascript">{W_MENU}</script>
+<!-- ******** END ALLWEBMENUS CODE FOR menu ******** -->
+{IPAD_MENU}
+<table width="1050" height="714" border="0" align="center">
+  	<tr bgcolor="#FFFFFF">
+	<!-- menu superior-->
+		<td width="1000"  height="51" align="center" id="awmAnchor-menu" style="width:100px; height:50px;">
+			<div style="color:blue; text-align:right; height:29px;"></div>
+			<div style="color:blue;text-align:right; font-family: Verdana,Arial,Helvetica,sans-serif;">{K_NOMBRE}</div>
+		</td>
+	</tr>
+  	<tr bgcolor="#FFFFFF">
+    	<td align="center"><div id="container" style="height: 425px; width: 900px;"></div></td>
+  	</tr>
+</table>
+</body>
+</html>

@@ -265,6 +265,19 @@ function valida_btn_genera_oc(){
 		return false;
 }
 
+function validaFechaNV(){
+	let fechaNotaVenta = document.getElementById('FECHA_NOTA_VENTA_H_0').value;
+	fechaNotaVenta = fechaNotaVenta.split("/");
+	fechaNotaVenta = new Date(fechaNotaVenta[2]+'-'+fechaNotaVenta[1]+'-'+fechaNotaVenta[0]);
+	const fechaValidaNV = new Date('2021-01-01');
+
+	if(fechaNotaVenta < fechaValidaNV){
+		alert('Este documento ha sido archivado por antiguedad de la Nota\nde Venta. Si lo necesita, favor solicitar a Informática');
+		return false;
+	}else
+		return true;
+}
+
 $(document).ready(function () {
 	$('#NRO_ORDEN_COMPRA_0').keypress(function (e) {
 		var regex =  new RegExp("^[a-zA-Z0-9\/.-]+$");

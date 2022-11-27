@@ -170,7 +170,7 @@
 																	<td width="165">N&deg; NV:</td>
 																	<td width="166" class="claro" align="left">{COD_NOTA_VENTA}{PORC_DESC_PERMITIDO}{COD_NOTA_VENTA_H}</td>
 																	<td width="165">Fecha:</td>
-																	<td width="166" class="claro" align="left">{FECHA_NOTA_VENTA}{RULES_MODIFIED}{LOAD_RECORD_STATE}</td>
+																	<td width="166" class="claro" align="left">{FECHA_NOTA_VENTA}{RULES_MODIFIED}{LOAD_RECORD_STATE}{FECHA_NOTA_VENTA_H}</td>
 																	<td width="165">Emisor:</td>
 																	<td width="166" class="claro" align="left">{NOM_USUARIO}</td>
 																</tr>
@@ -1284,7 +1284,7 @@
 																	<tr class="{DW_TR_CSS}" id="{DW_TR_ID}">
 																		<td width="19%" align="left">
 																			<div style="display:{D_DIV_LINK}">
-																				<a target="_blank" href="descarga_archivo.php?cod_doc={D_COD_ENCRIPT}">{D_NOM_ARCHIVO}</a>
+																				<a target="_blank" href="descarga_archivo.php?cod_doc={D_COD_ENCRIPT}" onclick="if(!validaFechaNV()){return false;}">{D_NOM_ARCHIVO}</a>
 																			</div>
 																			<div style="display:{D_DIV_FILE}">
 																				{D_FILE}

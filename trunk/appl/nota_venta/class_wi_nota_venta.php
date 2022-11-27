@@ -1339,6 +1339,7 @@ class wi_nota_venta extends w_cot_nv {
                     COD_NOTA_VENTA COD_NOTA_VENTA_H,
 					$this->porc_desc_permitido PORC_DESC_PERMITIDO, 
 					convert(varchar, FECHA_NOTA_VENTA, 103) FECHA_NOTA_VENTA,
+					convert(varchar, FECHA_NOTA_VENTA, 103) FECHA_NOTA_VENTA_H,
 					NV.COD_USUARIO,
 					U.NOM_USUARIO,
 					NRO_ORDEN_COMPRA,
@@ -1587,6 +1588,7 @@ class wi_nota_venta extends w_cot_nv {
 		$this->dws['dw_nota_venta']->add_control(new edit_text_hidden('ES_NO_SUMA_NV_INFORME'));
 		$this->dws['dw_nota_venta']->add_control(new edit_text_hidden('COD_NOTA_VENTA_H'));
 		$this->dws['dw_nota_venta']->add_control(new edit_text_hidden('RESULT_NV_NC'));
+		$this->dws['dw_nota_venta']->add_control(new edit_text_hidden('FECHA_NOTA_VENTA_H'));
 		$this->dws['dw_nota_venta']->add_control(new edit_text_multiline('NO_SUMA_NV_INFORME_MOTIVO',95,3));
 		
 		$this->dws['dw_nota_venta']->add_control($control = new edit_check_box('NO_TIENE_OC','S','N','Sin OC'));

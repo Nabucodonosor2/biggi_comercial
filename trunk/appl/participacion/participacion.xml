@@ -4,9 +4,9 @@
 	<Font name="Arial" size="17" style="B" id="ArialBoldBigB" red="0" green="0" blue="128"/>
 	<Font name="Arial" size="10" style="BU" id="ArialBoldU"/>
 	<Font name="Arial" size="10" style="B" id="ArialBold"/>
-	<Font name="Arial" size="10" style="B" id="ArialBoldBlue" red="0" green="0" blue="128"/>
+	<Font name="Arial" size="9" style="B" id="ArialBoldBlue" red="0" green="0" blue="128"/>
 	<Font name="Arial" size="11" style="B" id="ArialBoldBlueBig" red="0" green="0" blue="128"/>	
-	<Font name="Arial" size="9" style="" id="Arial"/>
+	<Font name="Arial" size="8" style="" id="Arial"/>
 	<Font name="Arial" size="10" style="B" id="Arial_cheque"/>
 	<Font name="Arial" size="9" style="" id="ArialBlue" red="0" green="0" blue="128"/>
 	<Font name="Arial" size="8.5" style="" id="ArialItem"/>
@@ -23,11 +23,12 @@
 	</PageHeader>
 	<Content font="Arial">
 		<Cell text="{COD_ORDEN_PAGO}"  width="10%" border="LRTB" align="C" font="Arial" redl="192" greenl="192" bluel="192"/>
-		<Cell text="{FECHA_ORDEN_PAGO}" width="12%" border="RTB" align="C" font="Arial" redl="192" greenl="192" bluel="192"/>
-		<Cell text="{COD_NOTA_VENTA}" width="12%" border="RTB" align="C" font="Arial" redl="192" greenl="192" bluel="192"/>
-		<Cell text="{FECHA_NOTA_VENTA}" width="13%" border="RTB" align="C" font="Arial" redl="192" greenl="192" bluel="192"/>
-		<Cell text="{NOM_EMPRESA}" width="40%" border="RTB" align="L" font="Arial" redl="192" greenl="192" bluel="192"/>
-		<Cell text="{TOTAL_NETO_POP}" width="13%" border="RTB" align="R" newline="1" format="N0,." font="Arial" redl="192" greenl="192" bluel="192"/>
+		<Cell text="{FECHA_ORDEN_PAGO}" width="10%" border="RTB" align="C" font="Arial" redl="192" greenl="192" bluel="192"/>
+		<Cell text="{COD_NOTA_VENTA}" width="10%" border="RTB" align="C" font="Arial" redl="192" greenl="192" bluel="192"/>
+		<Cell text="{FECHA_NOTA_VENTA}" width="10%" border="RTB" align="C" font="Arial" redl="192" greenl="192" bluel="192"/>
+		<Cell text="{FECHA_CIERRE}" width="11%" border="RTB" align="C" font="Arial" redl="192" greenl="192" bluel="192"/>
+		<Cell text="{NOM_EMPRESA}" width="39%" border="RTB" align="L" font="Arial" redl="192" greenl="192" bluel="192"/>
+		<Cell text="{TOTAL_NETO_POP}" width="10%" border="RTB" align="R" newline="1" format="N0,." font="Arial" redl="192" greenl="192" bluel="192"/>
 		<Cell text="" border="B" newline="1" height="1" red="0" green="0" blue="128"/>	
 	</Content>
 	<Group local="COD_PARTICIPACION">
@@ -77,11 +78,12 @@
 			<Cell text="Ordenes de Pago" font="ArialBoldBlueBig" newline="1"/>
 			<Cell text="" height="4" newline="1"/>
 			<Cell text="Código OP" width="10%" border="LRTB" align="C" font="ArialBoldBlue" redl="192" greenl="192" bluel="192"/>
-			<Cell text="Fecha OP" width="12%" align="C" border="LRTB" font="ArialBoldBlue" redl="192" greenl="192" bluel="192"/>
-			<Cell text="Código NV" width="12%" align="C" border="LRTB" font="ArialBoldBlue" redl="192" greenl="192" bluel="192"/>
-			<Cell text="Fecha NV" width="13%" align="C" border="LRTB" font="ArialBoldBlue" redl="192" greenl="192" bluel="192"/>
-			<Cell text="Cliente NV" width="40%" align="C" border="LRTB" font="ArialBoldBlue" redl="192" greenl="192" bluel="192"/>
-			<Cell text="{LABEL_BRUTO_NETO}" width="13%" align="C" border="LRTB" font="ArialBoldBlue" redl="192" greenl="192" bluel="192" newline="1"/>
+			<Cell text="Fecha OP" width="10%" align="C" border="LRTB" font="ArialBoldBlue" redl="192" greenl="192" bluel="192"/>
+			<Cell text="Código NV" width="10%" align="C" border="LRTB" font="ArialBoldBlue" redl="192" greenl="192" bluel="192"/>
+			<Cell text="Fecha NV" width="10%" align="C" border="LRTB" font="ArialBoldBlue" redl="192" greenl="192" bluel="192"/>
+			<Cell text="Fecha Cierre" width="11%" align="C" border="LRTB" font="ArialBoldBlue" redl="192" greenl="192" bluel="192"/>
+			<Cell text="Cliente NV" width="39%" align="C" border="LRTB" font="ArialBoldBlue" redl="192" greenl="192" bluel="192"/>
+			<Cell text="{LABEL_BRUTO_NETO}" width="10%" align="C" border="LRTB" font="ArialBoldBlue" redl="192" greenl="192" bluel="192" newline="1"/>
 		</GroupHeader>
 		<GroupFooter>
 			<Cell text="" width="100%" newline="1"/>

@@ -10,7 +10,7 @@ BEGIN
 		SELECT @result = COUNT(*)
 		FROM ORDEN_PAGO
 		WHERE COD_NOTA_VENTA = @ve_cod_nota_venta
-		AND COD_TIPO_ORDEN_PAGO = 1
+		AND COD_TIPO_ORDEN_PAGO = 3
 
 		IF(@result = 0 OR @result > 1)BEGIN
 			set @res = NULL
@@ -19,14 +19,14 @@ BEGIN
 			SELECT @res = COD_ORDEN_PAGO
 			FROM ORDEN_PAGO
 			WHERE COD_NOTA_VENTA = @ve_cod_nota_venta
-			AND COD_TIPO_ORDEN_PAGO = 1
+			AND COD_TIPO_ORDEN_PAGO = 3
 		END
 	END
 	ELSE IF(@ve_formato = 'OP_CT_DIR')BEGIN
 		SELECT @result = COUNT(*)
 		FROM ORDEN_PAGO
 		WHERE COD_NOTA_VENTA = @ve_cod_nota_venta
-		AND COD_TIPO_ORDEN_PAGO = 1
+		AND COD_TIPO_ORDEN_PAGO = 3
 
 		IF(@result = 0)
 			SET @res = NULL
@@ -37,7 +37,7 @@ BEGIN
 		SELECT @res = SUM(TOTAL_NETO)
 		FROM ORDEN_PAGO
 		WHERE COD_NOTA_VENTA = @ve_cod_nota_venta
-		AND COD_TIPO_ORDEN_PAGO = 1
+		AND COD_TIPO_ORDEN_PAGO = 3
 
 		IF(@result = 0)BEGIN
 			set @res = NULL

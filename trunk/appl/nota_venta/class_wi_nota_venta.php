@@ -1105,7 +1105,9 @@ class dw_lista_guia_recepcion extends datawindow {
 									FROM	FACTURA
 									WHERE	COD_DOC = {KEY1}
 									and  COD_TIPO_FACTURA = ".self::K_TIPO_FA."
-	  								and  COD_ESTADO_DOC_SII in (".self::K_ESTADO_SII_IMPRESA.", ".self::K_ESTADO_SII_ENVIADA."))))";
+	  								and  COD_ESTADO_DOC_SII in (".self::K_ESTADO_SII_IMPRESA.", ".self::K_ESTADO_SII_ENVIADA."))))
+        OR (TIPO_DOC = 'NOTA_VENTA' and COD_DOC = {KEY1})";
+        
 		parent::datawindow($sql, 'GR_RELACIONADA');
 
 		$this->add_control(new static_link('NRO_GUIA_RECEPCION', '../../../../commonlib/trunk/php/link_wi.php?modulo_origen=nota_venta&modulo_destino=guia_recepcion&cod_modulo_destino=[NRO_GUIA_RECEPCION]&cod_item_menu=1530'));

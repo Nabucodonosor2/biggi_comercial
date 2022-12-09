@@ -30,6 +30,7 @@ class dw_participacion_orden_pago extends datawindow {
 					 end TOTAL_NETO_POP_C
 					,P.COD_ESTADO_PARTICIPACION
 					,OP.COD_TIPO_ORDEN_PAGO
+					,convert(varchar(20), NV.FECHA_CIERRE, 103) FECHA_CIERRE
 				from PARTICIPACION P, PARTICIPACION_ORDEN_PAGO POP, ORDEN_PAGO OP, NOTA_VENTA NV, EMPRESA E
 				where P.COD_PARTICIPACION = {KEY1} and
 					POP.COD_PARTICIPACION = P.COD_PARTICIPACION and
@@ -51,6 +52,7 @@ class dw_participacion_orden_pago extends datawindow {
 										
 		$this->add_control(new drop_down_dw('COD_TIPO_ORDEN_PAGO', $sql_tipo_op,125));
 		$this->set_entrable('COD_TIPO_ORDEN_PAGO', false);
+		$this->add_control(new static_text('FECHA_CIERRE'));
 		
 		// computed y accumulate
 		$this->set_computed('TOTAL_NETO_POP_C', '[TOTAL_NETO_POP]');
@@ -530,24 +532,25 @@ class wi_participacion extends w_input {
 			}	
 						
 			$sql_item_crea_desde = "select 'N' SELECCION 
-						,null COD_ORDEN_PAGO_PARTICIPACION 
-						,null COD_PARTICIPACION 
-						,COD_ORDEN_PAGO 
-						,convert(nvarchar, FECHA_ORDEN_PAGO, 103) FECHA_ORDEN_PAGO 
-						,OP.COD_NOTA_VENTA 
-						,convert(nvarchar, FECHA_NOTA_VENTA, 103) FECHA_NOTA_VENTA
-						,E.NOM_EMPRESA 
-						,dbo.f_op_por_asignar(OP.COD_ORDEN_PAGO) TOTAL_NETO_POP 
-						,dbo.f_op_por_asignar(OP.COD_ORDEN_PAGO) TOTAL_NETO_POP_C 
-						,".self::K_ESTADO_PARTICIPACION_EMITIDA." COD_ESTADO_PARTICIPACION 
-						,COD_TIPO_ORDEN_PAGO 
-				from ORDEN_PAGO OP, NOTA_VENTA NV, EMPRESA E
-				where dbo.f_op_por_asignar(OP.COD_ORDEN_PAGO) <> 0
-				and OP.COD_EMPRESA = ".$cod_empresa."
-				and ($cod_tipo_op = 99 or COD_TIPO_ORDEN_PAGO = $cod_tipo_op)
-				and NV.COD_NOTA_VENTA = OP.COD_NOTA_VENTA
-				and E.COD_EMPRESA = NV.COD_EMPRESA
-        and YEAR(FECHA_ORDEN_PAGO) > 2020
+									,null COD_ORDEN_PAGO_PARTICIPACION 
+									,null COD_PARTICIPACION 
+									,COD_ORDEN_PAGO 
+									,convert(nvarchar, FECHA_ORDEN_PAGO, 103) FECHA_ORDEN_PAGO 
+									,OP.COD_NOTA_VENTA 
+									,convert(nvarchar, FECHA_NOTA_VENTA, 103) FECHA_NOTA_VENTA
+									,E.NOM_EMPRESA 
+									,dbo.f_op_por_asignar(OP.COD_ORDEN_PAGO) TOTAL_NETO_POP 
+									,dbo.f_op_por_asignar(OP.COD_ORDEN_PAGO) TOTAL_NETO_POP_C 
+									,".self::K_ESTADO_PARTICIPACION_EMITIDA." COD_ESTADO_PARTICIPACION 
+									,COD_TIPO_ORDEN_PAGO
+									,convert(varchar(20), NV.FECHA_CIERRE, 103) FECHA_CIERRE
+							from ORDEN_PAGO OP, NOTA_VENTA NV, EMPRESA E
+							where dbo.f_op_por_asignar(OP.COD_ORDEN_PAGO) <> 0
+							and OP.COD_EMPRESA = ".$cod_empresa."
+							and ($cod_tipo_op = 99 or COD_TIPO_ORDEN_PAGO = $cod_tipo_op)
+							and NV.COD_NOTA_VENTA = OP.COD_NOTA_VENTA
+							and E.COD_EMPRESA = NV.COD_EMPRESA
+					and YEAR(FECHA_ORDEN_PAGO) > 2020
 				".$select_centro_costo;
 
 			if ($es_sueldo=='S') 
@@ -643,7 +646,8 @@ class wi_participacion extends w_input {
 							when 'BH' then 'Total Líquido' 
 							when 'FA' then 'Total c/IVA' 
 							when 'SUELDO' then 'Total' 
-						end LABEL_TOTAL
+						end LABEL_TOTAL,
+						convert(varchar(20), NV.FECHA_CIERRE, 103) FECHA_CIERRE
 				from	PARTICIPACION P, PARTICIPACION_ORDEN_PAGO POP, ORDEN_PAGO OP
 						, NOTA_VENTA NV, EMPRESA E, USUARIO U
 				where	P.COD_PARTICIPACION = $cod_participacion

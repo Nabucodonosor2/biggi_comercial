@@ -267,3 +267,30 @@ function imprime_ccosto(){
 		$("#imprime_costo").val('N');
 	}
 }
+
+function request_orden_compra(ve_prompt, ve_valor){
+	const urlRequest = "../../../trunk/appl/orden_compra/request_orden_compra.php?prompt="+URLEncode(ve_prompt)+"&valor="+URLEncode(ve_valor);
+	$.showModalDialog({
+		 url: urlRequest,
+		 dialogArguments: '',
+		 height: 200,
+		 width: 360,
+		 scrollable: false,
+		 onClose: function(){ 
+		 	const returnValue = this.returnValue;
+		 	if(returnValue == null)	
+				return false;		
+			else{
+				const input = document.createElement("input");
+								input.setAttribute("type", "hidden");
+								input.setAttribute("name", "b_cambio_estado_x");
+								input.setAttribute("id", "b_cambio_estado_x");
+								document.getElementById("output").appendChild(input);
+
+				document.getElementById('wo_hidden').value = returnValue;
+				document.output.submit();
+				return true;
+			} 
+		}
+	});			
+}

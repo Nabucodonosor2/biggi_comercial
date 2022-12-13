@@ -71,7 +71,7 @@ class wo_orden_compra_base extends w_output_biggi {
 		$this->dw_check_box->retrieve();
    	}
 	function redraw(&$temp){
-		parent::redraw(&$temp);
+		parent::redraw($temp);
 		$this->dw_check_box->habilitar($temp, true);
 	}	
    	function procesa_event() {

@@ -35,6 +35,8 @@ class header_estado extends header_output {
 }
 
 class wo_orden_compra extends wo_orden_compra_base {
+	const K_AUTORIZA_CAMBIA_ESTADO = '991580';
+	
    	function wo_orden_compra() {
    		$this->checkbox_sumar = false;
    		
@@ -135,18 +137,103 @@ class wo_orden_compra extends wo_orden_compra_base {
 		$this->dw_check_box->retrieve();
    	}
    	
-	function redraw(&$temp){
-		parent::redraw(&$temp);
-		
-		$priv = $this->get_privilegio_opcion_usuario(self::K_AUTORIZA_AGREGAR, $this->cod_usuario);
-		if ($priv=='E') {
-			$this->habilita_boton($temp, 'add', true);
-      	}
-      	else {
-			$this->habilita_boton($temp, 'add', false);
-      	}
+	function procesa_event(){
+		if(isset($_POST['b_cambio_estado_x'])){
+			/*if($this->actualiza_estado($_POST['wo_hidden']))
+				$this->alert('Se ha realizado la actualizacion con éxito');
+			else
+				$this->alert('Error');*/
+			$this->actualiza_estado($_POST['wo_hidden']);
+			$this->retrieve();	
+		}else{
+			parent::procesa_event();
+		}	
 	}
 
-}
+	function actualiza_estado($valores){
+		$db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
+		$arr = explode('|', $valores);
+		$cod_orden_compra = $arr[0];
+		$cod_estado_oc_actual = $arr[1];
+		$cod_estado_oc_nuevo = "";
+		$cod_usuario = session::get("COD_USUARIO");
 
+		if($cod_estado_oc_actual == 1)
+			$cod_estado_oc_nuevo = 3;
+		else
+			$cod_estado_oc_nuevo = 1;
+
+		//Se actualiza estado	
+		$sp = 'spu_orden_compra';
+
+		$param	= "'ACTUALIZA_DESDE_WO'
+					,$cod_orden_compra				
+					,NULL 		
+					,NULL									
+					,NULL		
+					,$cod_estado_oc_nuevo";
+
+		if($db->EXECUTE_SP($sp, $param)){
+			//Se registra log_cambio y detalle cambio
+			$sp = 'sp_log_cambio';
+
+			$param	= "'ORDEN_COMPRA'
+					,$cod_orden_compra
+					,$cod_usuario
+					,'U'";
+
+			if($db->EXECUTE_SP($sp, $param)){
+				$cod_log_cambio = $db->GET_IDENTITY();
+
+				$sp = 'sp_detalle_cambio';
+
+				$param	= "$cod_log_cambio
+						,'COD_ESTADO_ORDEN_COMPRA'
+						,'$cod_estado_oc_actual'
+						,'$cod_estado_oc_nuevo'";
+
+				if($db->EXECUTE_SP($sp, $param))
+					return true;
+				else
+					return false;
+			}
+		}
+		return false;
+	}
+
+	function redraw(&$temp){
+		parent::redraw($temp);
+		
+		$priv = $this->get_privilegio_opcion_usuario(self::K_AUTORIZA_AGREGAR, $this->cod_usuario);
+		if ($priv=='E')
+			$this->habilita_boton($temp, 'add', true);
+      	else
+			$this->habilita_boton($temp, 'add', false);
+
+		$priv = $this->get_privilegio_opcion_usuario(self::K_AUTORIZA_CAMBIA_ESTADO, $this->cod_usuario);
+		if ($priv=='E')
+			$this->habilita_boton($temp, 'cambio_estado', true);
+			
+	}
+
+	function habilita_boton(&$temp, $boton, $habilita){
+		parent::habilita_boton($temp, $boton, $habilita);
+
+		if ($boton=='cambio_estado'){
+			if ($habilita){
+				$ruta_over = "'../../images_appl/b_".$boton."_over.jpg'";
+				$ruta_out = "'../../images_appl/b_".$boton.".jpg'";
+				$ruta_click = "'../../images_appl/b_".$boton."_click.jpg'";
+				$temp->setVar("WO_".strtoupper($boton), '<input name="b_'.$boton.'" id="b_'.$boton.'" type="button" onmouseover="entrada(this, '.$ruta_over.')" onmouseout="salida(this, '.$ruta_out.')" onmousedown="down(this, '.$ruta_click.')"'.
+								'style="cursor:pointer;height:68px;width:66px;border: 0;background-image:url(../../images_appl/b_'.$boton.'.jpg);background-repeat:no-repeat;background-position:center;border-radius: 15px;"'.
+								'onClick="request_orden_compra(\'Ingrese Nº de la Orden de Compra\',\'\');" />');
+			}else
+				$temp->setVar("WO_".strtoupper($boton), '<img src="../../images_appl/b_create_d.jpg"/>');
+		}
+		else
+			parent::habilita_boton($temp, $boton, $habilita);
+		
+	}
+	
+}
 ?>

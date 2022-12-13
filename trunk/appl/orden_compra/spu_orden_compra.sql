@@ -1,36 +1,41 @@
--------------------spu_orden_compra----------------
 ALTER PROCEDURE [dbo].[spu_orden_compra]
-			(@ve_operacion				 varchar(20)
-			,@ve_cod_orden_compra		 numeric
-			,@ve_cod_usuario		 	 numeric = NULL
-			,@ve_cod_usuario_solicita	 numeric = NULL
-			,@ve_cod_moneda				 numeric = NULL			
-			,@ve_cod_estado_orden_compra numeric = NULL
-			,@ve_cod_nota_venta			 numeric = NULL
-			,@ve_cod_cuenta_corriente 	 numeric = NULL
-			,@ve_referencia				 varchar(100)= NULL			
-			,@ve_cod_empresa			 numeric = NULL			
-			,@ve_cod_suc_factura		 numeric = NULL
-			,@ve_cod_persona			 numeric = NULL
-			,@ve_sub_total				 T_PRECIO = NULL
-			,@ve_porc_dscto1			 T_PORCENTAJE = NULL
-			,@ve_monto_dscto1			 T_PRECIO = NULL
-			,@ve_porc_dscto2			 T_PORCENTAJE = NULL
-			,@ve_monto_dscto2			 T_PRECIO = NULL
-			,@ve_total_neto				 T_PRECIO = NULL
-			,@ve_porc_iva				 T_PORCENTAJE = NULL
-			,@ve_monto_iva				 T_PRECIO = NULL
-			,@ve_total_con_iva			 T_PRECIO = NULL
-			,@ve_obs					 text = NULL
-			,@ve_motivo_anula			 varchar(100)= NULL
-			,@ve_cod_usuario_anula		 numeric = NULL
-			,@ve_ingreso_usuario_dscto1  varchar(1) = NULL
-			,@ve_ingreso_usuario_dscto2  varchar(1) = NULL
-			,@ve_tipo_orden_compra		 varchar(30) = NULL
-			,@ve_cod_doc				 numeric = NULL
-			,@ve_autorizada				 varchar(1) = NULL
-			,@ve_autorizada_20_proc		 varchar(1) = NULL
-			,@nro_orden_compra_4d		 numeric = NULL)
+			(@ve_operacion				 		varchar(20)
+			,@ve_cod_orden_compra		 		numeric
+			,@ve_cod_usuario		 	 		numeric = NULL
+			,@ve_cod_usuario_solicita	 		numeric = NULL
+			,@ve_cod_moneda				 		numeric = NULL			
+			,@ve_cod_estado_orden_compra 		numeric = NULL
+			,@ve_cod_nota_venta			 		numeric = NULL
+			,@ve_cod_cuenta_corriente 	 		numeric = NULL
+			,@ve_referencia				 		varchar(100)= NULL			
+			,@ve_cod_empresa			 		numeric = NULL			
+			,@ve_cod_suc_factura		 		numeric = NULL
+			,@ve_cod_persona			 		numeric = NULL
+			,@ve_sub_total				 		T_PRECIO = NULL
+			,@ve_porc_dscto1			 		T_PORCENTAJE = NULL
+			,@ve_monto_dscto1			 		T_PRECIO = NULL
+			,@ve_porc_dscto2			 		T_PORCENTAJE = NULL
+			,@ve_monto_dscto2			 		T_PRECIO = NULL
+			,@ve_total_neto				 		T_PRECIO = NULL
+			,@ve_porc_iva				 		T_PORCENTAJE = NULL
+			,@ve_monto_iva				 		T_PRECIO = NULL
+			,@ve_total_con_iva			 		T_PRECIO = NULL
+			,@ve_obs					 		text = NULL
+			,@ve_motivo_anula			 		varchar(100)= NULL
+			,@ve_cod_usuario_anula		 		numeric = NULL
+			,@ve_ingreso_usuario_dscto1  		varchar(1) = NULL
+			,@ve_ingreso_usuario_dscto2 		varchar(1) = NULL
+			,@ve_tipo_orden_compra		 		varchar(30) = NULL
+			,@ve_cod_doc				 		numeric = NULL
+			,@ve_autorizada				 		varchar(1) = NULL
+			,@ve_autorizada_20_proc		 		varchar(1) = NULL
+			,@nro_orden_compra_4d		 		numeric = NULL
+			,@ve_es_oc_gf_plano			 		varchar(1) = NULL
+			,@ve_autoriza_facturacion	 		varchar(1) = NULL
+			,@ve_fecha_aut_facturacion	 		datetime = NULL
+			,@ve_autoriza_monto_compra	 		varchar(1) = NULL
+			,@ve_usuario_autoriza_monto_compra	numeric = NULL
+			,@ve_creada_desde					varchar(100) = NULL)
 
 			
 
@@ -50,13 +55,27 @@ BEGIN
 				,@vl_total_neto T_PRECIO
 				,@vl_monto_iva T_PRECIO
 				,@vl_total_con_iva T_PRECIO
-				,@vl_total_neto_original T_PRECIO 
+				,@vl_total_neto_original T_PRECIO
+				,@vl_usuario_autoriza_monto_compra	numeric
+				,@vl_fecha_autoriza_monto_compra	datetime
 				
 			
 	set @kl_cod_estado_oc_anulada = 2  --- estado de la oc = anulada
    			
 	if (@ve_operacion='UPDATE') 
 		begin
+			select @vl_usuario_autoriza_monto_compra = usuario_autoriza_monto_compra
+			from orden_compra
+			where cod_orden_compra = @ve_cod_orden_compra
+			
+			if(@vl_usuario_autoriza_monto_compra IS NULL)BEGIN
+				if(@ve_autoriza_monto_compra = 'S')
+					update orden_compra
+					set usuario_autoriza_monto_compra = @ve_usuario_autoriza_monto_compra
+						,fecha_autoriza_monto_compra = getdate()
+					where cod_orden_compra = @ve_cod_orden_compra
+			END
+			
 			UPDATE [dbo].[ORDEN_COMPRA]
 			SET 	
 		        [COD_USUARIO]						=	 @ve_cod_usuario		
@@ -86,6 +105,11 @@ BEGIN
            	   	,AUTORIZADA							=	 @ve_autorizada
            	   	,AUTORIZADA_20_PROC					=	 @ve_autorizada_20_proc
            	   	,NRO_ORDEN_COMPRA_4D				=	 @nro_orden_compra_4d
+           	   	,AUTORIZA_FACTURACION				=	 @ve_autoriza_facturacion
+           	   	,FECHA_SOLICITA_FACTURACION			=	 @ve_fecha_aut_facturacion
+           	   	,AUTORIZA_MONTO_COMPRA				=	 @ve_autoriza_monto_compra
+           	   	,CREADA_DESDE						=	 @ve_creada_desde
+           	   	
 				WHERE cod_orden_compra = @ve_cod_orden_compra
 				
 
@@ -102,6 +126,18 @@ BEGIN
 			end 
 	else if (@ve_operacion='INSERT') 
 		begin
+			if(@ve_autoriza_monto_compra = 'S')BEGIN
+				set @vl_usuario_autoriza_monto_compra = @ve_cod_usuario
+				set @vl_fecha_autoriza_monto_compra = getdate()
+			END
+			
+			/*caso especial, se puede autorizar al momento de hacer insert siempre y cuando la empresa
+			  sea para TODOINOX, de lo contrario no tomara en cuenta los valores que se ingresen*/
+			if(@ve_cod_empresa <> 1302)begin
+				set @ve_autoriza_facturacion = NULL
+           	   	set @ve_fecha_aut_facturacion = NULL
+           	end   	
+			
 			INSERT INTO [dbo].[ORDEN_COMPRA]
 		       	([FECHA_ORDEN_COMPRA]
 		       	,[COD_USUARIO]
@@ -131,8 +167,14 @@ BEGIN
 				,[TOTAL_NETO_ORIGINAL]
 				,AUTORIZADA
 				,AUTORIZADA_20_PROC
-				,NRO_ORDEN_COMPRA_4D)
-			values 
+				,NRO_ORDEN_COMPRA_4D
+				,AUTORIZA_MONTO_COMPRA
+				,USUARIO_AUTORIZA_MONTO_COMPRA
+				,FECHA_AUTORIZA_MONTO_COMPRA
+				,CREADA_DESDE
+				,AUTORIZA_FACTURACION
+           	   	,FECHA_SOLICITA_FACTURACION)
+			values
 				(getdate()		 					
 				,@ve_cod_usuario		
 				,@ve_cod_usuario_solicita	
@@ -161,7 +203,13 @@ BEGIN
 				,@ve_total_neto
 				,@ve_autorizada
 				,'S'
-				,@nro_orden_compra_4d)
+				,@nro_orden_compra_4d
+				,@ve_autoriza_monto_compra
+				,@vl_usuario_autoriza_monto_compra
+				,@vl_fecha_autoriza_monto_compra
+				,@ve_creada_desde
+				,@ve_autoriza_facturacion
+           	   	,@ve_fecha_aut_facturacion)
 				
 			end 
 		else if(@ve_operacion='RECALCULA')
@@ -213,5 +261,19 @@ BEGIN
 				set	total_neto_original = @vl_total_neto				
 				where cod_orden_compra	= @ve_cod_orden_compra 
 			end	
+		end
+		else if(@ve_operacion='AUTORIZA_MONTO_OC')begin
+			SET @vl_fecha_autoriza_monto_compra = GETDATE()
+			
+			UPDATE ORDEN_COMPRA
+			SET  AUTORIZA_MONTO_COMPRA = 'S'
+				,USUARIO_AUTORIZA_MONTO_COMPRA = @ve_cod_usuario
+				,FECHA_AUTORIZA_MONTO_COMPRA = @vl_fecha_autoriza_monto_compra
+			WHERE COD_ORDEN_COMPRA = @ve_cod_orden_compra
+		end
+		else if(@ve_operacion='ACTUALIZA_DESDE_WO')begin		
+			UPDATE ORDEN_COMPRA
+			SET COD_ESTADO_ORDEN_COMPRA = @ve_cod_estado_orden_compra
+			WHERE COD_ORDEN_COMPRA = @ve_cod_orden_compra
 		end
 END

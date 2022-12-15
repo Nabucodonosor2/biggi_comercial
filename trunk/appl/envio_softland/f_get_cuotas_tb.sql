@@ -1,4 +1,5 @@
-ALTER FUNCTION [dbo].[f_get_cuotas_tb](@nro_autoriza_tb		numeric)
+ALTER FUNCTION [dbo].[f_get_cuotas_tb](@nro_autoriza_tb		numeric
+									)
 RETURNS varchar(100)
 AS
 BEGIN
@@ -16,11 +17,15 @@ BEGIN
 			select @vl_nro_cuotas_tbk = NRO_CUOTAS_TBK from DOC_INGRESO_PAGO
 			where NRO_DOC = @nro_autoriza_tb
 
-			select @vl_count_cuotas_tbk = count(NRO_AUTORIZA_TB)+1 from envio_transbank
-			where NRO_AUTORIZA_TB = @nro_autoriza_tb
+			/*select @vl_count_cuotas_tbk = count(NRO_AUTORIZA_TB)+1 from envio_transbank
+			where NRO_AUTORIZA_TB = @nro_autoriza_tb*/
 
-			select @vl_count_cuotas_tbk = count(NRO_AUTORIZA_TB) from envio_transbank
-			where NRO_AUTORIZA_TB = @nro_autoriza_tb
+			select @vl_count_cuotas_tbk = COUNT(NRO_AUTORIZA_TB)
+            from ENVIO_TRANSBANK ET
+                ,ENVIO_SOFTLAND ES
+            where NRO_AUTORIZA_TB = @nro_autoriza_tb
+            and COD_ESTADO_ENVIO in (1, 2)
+            and ET.COD_ENVIO_SOFTLAND = ES.COD_ENVIO_SOFTLAND
 
 			select @vl_count_cuotas_tbk = SUM(@vl_count_cuotas_tbk +1)
 			set @vl_retun = 'Cuota '+cast(@vl_count_cuotas_tbk as varchar) +'/'+ cast(@vl_nro_cuotas_tbk as varchar)

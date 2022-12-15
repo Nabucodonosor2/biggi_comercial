@@ -397,78 +397,89 @@ function selecciona_faprov(ve_seleccion) {
 		document.getElementById('RE_DIF_MESES_0').innerHTML = '';
 	*/
 }
-function decode_utf8( s )
-{
+function decode_utf8( s ){
   return decodeURIComponent( escape( s ) );
 }
-function request_autorizatb(ve_nro_autoriza_tb) {
 
-var nro_autoriza_valida = ''
-var nro_auto_rep = 0
+function request_autorizatb(ve_nro_autoriza_tb){
+	var nro_autoriza_valida = ''
+	var nro_auto_rep = 0
 
-
-  var aTR = get_TR('ENVIO_TRANSBANK');
-		for (i=0; i < aTR.length; i++)	{
-			vl_record = get_num_rec_field(aTR[i].id);
-	
-				nro_autoriza_valida = document.getElementById('NRO_AUTORIZA_TB_' + vl_record).value;
+  	var aTR = get_TR('ENVIO_TRANSBANK');
+	for (i=0; i < aTR.length; i++){
+		vl_record = get_num_rec_field(aTR[i].id);
+		nro_autoriza_valida = document.getElementById('NRO_AUTORIZA_TB_' + vl_record).value;
         
-				
-        
-      if  (nro_autoriza_valida == ve_nro_autoriza_tb.value){
-        
-          nro_auto_rep = nro_auto_rep + 1;
-          
+      	if (nro_autoriza_valida == ve_nro_autoriza_tb.value){
+          	nro_auto_rep = nro_auto_rep + 1;
          
-          if (nro_auto_rep > 1){
-            alert('El Nro. Autorización ya se encuentra registrado');
-            return false;
-          }
+			if (nro_auto_rep > 1){
+				alert('El Nro. Autorización ya se encuentra registrado');
+				document.getElementById('NRO_AUTORIZA_TB_' + vl_record).value = '';
+				return false;
+			}
         }
 	}
  
-
 	var vl_record = get_num_rec_field(ve_nro_autoriza_tb.id);
- 
 
 	//Ajax para saber si el nro ya esta siendo usado
 	var ajax = nuevoAjax();
 	ajax.open("GET", "ajax_ingreso_transbank.php?nro_autoriza_tb="+ve_nro_autoriza_tb.value, false);
 	ajax.send(null);
+	
 	var resp 	= URLDecode(ajax.responseText);
+	
+	if(resp == 'err1'){
+		alert('El Nro. Autorizacion ingresado NO existe');
+		document.getElementById('NRO_AUTORIZA_TB_' + vl_record).value = '';
+		return;
+	}else if(resp == 'err2-1'){
+		alert('El Nro. Autorizacion ingresado NO es del tipo Débito / Crédito');
+		document.getElementById('NRO_AUTORIZA_TB_' + vl_record).value = '';
+		return;
+	}else if(resp == 'err2-2'){
+		alert('El Nro. Autorizacion esta asociado a un ingreso pago que no esta confirmado');
+		document.getElementById('NRO_AUTORIZA_TB_' + vl_record).value = '';
+		return;
+	}else if(resp == 'err3-1'){
+		alert('El Nro. Autorizacion no se encuentra dentro del rango permitido de fecha para Débito');
+		document.getElementById('NRO_AUTORIZA_TB_' + vl_record).value = '';
+		return;
+	}else if(resp == 'err3-2'){
+		alert('El Nro. Autorizacion ya se encuentra traspasado a Softland');
+		document.getElementById('NRO_AUTORIZA_TB_' + vl_record).value = '';
+		return;
+	}else if(resp == 'err4-1'){
+		alert('El Nro. Autorizacion no se encuentra dentro del rango permitido de fecha para Crédito');
+		document.getElementById('NRO_AUTORIZA_TB_' + vl_record).value = '';
+		return;
+	}else if(resp == 'err4-2'){
+		alert('El Nro. Autorizacion excede la cantidad de traspasos a Softland según cantidad de cuotas para Crédito');
+		document.getElementById('NRO_AUTORIZA_TB_' + vl_record).value = '';
+		return;
+	}
+
     var lista 	= resp.split('|');
-//	var resp = URLDecode(ajax.responseText);
-	//var result = eval("(" + resp + ")");
-/*
-	var cod_ingreso_pago = result[0]['COD_INGRESO_PAGO'];
-	var nom_tipo_origen_pago = result[0]['NOM_TIPO_ORIGEN_PAGO'];
-	var fecha_ingreso_pago = result[0]['FECHA_INGRESO_PAGO'];
-	var cod_nota_venta = result[0]['COD_NOTA_VENTA'];
-	var razon_social = result[0]['RAZON_SOCIAL'];
-	var nom_tipo_doc_pago = URLDecode(result[0]['NOM_TIPO_DOC_PAGO']);
-	var cuotas = result[0]['CUOTAS'];
-	var cuotas_n = result[0]['CUOTAS_N'];
-*/
-//alert(lista);
-var cod_ingreso_pago = lista[0];
-var nom_tipo_origen_pago = lista[1];
-var fecha_ingreso_pago = lista[2];
-var cod_nota_venta = lista[3];
-var razon_social = lista[4];
-var nom_tipo_doc_pago = lista[5];
-//var nom_tipo_doc_pago = URLDecode(lista[5]);
- //nom_tipo_doc_pago = utf8_decode(nom_tipo_doc_pago);
-var cuotas = lista[6];
-var cuotas_n = lista[7];
-var cod_tipo_doc_pago = lista[8];
-var anno_ingreso_pago = lista[9];
-var monto_doc = lista[10];
-var razon_social_i = lista[11];
-var cod_empresa = lista[12];
-var monto_transaccion = lista[13];
+
+	var cod_ingreso_pago = lista[0];
+	var nom_tipo_origen_pago = lista[1];
+	var fecha_ingreso_pago = lista[2];
+	var cod_nota_venta = lista[3];
+	var razon_social = lista[4];
+	var nom_tipo_doc_pago = lista[5];
+	//var nom_tipo_doc_pago = URLDecode(lista[5]);
+	//nom_tipo_doc_pago = utf8_decode(nom_tipo_doc_pago);
+	var cuotas = lista[6];
+	var cuotas_n = lista[7];
+	var cod_tipo_doc_pago = lista[8];
+	var anno_ingreso_pago = lista[9];
+	var monto_doc = lista[10];
+	var razon_social_i = lista[11];
+	var cod_empresa = lista[12];
+	var monto_transaccion = lista[13];
 
 	if (cod_tipo_doc_pago != '') {
-    
 		document.getElementById('COD_INGRESO_PAGO_'+ vl_record).innerHTML = cod_ingreso_pago;
 		document.getElementById('COD_INGRESO_PAGO_I_'+ vl_record).value = cod_ingreso_pago;
 		document.getElementById('NOM_TIPO_ORIGEN_PAGO_'+ vl_record).innerHTML = nom_tipo_origen_pago;
@@ -482,14 +493,13 @@ var monto_transaccion = lista[13];
 		document.getElementById('CUOTAS_I_'+ vl_record).value = cuotas;
 		document.getElementById('CUOTAS_N_'+ vl_record).value = cuotas_n;
 		document.getElementById('COD_TIPO_DOC_PAGO_'+ vl_record).value = cod_tipo_doc_pago;
-    document.getElementById('MONTO_ABONO_'+ vl_record).value = Math.trunc(monto_doc);
-    document.getElementById('COD_EMPRESA_'+ vl_record).value = cod_empresa; 
-    document.getElementById('MONTO_DOC_'+ vl_record).innerHTML = monto_transaccion;
+		document.getElementById('MONTO_ABONO_'+ vl_record).value = Math.trunc(monto_doc);
+		document.getElementById('COD_EMPRESA_'+ vl_record).value = cod_empresa; 
+		document.getElementById('MONTO_DOC_'+ vl_record).innerHTML = monto_transaccion;
     
-      
-    if(anno_ingreso_pago < 2021){
-       alert ('El ingreso pago es de un año menor al 2022');
-     }  
+    	if(anno_ingreso_pago < 2021){
+       		alert ('El ingreso pago es de un año menor al 2022');
+    	}  
 
 	}else{
 		alert('El nro autoriza Transbank no esta permitido..');
@@ -497,6 +507,7 @@ var monto_transaccion = lista[13];
 		//document.getElementById('NRO_AUTORIZA_TB_'+ vl_record).focus;
 	}
 }
+
 //utf8 to 1251 converter (1 byte format, RU/EN support only + any other symbols) by drgluck
 function utf8_decode (aa) {
     var bb = '', c = 0;

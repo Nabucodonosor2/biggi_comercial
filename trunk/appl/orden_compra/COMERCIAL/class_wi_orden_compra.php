@@ -4,6 +4,8 @@
 /////////////////////////////////////////
 
 class wi_orden_compra extends wi_orden_compra_base {
+	const K_AUTORIZA_CAMBIA_ESTADO = '991580';
+
 	function wi_orden_compra($cod_item_menu) {
 		parent::wi_orden_compra_base($cod_item_menu);
 		$this->dws['dw_orden_compra']->add_control(new edit_text('COD_CUENTA_CORRIENTE',10,10, 'hidden'));
@@ -67,7 +69,58 @@ class wi_orden_compra extends wi_orden_compra_base {
 		$this->dws['dw_orden_compra']->set_item(0, 'AUTORIZA_FACTURACION', 'N');
 		$this->dws['dw_orden_compra']->set_item(0, 'FECHA_SOLICITA_FACTURACION', '');
 	}
-	
+
+	function habilitar(&$temp, $habilita){
+		parent::habilitar($temp, $habilita);
+		
+		$priv = $this->get_privilegio_opcion_usuario(self::K_AUTORIZA_CAMBIA_ESTADO, $this->cod_usuario);
+		$cod_estado_orden_compra	= $this->dws['dw_orden_compra']->get_item(0, 'COD_ESTADO_ORDEN_COMPRA');
+
+		if($priv=='E' && $cod_estado_orden_compra <> self::K_ESTADO_ANULADA && $this->is_new_record() == false)
+			$this->habilita_boton($temp, 'cambio_estado', true);
+	}
+
+	function habilita_boton(&$temp, $boton, $habilita){
+		parent::habilita_boton($temp, $boton, $habilita);
+
+		if($boton == 'cambio_estado'){
+			if($habilita){
+				$control = '<input name="b_'.$boton.'" id="b_'.$boton.'" src="../../images_appl/b_'.$boton.'.jpg" type="image" '.
+							'onMouseDown="MM_swapImage(\'b_'.$boton.'\',\'\',\'../../images_appl/b_'.$boton.'_click.jpg\',1)" '.
+							'onMouseUp="MM_swapImgRestore()" onMouseOut="MM_swapImgRestore()" '.
+							'onMouseOver="MM_swapImage(\'b_'.$boton.'\',\'\',\'../../images_appl/b_'.$boton.'_over.jpg\',1)" '.
+							'onclick="if(!valida_cambio_estado_oc(document.getElementById(\'COD_ORDEN_COMPRA_H_0\').value)){return false;}else{return true;}"/>';
+			}else{
+				$control = '<img src="../../images_appl/b_'.$boton.'_d.jpg">';
+			}
+			
+			$temp->setVar("WI_".strtoupper($boton), $control);
+		}else
+			parent::habilita_boton($temp, $boton, $habilita);
+	}
+
+	function procesa_event() {		
+		if(isset($_POST['b_cambio_estado_x'])){
+			$cod_orden_compra			= $this->get_key();
+			$cod_estado_orden_compra	= $this->dws['dw_orden_compra']->get_item(0, 'COD_ESTADO_ORDEN_COMPRA');
+
+			$dw_wo_orden_compra = new wo_orden_compra();
+			$valores = "$cod_orden_compra|$cod_estado_orden_compra";
+			$dw_wo_orden_compra->actualiza_estado($valores);
+
+			$sql = "select 	COD_ESTADO_ORDEN_COMPRA
+							,NOM_ESTADO_ORDEN_COMPRA
+							,ORDEN
+					from ESTADO_ORDEN_COMPRA
+					order by COD_ESTADO_ORDEN_COMPRA";
+					
+			unset($this->dws['dw_orden_compra']->controls['COD_ESTADO_ORDEN_COMPRA']);
+			$this->dws['dw_orden_compra']->add_control($control = new drop_down_dw('COD_ESTADO_ORDEN_COMPRA',$sql,150));
+			$this->_load_record();
+		}else
+			parent::procesa_event();
+	}
+
 	function print_record() {
 	    $imprime_ccosto = $_POST['imprime_costo']; 
 		$db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);

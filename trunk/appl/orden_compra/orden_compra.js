@@ -294,3 +294,30 @@ function request_orden_compra(ve_prompt, ve_valor){
 		}
 	});			
 }
+
+function valida_cambio_estado_oc(ve_cod_orden_compra){
+	const ajax = nuevoAjax();
+	ajax.open("GET", "ajax_valida_estado_od.php?cod_orden_compra="+ve_cod_orden_compra, false);
+	ajax.send(null);	
+	const resp = ajax.responseText;
+
+	if(resp == '-1'){
+		alert('La OC Nro. '+ve_cod_orden_compra+' tiene más de 12 meses de antiguedad, no se puede realizar el cambio de estado.');
+		return false;
+	}else if(resp == '1'){
+		let vl_confirm = confirm('Se cambiará a estado CERRADA la OC Nro. '+ve_cod_orden_compra+'. Esta seguro?.');
+		if(vl_confirm == false)
+			return false;
+		else
+			return true;
+	}else if(resp == '3'){
+		let vl_confirm = confirm('Se cambiará a estado EMITIDA la a OC Nro. '+ve_cod_orden_compra+'. Esta seguro?.');
+		if(vl_confirm == false)
+			return false;
+		else
+			return true;
+	}else{
+		alert('Error');
+		return false;
+	}
+}

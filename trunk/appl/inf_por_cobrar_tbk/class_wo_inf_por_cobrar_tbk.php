@@ -30,11 +30,11 @@ class wo_inf_por_cobrar_tbk extends w_informe_pantalla {
 				
 		parent::w_informe_pantalla('inf_por_cobrar_tbk', $sql, $_REQUEST['cod_item_menu']);
 
-		$this->add_header(new header_num('COD_INGRESO_PAGO', 'COD_INGRESO_PAGO', 'Ingreso Pago'));
-		$this->add_header($control = new header_date('FECHA_INGRESO_PAGO', 'FECHA_INGRESO_PAGO', 'Fecha Ingreso Pago'));
+		$this->add_header(new header_num('COD_INGRESO_PAGO', 'COD_INGRESO_PAGO', 'IP'));
+		$this->add_header($control = new header_date('FECHA_INGRESO_PAGO', 'FECHA_INGRESO_PAGO', 'F. IP'));
 		$control->field_bd_order = 'DATE_FECHA_INGRESO_PAGO';
-		$this->add_header(new header_num('COD_NOTA_VENTA', 'COD_NOTA_VENTA', 'Nota Venta'));
-		$this->add_header($control = new header_date('FECHA_NOTA_VENTA', 'FECHA_NOTA_VENTA', 'Fecha Nota Venta'));
+		$this->add_header(new header_num('COD_NOTA_VENTA', 'COD_NOTA_VENTA', 'NV'));
+		$this->add_header($control = new header_date('FECHA_NOTA_VENTA', 'FECHA_NOTA_VENTA', 'F. NV'));
 		$control->field_bd_order = 'DATE_FECHA_NOTA_VENTA';
 		$this->add_header(new header_rut('RUT_CLIENTE', 'IPCT', 'Rut'));
 		$this->add_header(new header_text('RAZON_SOCIAL', "RAZON_SOCIAL", 'Cliente'));
@@ -44,7 +44,7 @@ class wo_inf_por_cobrar_tbk extends w_informe_pantalla {
 		$this->add_header(new header_num('MONTO_CREDITO', 'MONTO_CREDITO', 'Monto Crédito'));
 		$this->add_header(new header_num('COMISION_CREDITO', 'COMISION_CREDITO', 'Comisión Crédito'));
 		$this->add_header(new header_num('CUOTAS_CREDITO', 'CUOTAS_CREDITO', 'Cuotas Crédito'));
-		$this->add_header(new header_num('TOTAL_POR_COBRAR', 'TOTAL_POR_COBRAR', 'Monto x Cobrar TBK', 0, true, 'SUM'));
+		$this->add_header(new header_num('TOTAL_POR_COBRAR', 'TOTAL_POR_COBRAR', 'X Cobrar TBK', 0, true, 'SUM'));
 
 		$this->dw->add_control(new static_num('RUT_CLIENTE'));
 		$this->dw->add_control(new static_num('TOTAL_CON_IVA'));
@@ -58,7 +58,7 @@ class wo_inf_por_cobrar_tbk extends w_informe_pantalla {
 
 	function make_menu(&$temp) {
 		$menu = session::get('menu_appl');
-		$menu->ancho_completa_menu = 765;
+		$menu->ancho_completa_menu = 465; //765
 		$menu->draw($temp);
 		$menu->ancho_completa_menu = 280;    // volver a setear el tamaño original
 	}

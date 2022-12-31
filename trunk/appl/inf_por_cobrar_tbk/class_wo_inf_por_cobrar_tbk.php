@@ -25,6 +25,8 @@ class wo_inf_por_cobrar_tbk extends w_informe_pantalla {
 				,COMISION_DEBITO
 				,COMISION_CREDITO
 				,TOTAL_POR_COBRAR
+				,MONTO_CUOTA_CREDITO
+				,CUOTAS_PENDIENTES
 			FROM INF_POR_COBRAR_TBK IPCT
 			ORDER BY COD_INGRESO_PAGO DESC";
 				
@@ -44,6 +46,8 @@ class wo_inf_por_cobrar_tbk extends w_informe_pantalla {
 		$this->add_header(new header_num('MONTO_CREDITO', 'MONTO_CREDITO', 'Monto Crédito'));
 		$this->add_header(new header_num('COMISION_CREDITO', 'COMISION_CREDITO', 'Comisión Crédito'));
 		$this->add_header(new header_num('CUOTAS_CREDITO', 'CUOTAS_CREDITO', 'Cuotas Crédito'));
+		$this->add_header(new header_num('MONTO_CUOTA_CREDITO', 'MONTO_CUOTA_CREDITO', 'Monto Cuota Crédito'));
+		$this->add_header(new header_num('CUOTAS_PENDIENTES', 'CUOTAS_PENDIENTES', 'Cuotas pendientes'));
 		$this->add_header(new header_num('TOTAL_POR_COBRAR', 'TOTAL_POR_COBRAR', 'X Cobrar TBK', 0, true, 'SUM'));
 
 		$this->dw->add_control(new static_num('RUT_CLIENTE'));
@@ -53,12 +57,14 @@ class wo_inf_por_cobrar_tbk extends w_informe_pantalla {
 		$this->dw->add_control(new static_num('CUOTAS_CREDITO'));
 		$this->dw->add_control(new static_num('COMISION_DEBITO'));
 		$this->dw->add_control(new static_num('COMISION_CREDITO'));
+		$this->dw->add_control(new static_num('MONTO_CUOTA_CREDITO'));
+		$this->dw->add_control(new static_num('CUOTAS_PENDIENTES'));
 		$this->dw->add_control(new static_num('TOTAL_POR_COBRAR'));
    	}
 
 	function make_menu(&$temp) {
 		$menu = session::get('menu_appl');
-		$menu->ancho_completa_menu = 465; //765
+		$menu->ancho_completa_menu = 475; //765
 		$menu->draw($temp);
 		$menu->ancho_completa_menu = 280;    // volver a setear el tamaño original
 	}

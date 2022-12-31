@@ -97,6 +97,17 @@ class wo_ingreso_pago extends w_output_biggi {
 		$this->dw_check_box->retrieve();
    	}
    	
+	function redraw_item(&$temp, $ind, $record){
+		parent::redraw_item($temp, $ind, $record);
+
+		$COD_ESTADO_INGRESO_PAGO = $this->dw->get_item($record, 'COD_ESTADO_INGRESO_PAGO');
+
+		if($COD_ESTADO_INGRESO_PAGO == 3)//Anulada
+			$temp->setVar("wo_registro.WO_COLOR_CSS", 'red');
+		else
+			$temp->setVar("wo_registro.WO_COLOR_CSS", '');	
+	}
+
 	function redraw(&$temp){
 		parent::redraw($temp);
 		$this->dw_check_box->habilitar($temp, true);

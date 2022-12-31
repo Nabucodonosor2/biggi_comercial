@@ -111,6 +111,17 @@ class wo_nota_venta extends w_output_biggi {
 		$this->add_header($control = new header_drop_down_string('PORC_FACTURADO', 'dbo.f_header_porc_facturado(NV.COD_NOTA_VENTA)', '% Facturado', $sql));
 		
     }
+	
+	function redraw_item(&$temp, $ind, $record){
+		parent::redraw_item($temp, $ind, $record);
+
+		$COD_ESTADO_NOTA_VENTA = $this->dw->get_item($record, 'COD_ESTADO_NOTA_VENTA');
+
+		if($COD_ESTADO_NOTA_VENTA == 3)//Anulada
+			$temp->setVar("wo_registro.WO_COLOR_CSS", 'red');
+		else
+			$temp->setVar("wo_registro.WO_COLOR_CSS", '');	
+	}
 
 	function crear_nv_from_cot($vl_result) {
 		$array = explode("|", $vl_result);

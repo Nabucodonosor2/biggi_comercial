@@ -28,6 +28,7 @@ class wo_inf_por_cobrar_tbk extends w_informe_pantalla {
 				,MONTO_CUOTA_CREDITO
 				,CUOTAS_PENDIENTES
 			FROM INF_POR_COBRAR_TBK IPCT
+			WHERE COD_USUARIO = $cod_usuario
 			ORDER BY COD_INGRESO_PAGO DESC";
 				
 		parent::w_informe_pantalla('inf_por_cobrar_tbk', $sql, $_REQUEST['cod_item_menu']);
@@ -60,6 +61,9 @@ class wo_inf_por_cobrar_tbk extends w_informe_pantalla {
 		$this->dw->add_control(new static_num('MONTO_CUOTA_CREDITO'));
 		$this->dw->add_control(new static_num('CUOTAS_PENDIENTES'));
 		$this->dw->add_control(new static_num('TOTAL_POR_COBRAR'));
+
+		//Registros por pagina
+		$this->row_per_page = 200;
    	}
 
 	function make_menu(&$temp) {

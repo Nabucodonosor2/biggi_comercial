@@ -113,7 +113,7 @@ else
 	
 $temp->setVar("EXCEL", $input);
 
-if($cod_usuario == 1 || $cod_usuario == 8 || $cod_usuario == 1 || $cod_usuario == 102 || $cod_usuario == 71)
+if($cod_usuario == 1 || $cod_usuario == 8 || $cod_usuario == 11 || $cod_usuario == 102 || $cod_usuario == 71)
 	$temp->setVar("DISPLAY_CAD", '');
 else
 	$temp->setVar("DISPLAY_CAD", 'none');

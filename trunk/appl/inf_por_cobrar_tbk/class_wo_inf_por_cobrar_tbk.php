@@ -42,9 +42,9 @@ class wo_inf_por_cobrar_tbk extends w_informe_pantalla {
 		$this->add_header(new header_rut('RUT_CLIENTE', 'IPCT', 'Rut'));
 		$this->add_header(new header_text('RAZON_SOCIAL', "RAZON_SOCIAL", 'Cliente'));
 		$this->add_header(new header_num('TOTAL_CON_IVA', 'TOTAL_CON_IVA', 'Total Con IVA NV'));
-		$this->add_header(new header_num('MONTO_DEBITO', 'MONTO_DEBITO', 'Monto Débito'));
+		$this->add_header(new header_num('MONTO_DEBITO', 'MONTO_DEBITO', 'Monto Débito', 0, true, 'SUM'));
 		$this->add_header(new header_num('COMISION_DEBITO', 'COMISION_DEBITO', 'Comisión Débito'));
-		$this->add_header(new header_num('MONTO_CREDITO', 'MONTO_CREDITO', 'Monto Crédito'));
+		$this->add_header(new header_num('MONTO_CREDITO', 'MONTO_CREDITO', 'Monto Crédito', 0, true, 'SUM'));
 		$this->add_header(new header_num('COMISION_CREDITO', 'COMISION_CREDITO', 'Comisión Crédito'));
 		$this->add_header(new header_num('CUOTAS_CREDITO', 'CUOTAS_CREDITO', 'Cuotas Crédito'));
 		$this->add_header(new header_num('MONTO_CUOTA_CREDITO', 'MONTO_CUOTA_CREDITO', 'Monto Cuota Crédito'));

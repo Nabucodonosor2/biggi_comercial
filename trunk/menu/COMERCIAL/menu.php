@@ -58,29 +58,29 @@ $arriendo = array(new item_menu('Arriendo Cotizacion', '2005', "../../../commonl
 				//,new item_menu('Traspaso entre bodega', '2060', "../../../commonlib/trunk/php/mantenedor.php?modulo=traspaso_bodega&cod_item_menu=2060")
 				);
 				
-$administracion = array( new item_menu('Ingreso Pago', '2505', "../../../commonlib/trunk/php/mantenedor.php?modulo=ingreso_pago&cod_item_menu=2505"),
-				new item_menu('Bitácora Cobranza', '2510', "../../../commonlib/trunk/php/mantenedor.php?modulo=bitacora_factura&cod_item_menu=2510"),
-				new item_menu('-'),
-				new item_menu('Depósito', '2515', "../../../commonlib/trunk/php/mantenedor.php?modulo=deposito&cod_item_menu=2515"),
-				new item_menu('-'),
-				new item_menu('Asignación Documentos', '2520', "../../../commonlib/trunk/php/mantenedor.php?modulo=asig_nro_doc_sii&cod_item_menu=2520"),
-				new item_menu('-'),
-				new item_menu('Participación Nota Venta', '2527', "../../../commonlib/trunk/php/mantenedor.php?modulo=orden_pago&cod_item_menu=2527"),
-				new item_menu('Pago Participación', '2528', "../../../commonlib/trunk/php/mantenedor.php?modulo=participacion&cod_item_menu=2528"),
-                new item_menu('Cartola Participación', '2529', "../../../commonlib/trunk/php/mantenedor.php?modulo=cartola_participacion&cod_item_menu=2529"),
-				new item_menu('-'),
-				new item_menu('FA Proveedor', '2525', "../../../commonlib/trunk/php/mantenedor.php?modulo=faprov&cod_item_menu=2525"),
-				new item_menu('NC Proveedor', '2526',"../../../commonlib/trunk/php/mantenedor.php?modulo=ncprov&cod_item_menu=2526"),
-				new item_menu('Pago Proveedor', '2530', "../../../commonlib/trunk/php/mantenedor.php?modulo=pago_faprov&cod_item_menu=2530"),
-				new item_menu('Pago Directorio', '2535', "../../../commonlib/trunk/php/mantenedor.php?modulo=pago_directorio&cod_item_menu=2535"),
-				new item_menu('-'),
-				new item_menu('Traspaso Softland', '2545', "../../../commonlib/trunk/php/mantenedor.php?modulo=envio_softland&cod_item_menu=2545"),
-				new item_menu('-'),
-				new item_menu('Gasto Fijo', '2550', "../../../commonlib/trunk/php/mantenedor.php?modulo=gasto_fijo&cod_item_menu=2550"),
-				new item_menu('Documentos ADM', '2560', "../appl/cheque_renta/cheque_renta.php"),
-				new item_menu('-'),
-				new item_menu('Facturas Rechazadas', '2590', "../../../commonlib/trunk/php/mantenedor.php?modulo=factura_rechazada&cod_item_menu=2590"),
-				new item_menu('Cheque Rental', '2560', "../appl/cheque_renta/cheque_renta.php"));
+$administracion = array(new item_menu('Ingreso Pago', '2505', "../../../commonlib/trunk/php/mantenedor.php?modulo=ingreso_pago&cod_item_menu=2505"),
+						new item_menu('Bitácora Cobranza', '2510', "../../../commonlib/trunk/php/mantenedor.php?modulo=bitacora_factura&cod_item_menu=2510"),
+						new item_menu('-'),
+						new item_menu('Depósito', '2515', "../../../commonlib/trunk/php/mantenedor.php?modulo=deposito&cod_item_menu=2515"),
+						new item_menu('-'),
+						new item_menu('Asignación Documentos', '2520', "../../../commonlib/trunk/php/mantenedor.php?modulo=asig_nro_doc_sii&cod_item_menu=2520"),
+						new item_menu('-'),
+						new item_menu('Participación Nota Venta', '2527', "../../../commonlib/trunk/php/mantenedor.php?modulo=orden_pago&cod_item_menu=2527"),
+						new item_menu('Pago Participación', '2528', "../../../commonlib/trunk/php/mantenedor.php?modulo=participacion&cod_item_menu=2528"),
+						new item_menu('Cartola Participación', '2529', "../../../commonlib/trunk/php/mantenedor.php?modulo=cartola_participacion&cod_item_menu=2529"),
+						new item_menu('-'),
+						new item_menu('FA Proveedor', '2525', "../../../commonlib/trunk/php/mantenedor.php?modulo=faprov&cod_item_menu=2525"),
+						new item_menu('NC Proveedor', '2526',"../../../commonlib/trunk/php/mantenedor.php?modulo=ncprov&cod_item_menu=2526"),
+						new item_menu('Pago Proveedor', '2530', "../../../commonlib/trunk/php/mantenedor.php?modulo=pago_faprov&cod_item_menu=2530"),
+						new item_menu('Pago Directorio', '2535', "../../../commonlib/trunk/php/mantenedor.php?modulo=pago_directorio&cod_item_menu=2535"),
+						new item_menu('-'),
+						new item_menu('Traspaso Softland', '2545', "../../../commonlib/trunk/php/mantenedor.php?modulo=envio_softland&cod_item_menu=2545"),
+						new item_menu('-'),
+						new item_menu('Gasto Fijo', '2550', "../../../commonlib/trunk/php/mantenedor.php?modulo=gasto_fijo&cod_item_menu=2550"),
+						new item_menu('Documentos ADM', '2560', "../appl/cheque_renta/cheque_renta.php"),
+						new item_menu('-'),
+						new item_menu('Facturas Rechazadas', '2590', "../../../commonlib/trunk/php/mantenedor.php?modulo=factura_rechazada&cod_item_menu=2590"),
+						new item_menu('Cheque Rental', '2560', "../appl/cheque_renta/cheque_renta.php"));
 																				
 $bodega = array( new item_menu('Entrada', '3015', "../../../commonlib/trunk/php/mantenedor.php?modulo=entrada_bodega&cod_item_menu=3015")
 				,new item_menu('Salida', '3020', "../../../commonlib/trunk/php/mantenedor.php?modulo=salida_bodega&cod_item_menu=3020")
@@ -90,30 +90,31 @@ $bodega = array( new item_menu('Entrada', '3015', "../../../commonlib/trunk/php/
                 ,new item_menu('Traspaso Bodega', '3040', "../../../commonlib/trunk/php/mantenedor.php?modulo=traspaso_bodega&cod_item_menu=3040")
 				,new item_menu('-')
 				,new item_menu('Inventario', '3025', "../../../commonlib/trunk/php/informe.php?informe=inf_bodega_inventario&cod_item_menu=3025")
-				,new item_menu('Inventario Valorizado', '3030', "../../../commonlib/trunk/php/informe.php?informe=inf_bodega_stock&cod_item_menu=3030")
-				);
-								
-$informes = array(new item_menu('Ventas por Mes', '4005', "../appl/inf_ventas_por_mes/inf_ventas_por_mes.php"),
-				new item_menu('Facturas por Equipo', '4015', "../appl/inf_ventas_por_equipo/inf_ventas_por_equipo.php"),
-				new item_menu('Equipos por despachar', '4017', "../../../commonlib/trunk/php/mantenedor.php?modulo=inf_por_despachar&cod_item_menu=4017"),
-				new item_menu('GD por facturar', '4020', "../../../commonlib/trunk/php/mantenedor.php?modulo=inf_guia_despacho_por_facturar&cod_item_menu=4020"),
-				new item_menu('Por cobrar Transbank', '4030', "../../../commonlib/trunk/php/mantenedor.php?modulo=inf_por_cobrar_tbk&cod_item_menu=4030"),				
-				new item_menu('Facturas por Cobrar', '4035', "../../../commonlib/trunk/php/mantenedor.php?modulo=inf_facturas_por_cobrar&cod_item_menu=4035"),
-				new item_menu('Facturas por Cliente', '4060', "../appl/inf_facturas_por_cliente/inf_facturas_por_cliente.php"),
-				new item_menu('Facturas por Mes', '4065', "../appl/inf_facturas_por_mes/inf_facturas_por_mes.php"),
-				new item_menu('Informe Resultado', '4070', "../appl/inf_resultado/inf_resultado.php"),
-				new item_menu('Informe Backcharge', '4075', "../appl/inf_backcharge/inf_backcharge.php"),
-				new item_menu('OC Pendientes por Facturar desde TDNX', '4095', "../../../commonlib/trunk/php/mantenedor.php?modulo=inf_oc_por_facturar_tdnx&cod_item_menu=4095"),
-				new item_menu('OC Pendientes por Facturar desde Bodega Biggi', '4097', "../../../commonlib/trunk/php/mantenedor.php?modulo=inf_oc_por_facturar_bodega&cod_item_menu=4097"),
-				new item_menu('Informe Cheque a fecha', '4098', "../../../commonlib/trunk/php/mantenedor.php?modulo=inf_cheque_fecha&cod_item_menu=4098"),
-				new item_menu('Informe Pre-IVA', '4099', "../appl/inf_pre_iva/inf_pre_iva.php")
-				);
+				,new item_menu('Inventario Valorizado', '3030', "../../../commonlib/trunk/php/informe.php?informe=inf_bodega_stock&cod_item_menu=3030"));
+
+$informes = array(new item_menu('Facturas por Equipo', '4015', "../appl/inf_ventas_por_equipo/inf_ventas_por_equipo.php")
+				 ,new item_menu('Equipos por despachar', '4017', "../../../commonlib/trunk/php/mantenedor.php?modulo=inf_por_despachar&cod_item_menu=4017")
+				 ,new item_menu('GD por facturar', '4020', "../../../commonlib/trunk/php/mantenedor.php?modulo=inf_guia_despacho_por_facturar&cod_item_menu=4020")
+				 ,new item_menu('OC Pendientes por Facturar desde TDNX', '4095', "../../../commonlib/trunk/php/mantenedor.php?modulo=inf_oc_por_facturar_tdnx&cod_item_menu=4095")
+				 ,new item_menu('OC Pendientes por Facturar desde Bodega Biggi', '4097', "../../../commonlib/trunk/php/mantenedor.php?modulo=inf_oc_por_facturar_bodega&cod_item_menu=4097")
+				 ,new item_menu('-')
+				 ,new item_menu('Ventas por Mes', '4005', "../appl/inf_ventas_por_mes/inf_ventas_por_mes.php")
+				 ,new item_menu('Facturas por Mes', '4065', "../appl/inf_facturas_por_mes/inf_facturas_por_mes.php")
+				 ,new item_menu('Informe Resultado', '4070', "../appl/inf_resultado/inf_resultado.php")
+				 ,new item_menu('Informe Backcharge', '4075', "../appl/inf_backcharge/inf_backcharge.php")
+				 ,new item_menu('-')
+				 ,new item_menu('Facturas por Cobrar', '4035', "../../../commonlib/trunk/php/mantenedor.php?modulo=inf_facturas_por_cobrar&cod_item_menu=4035")
+				 ,new item_menu('Por cobrar Transbank', '4030', "../../../commonlib/trunk/php/mantenedor.php?modulo=inf_por_cobrar_tbk&cod_item_menu=4030")
+				 ,new item_menu('Informe Cheque a fecha', '4098', "../../../commonlib/trunk/php/mantenedor.php?modulo=inf_cheque_fecha&cod_item_menu=4098")
+				 ,new item_menu('Facturas por Cliente', '4060', "../appl/inf_facturas_por_cliente/inf_facturas_por_cliente.php")
+				 ,new item_menu('-')
+				 ,new item_menu('Informe Pre-IVA', '4099', "../appl/inf_pre_iva/inf_pre_iva.php")
+				);				
 				
 $menu = new menu(array(new item_menu('Archivo', '05', '', $archivo), 
 						new item_menu('Maestros', '10', '', $maestro),
 						new item_menu('Ventas', '10', '', $ventas),
 						new item_menu('Administración', '10', '', $administracion),
 						new item_menu('Bodega', '10', '', $bodega),
-						new item_menu('Informes', '10', '', $informes))
-				,280);
+						new item_menu('Informes', '10', '', $informes)),280);
 ?>

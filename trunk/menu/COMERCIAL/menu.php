@@ -60,8 +60,8 @@ $arriendo = array(new item_menu('Arriendo Cotizacion', '2005', "../../../commonl
 				
 $administracion = array(new item_menu('Ingreso Pago', '2505', "../../../commonlib/trunk/php/mantenedor.php?modulo=ingreso_pago&cod_item_menu=2505"),
 						new item_menu('Bitácora Cobranza', '2510', "../../../commonlib/trunk/php/mantenedor.php?modulo=bitacora_factura&cod_item_menu=2510"),
-						new item_menu('-'),
-						new item_menu('Depósito', '2515', "../../../commonlib/trunk/php/mantenedor.php?modulo=deposito&cod_item_menu=2515"),
+						//new item_menu('-'),
+						//new item_menu('Depósito', '2515', "../../../commonlib/trunk/php/mantenedor.php?modulo=deposito&cod_item_menu=2515"),
 						new item_menu('-'),
 						new item_menu('Asignación Documentos', '2520', "../../../commonlib/trunk/php/mantenedor.php?modulo=asig_nro_doc_sii&cod_item_menu=2520"),
 						new item_menu('-'),

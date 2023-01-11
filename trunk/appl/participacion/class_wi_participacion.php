@@ -31,6 +31,7 @@ class dw_participacion_orden_pago extends datawindow {
 					,P.COD_ESTADO_PARTICIPACION
 					,OP.COD_TIPO_ORDEN_PAGO
 					,convert(varchar(20), NV.FECHA_CIERRE, 103) FECHA_CIERRE
+					,'S' VISIBLE_TR
 				from PARTICIPACION P, PARTICIPACION_ORDEN_PAGO POP, ORDEN_PAGO OP, NOTA_VENTA NV, EMPRESA E
 				where P.COD_PARTICIPACION = {KEY1} and
 					POP.COD_PARTICIPACION = P.COD_PARTICIPACION and
@@ -53,6 +54,7 @@ class dw_participacion_orden_pago extends datawindow {
 		$this->add_control(new drop_down_dw('COD_TIPO_ORDEN_PAGO', $sql_tipo_op,125));
 		$this->set_entrable('COD_TIPO_ORDEN_PAGO', false);
 		$this->add_control(new static_text('FECHA_CIERRE'));
+		$this->add_control(new edit_text_hidden('VISIBLE_TR'));
 		
 		// computed y accumulate
 		$this->set_computed('TOTAL_NETO_POP_C', '[TOTAL_NETO_POP]');
@@ -544,6 +546,7 @@ class wi_participacion extends w_input {
 									,".self::K_ESTADO_PARTICIPACION_EMITIDA." COD_ESTADO_PARTICIPACION 
 									,COD_TIPO_ORDEN_PAGO
 									,convert(varchar(20), NV.FECHA_CIERRE, 103) FECHA_CIERRE
+									,'S' VISIBLE_TR
 							from ORDEN_PAGO OP, NOTA_VENTA NV, EMPRESA E
 							where dbo.f_op_por_asignar(OP.COD_ORDEN_PAGO) <> 0
 							and OP.COD_EMPRESA = ".$cod_empresa."

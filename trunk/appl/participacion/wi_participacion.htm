@@ -150,7 +150,7 @@
 																<table width="1000" rules="none" border="1" align="center" class="claro" id="PARTICIPACION_ORDEN_PAGO">								
 																	<!-- startBlock(PARTICIPACION_ORDEN_PAGO) -->
 																	 <tr class="{DW_TR_CSS}" id="{DW_TR_ID}">
-																		<td width="9%" align="center">{COD_ORDEN_PAGO}</td>
+																		<td width="9%" align="center">{COD_ORDEN_PAGO}{VISIBLE_TR}</td>
 																		<td width="9%" align="center">{FECHA_ORDEN_PAGO}</td>
 																		<td width="9%">{COD_TIPO_ORDEN_PAGO}</td>
 																		<td width="9%" align="center">{COD_NOTA_VENTA}</td>
@@ -176,8 +176,10 @@
 													<table width="1000" align="center" border="0" rules="none">											
 														<tr class="encabezado_right">
 															<td colspan="2" class="claro" align="left">
-																<input type="button" value="Dejar Selección" class="Button" onClick="muestra_lista_op('none');" {DISABLE_BUTTON_SELECCION}>
-																<input type="button" value="Volver a todo el listado" class="Button" onClick="muestra_lista_op('');" {DISABLE_BUTTON_TODO}>
+																<input type="button" value="Dejar Selección" class="Button" onClick="muestra_lista_op('none');" {DISABLE_BUTTON_SELECCION} />
+																<input type="button" value="Volver a todo el listado" class="Button" onClick="muestra_lista_op('');" {DISABLE_BUTTON_TODO} />
+																<input type="button" value="Seleccionar todo" class="Button" onClick="seleccionarTodo();"/>
+															</td>	
 														</tr>													
 													</table>
 												</div>	

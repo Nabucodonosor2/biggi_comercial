@@ -158,11 +158,11 @@ function dlg_centro_costo(ve_cod_tipo_op){
     }
 }
 function muestra_lista_op(ve_visible){
-/*
-esta funcion realiza dos acciones:
-1.- dado el boton "Dejar Selección" solo despliega las OP seleccionadas
-2.- dado el boton "Volver a todo el listado" despliega todas las OP.
-*/
+	/*
+	esta funcion realiza dos acciones:
+	1.- dado el boton "Dejar Selección" solo despliega las OP seleccionadas
+	2.- dado el boton "Volver a todo el listado" despliega todas las OP.
+	*/
 	var aTR = get_TR('PARTICIPACION_ORDEN_PAGO');
 	for (i=0; i<aTR.length; i++){
 		var rec_tr = get_num_rec_field(aTR[i].id);
@@ -170,10 +170,30 @@ esta funcion realiza dos acciones:
 		if(seleccion == false){
 			var tr_anula = document.getElementById('PARTICIPACION_ORDEN_PAGO_' + rec_tr);
 			tr_anula.style.display = ve_visible;
+
+			if(ve_visible == 'none')
+				document.getElementById('VISIBLE_TR_' + rec_tr).value = 'N';
+			else
+				document.getElementById('VISIBLE_TR_' + rec_tr).value = 'S';
 		}
 	}//fin for	
 }
- function mostrarOcultar_Anula() {
+
+function seleccionarTodo(){
+	const trParticipacion = get_TR('PARTICIPACION_ORDEN_PAGO');
+	for (i=0; i < trParticipacion.length; i++){
+		let rec_tr = get_num_rec_field(trParticipacion[i].id);
+		const seleccion = document.getElementById('SELECCION_' + rec_tr);
+		const visibleTr = document.getElementById('VISIBLE_TR_' + rec_tr);
+		
+		if(seleccion.checked == false && visibleTr.value == 'S'){
+			seleccion.checked = true;
+			asignacion_monto(seleccion);
+		}
+	}
+}
+
+function mostrarOcultar_Anula() {
 	var tr_anula = document.getElementById('tr_anula');
 	var cod_estado_participacion = get_value('COD_ESTADO_PARTICIPACION_0'); 
 	
@@ -191,6 +211,7 @@ esta funcion realiza dos acciones:
 	}
 	return true;
 }
+
 function asignacion_monto(ve_seleccion) {	
 	var seleccion = ve_seleccion.checked;
 	var record = get_num_rec_field(ve_seleccion.id);

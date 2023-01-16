@@ -5,6 +5,7 @@
 <title>Sistema Grupo de Empresas Biggi</title>
 <link href="{W_CSS}" rel="stylesheet" type="text/css">
 <script charset="iso-8859-1" src="../../../../commonlib/trunk/script_js/general.js" type="text/javascript"></script>
+<script charset="iso-8859-1" src="factura_rechazada.js" type="text/javascript"></script>
 <script type="text/javascript">
 function entrada(objeto, url)
 {
@@ -30,7 +31,8 @@ function down(objeto, url)
 <!-- ******** END ALLWEBMENUS CODE FOR menu ******** -->
 <form action="" method="post" name="output" id="output">
 <input name="wo_hidden" id="wo_hidden" type="hidden" value="">
-<table width="1050" border="0" align="center">
+<input name="wo_hidden2" id="wo_hidden2" type="hidden" value="">
+<table width="1200" border="0" align="center">
 	<tr bgcolor="#FFFFFF">
 		<!-- menu superior-->
 		<td width="1000"  height="30" align="center" id="awmAnchor-menu" style="width:100px; height:50px;">
@@ -40,7 +42,7 @@ function down(objeto, url)
 	</tr>
 	<tr bgcolor="#FFFFFF">
 		<td>
-			<table width="1000" border="0">
+			<table width="1150" border="0">
 				<tr>
 					<td>
 						<table width="592" border="0">
@@ -62,29 +64,39 @@ function down(objeto, url)
 	</tr>
 	<tr bgcolor="#FFFFFF">
 		<td>	  
-			<table width="1000" border="0" align="center" height="570">
+			<table width="1150" border="0" align="center" height="570">
 				<tr bgcolor="#FFFFFF" height="520">
 					<td valign="top">
-						<table width="1000" border="0" align="center">
+						<table width="1150" border="0" align="center">
 							<tr class="encabezado_center">
-								<th width="15%">Detalle</th>
-								<th width="17%">{H_COD_FACTURA_RECHAZADA}</th>
-								<th width="17%">{H_NRO_FACTURA}</th>
-								<th width="17%">{H_FECHA_RECHAZO}</th>
-								<th width="17%">{H_RESUELTA}</th>
-								<th width="17%">{H_NOM_USUARIO}</th>
+								<th width="3%"></th>
+								<th width="6%">{H_NRO_FACTURA}</th>
+								<th width="8%">{H_FECHA_FACTURA}</th>
+								<th width="8%">{H_RUT}</th>
+								<th width="32%">{H_NOM_EMPRESA}</th>
+								<th width="5%">{H_INI_USUARIO}</th>
+								<th width="9%">{H_RESUELTA}</th>
+								<th width="9%">{H_FECHA_RECHAZO}</th>
+								<th width="9%">{H_TOTAL_CON_IVA}</th>
+								<th width="7%">{H_COD_DOC}</th>
+								<th width="4%">PDF</th>
 							</tr>
 						</table>
-					<div style="overflow-x:hidden; overflow-y:auto; height:476; width=746";>						
-						<table width="1000" border="0" align="center">
+					<div style="overflow-x:hidden; overflow-y:auto; height:476;">						
+						<table width="1150" border="0" align="center">
 							<!-- startBlock(wo_registro) -->
 							<tr class="{WO_TR_CSS}">
-								<td width="15%" align="center">{WO_DETALLE}</td>
-								<td width="17%" align="center">{COD_FACTURA_RECHAZADA}</td>
-								<td width="17%" align="center">{NRO_FACTURA}</td>
-								<td width="17%" align="center">{FECHA_RECHAZO}</td>
-								<td width="17%" align="center">{RESUELTA}</td>
-								<td width="17%" align="left">{NOM_USUARIO}</td>							 								
+								<td width="3%" align="center">{WO_DETALLE}</td>
+								<td width="6%" align="center">{NRO_FACTURA}</td>
+								<td width="8%" align="center">{FECHA_FACTURA}</td>
+								<td width="8%" align="right">{RUT}-{DIG_VERIF}</td>
+								<td width="32%">{NOM_EMPRESA}</td>
+								<td width="5%">{INI_USUARIO}</td>
+								<td width="9%" align="center">{RESUELTA}</td>
+								<td width="9%" align="center">{FECHA_RECHAZO}</td>
+								<td width="9%" align="right">{TOTAL_CON_IVA}</td>
+							    <td width="7%" align="center">{COD_DOC}</td>
+								<td width="4%" align="center"><div style="padding-right:20px;">{WO_PRINT_DTE}</div></td>
 							</tr>
 							<!-- endBlock(wo_registro) -->
 						</table>
@@ -93,7 +105,7 @@ function down(objeto, url)
 				</tr>		
 				<tr bgcolor="#FFFFFF" height="28">
 					<td>						
-						<table width="1000" border="0" align="center">
+						<table width="1150" border="0" align="center">
 							<tr valign="middle">
 								<td width="290" >{WO_BACK}</td>
 								<td align="right">{WO_FIRST}{WO_PREV}</td>

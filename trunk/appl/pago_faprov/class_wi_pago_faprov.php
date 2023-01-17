@@ -885,6 +885,7 @@ class wi_pago_faprov_base extends w_input {
 			 FROM 	FAPROV F left outer join CUENTA_COMPRA c on c.COD_CUENTA_COMPRA = f.COD_CUENTA_COMPRA
 							 left outer join CUENTA_CORRIENTE cc on c.COD_CUENTA_CORRIENTE = cc.COD_CUENTA_CORRIENTE
 			 WHERE 	F.COD_EMPRESA = $cod_empresa  
+			 and	F.ES_NORMALIZACION = 'N'
 			 and 	dbo.f_pago_faprov_get_por_asignar(F.COD_FAPROV) > 0
 			 ORDER BY F.NRO_FAPROV";
 			 

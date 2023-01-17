@@ -14,13 +14,16 @@ ALTER PROCEDURE [dbo].[spu_faprov]
 			,@ve_cod_usuario_anula			numeric		= NULL
 			,@ve_motivo_anula				varchar(100)= NULL
 			,@ve_origen_faprov				varchar(20)= NULL
-			,@ve_cod_cuenta_compra			numeric		= NULL)
+			,@ve_cod_cuenta_compra			numeric		= NULL
+			,@ws_origen						varchar(50)	= NULL
+			,@ve_es_normalizacion			T_SI_NO		= NULL)
 
 AS
 BEGIN
 
 	declare		@kl_cod_estado_faprov_anulada numeric,
-				@vl_cod_usuario_anula numeric
+				@vl_cod_usuario_anula numeric,
+				@vl_cod_estado_faprov numeric
 
 
 	set @kl_cod_estado_faprov_anulada = 5  --- estado de la faprov = anulada
@@ -39,6 +42,7 @@ BEGIN
 							,monto_iva					=	@ve_monto_iva		
 							,total_con_iva				=	@ve_total_con_iva
 							,cod_cuenta_compra			=	@ve_cod_cuenta_compra
+							,ES_NORMALIZACION			=	@ve_es_normalizacion
 			
 				WHERE cod_faprov = @ve_cod_faprov
 				if (@ve_cod_estado_faprov = @kl_cod_estado_faprov_anulada) and (@vl_cod_usuario_anula is NULL) -- estado de la faprov = anulada 
@@ -50,6 +54,20 @@ BEGIN
 			end
 		else if (@ve_operacion='INSERT') 
 			begin
+				declare
+					@vl_count	numeric
+				
+				/*Se verifica que no exista el nro_faprov ingresada por procedimiento*/
+				if(@ws_origen IS NOT NULL)BEGIN
+					SELECT @vl_count = COUNT(*)
+					FROM FAPROV
+					WHERE NRO_FAPROV = @ve_nro_faprov
+					AND COD_EMPRESA = @ve_cod_empresa
+					
+					if(@vl_count > 0)
+						return
+				END
+				
 				insert into faprov
 					(fecha_registro
 					,fecha_faprov
@@ -62,7 +80,9 @@ BEGIN
 					,monto_iva
 					,total_con_iva
 					,origen_faprov
-					,cod_cuenta_compra)
+					,cod_cuenta_compra
+					,ws_origen
+					,es_normalizacion)
 				values 
 					(getdate()
 					,dbo.to_date(@ve_fecha_faprov)
@@ -75,7 +95,9 @@ BEGIN
 					,@ve_monto_iva		
 					,@ve_total_con_iva
 					,@ve_origen_faprov
-					,@ve_cod_cuenta_compra)
+					,@ve_cod_cuenta_compra
+					,@ws_origen
+					,@ve_es_normalizacion)
 			end 
 		else if (@ve_operacion='DELETE_ALL') 
 				begin
@@ -90,6 +112,16 @@ BEGIN
 					UPDATE faprov		
 					SET		cod_cuenta_compra = @ve_cod_usuario	-- Para esta opcion 'ASIGNAR' se sobreusa el parametro de entrada @ve_cod_usuario para indicar el cod_cuenta_compra
     				where cod_faprov = @ve_cod_faprov 
-				end 
+				end
+		else if (@ve_operacion='CAMBIO_ESTADO')begin
+			SELECT @vl_cod_estado_faprov = COD_ESTADO_FAPROV
+			FROM FAPROV
+			WHERE COD_FAPROV = @ve_cod_faprov
+			
+			if(@vl_cod_estado_faprov = 1)BEGIN --Ingresada
+				UPDATE FAPROV
+				SET COD_ESTADO_FAPROV = 2 --Aprobada
+				WHERE COD_FAPROV = @ve_cod_faprov
+			END
+		end		 
 END
-go

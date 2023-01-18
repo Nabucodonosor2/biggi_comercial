@@ -70,15 +70,17 @@ function down(objeto, url)
 						<table width="1150" border="0" align="center">
 							<tr class="encabezado_center">
 								<th width="3%"></th>
-								<th width="6%">{H_NRO_FACTURA}</th>
-								<th width="8%">{H_FECHA_FACTURA}</th>
+								<th width="7%">{H_NRO_FACTURA}</th>
+								<th width="7%">{H_FECHA_FACTURA}</th>
+								<th width="7%">{H_FECHA_RECHAZO}</th>
 								<th width="8%">{H_RUT}</th>
-								<th width="32%">{H_NOM_EMPRESA}</th>
-								<th width="5%">{H_INI_USUARIO}</th>
-								<th width="9%">{H_RESUELTA}</th>
-								<th width="9%">{H_FECHA_RECHAZO}</th>
-								<th width="9%">{H_TOTAL_CON_IVA}</th>
-								<th width="7%">{H_COD_DOC}</th>
+								<th width="26%">{H_NOM_EMPRESA}</th>
+								<th width="4%">{H_INI_USUARIO}</th>
+								<th width="7%">{H_TOTAL_CON_IVA}</th>
+								<th width="6%">{H_COD_DOC}</th>
+								<th width="7%">{H_RESUELTA}</th>
+								<th width="7%">{H_NRO_NOTA_CREDITO}</th>
+								<th width="7%">{H_NRO_RE_FACTURA}</th>
 								<th width="4%">PDF</th>
 							</tr>
 						</table>
@@ -87,15 +89,17 @@ function down(objeto, url)
 							<!-- startBlock(wo_registro) -->
 							<tr class="{WO_TR_CSS}">
 								<td width="3%" align="center">{WO_DETALLE}</td>
-								<td width="6%" align="center">{NRO_FACTURA}</td>
-								<td width="8%" align="center">{FECHA_FACTURA}</td>
+								<td width="7%" align="center">{NRO_FACTURA}</td>
+								<td width="7%" align="center">{FECHA_FACTURA}</td>
+								<td width="7%" align="center">{FECHA_RECHAZO}</td>
 								<td width="8%" align="right">{RUT}-{DIG_VERIF}</td>
-								<td width="32%">{NOM_EMPRESA}</td>
-								<td width="5%">{INI_USUARIO}</td>
-								<td width="9%" align="center">{RESUELTA}</td>
-								<td width="9%" align="center">{FECHA_RECHAZO}</td>
-								<td width="9%" align="right">{TOTAL_CON_IVA}</td>
-							    <td width="7%" align="center">{COD_DOC}</td>
+								<td width="26%">{NOM_EMPRESA}</td>
+								<td width="4%">{INI_USUARIO}</td>
+								<td width="7%" align="right">{TOTAL_CON_IVA}</td>
+								<td width="6%" align="center">{COD_DOC}</td>
+								<td width="7%" align="center">{RESUELTA}</td>
+								<td width="7%" align="center">{NRO_NOTA_CREDITO}</td>
+								<td width="7%" align="center">{NRO_RE_FACTURA}</td>
 								<td width="4%" align="center"><div style="padding-right:20px;">{WO_PRINT_DTE}</div></td>
 							</tr>
 							<!-- endBlock(wo_registro) -->

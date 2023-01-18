@@ -8,7 +8,6 @@ BEGIN
 		@vc_cod_nota_venta			numeric,
 		@vc_cod_factura				numeric,
 		@vc_total_con_iva			numeric,
-		@vc_total_con_iva_fac		numeric,
 		@vl_total_con_iva			numeric
 	
 	DECLARE C_CURSOR CURSOR FOR	
@@ -31,32 +30,20 @@ BEGIN
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		IF(@vc_nro_nota_credito IS NOT NULL AND @vc_nro_re_factura IS NOT NULL)BEGIN
-
-			DECLARE C_FACTURAS CURSOR FOR
-			SELECT TOTAL_CON_IVA
+			
+			SELECT top 1 @vl_total_con_iva = TOTAL_CON_IVA
 			FROM FACTURA
 			WHERE COD_DOC = @vc_cod_nota_venta
 			and  COD_ESTADO_DOC_SII in (2, 3)
 			and COD_FACTURA <> @vc_cod_factura
+			and TOTAL_CON_IVA = @vc_total_con_iva
 			ORDER BY FECHA_FACTURA ASC
 
-			OPEN C_FACTURAS 
-			FETCH C_FACTURAS INTO @vc_total_con_iva_fac
-			WHILE @@FETCH_STATUS = 0
-			BEGIN
-
-				IF(@vc_total_con_iva = @vc_total_con_iva_fac)BEGIN
-					UPDATE FACTURA_RECHAZADA
-					SET RESUELTA = 'S'
-					WHERE COD_FACTURA_RECHAZADA = @vc_cod_factura_rechazada
-
-					BREAK
-				END
-
-				FETCH C_FACTURAS INTO @vc_total_con_iva_fac
+			IF(@vc_total_con_iva = @vl_total_con_iva)BEGIN
+				UPDATE FACTURA_RECHAZADA
+				SET RESUELTA = 'S'
+				WHERE COD_FACTURA_RECHAZADA = @vc_cod_factura_rechazada
 			END
-			CLOSE C_FACTURAS
-			DEALLOCATE C_FACTURAS
 
 		END
 		FETCH C_CURSOR INTO @vc_cod_factura_rechazada, @vc_nro_nota_credito, @vc_nro_re_factura, @vc_cod_nota_venta, @vc_cod_factura, @vc_total_con_iva

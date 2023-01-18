@@ -29,7 +29,10 @@ class wo_factura_rechazada extends w_output_biggi{
 						,F.COD_FACTURA
 						,COD_ESTADO_DOC_SII
 						,dbo.f_get_nc_from_fa(F.COD_FACTURA) NRO_NOTA_CREDITO
-						,dbo.f_get_reFA(F.COD_FACTURA, F.COD_DOC) NRO_RE_FACTURA
+						,CASE
+							WHEN dbo.f_get_nc_from_fa(F.COD_FACTURA) IS NULL THEN NULL
+							ELSE dbo.f_get_reFA(F.COD_FACTURA, F.COD_DOC, F.TOTAL_CON_IVA)
+						END NRO_RE_FACTURA
 				FROM FACTURA_RECHAZADA FR LEFT OUTER JOIN USUARIO U ON U.COD_USUARIO = FR.COD_USUARIO_RESUELTA
 					,FACTURA F
 					,USUARIO UV1

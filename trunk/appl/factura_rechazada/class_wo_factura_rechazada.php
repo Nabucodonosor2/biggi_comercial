@@ -58,7 +58,7 @@ class wo_factura_rechazada extends w_output_biggi{
 					UNION 
 					select 'N' RESUELTA,
 						   'No' NOM_RESUELTA";
-		$this->add_header(new header_drop_down_string('RESUELTA', 'RESUELTA', 'Resuelta',$sql_s_n));	
+		$this->add_header($header = new header_drop_down_string('RESUELTA', 'RESUELTA', 'Resuelta',$sql_s_n));	
 		$this->add_header(new header_num('NRO_NOTA_CREDITO', 'dbo.f_get_nc_from_fa(F.COD_FACTURA)', 'NC'));
 		$this->add_header(new header_num('NRO_RE_FACTURA', 'dbo.f_get_nc_from_fa(F.COD_FACTURA)', 'FA'));
 
@@ -70,6 +70,9 @@ class wo_factura_rechazada extends w_output_biggi{
 			$this->autoriza_print = true;
       	else
 			$this->autoriza_print = false;
+
+		$header->valor_filtro = 'N';
+		$this->make_filtros();	
 	}
 
 	function make_menu(&$temp){

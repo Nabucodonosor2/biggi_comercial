@@ -25,6 +25,8 @@ BEGIN
 				@vl_cod_usuario_anula numeric,
 				@vl_cod_estado_faprov numeric
 
+	if(@ve_es_normalizacion IS NULL)
+		set @ve_es_normalizacion = 'N'
 
 	set @kl_cod_estado_faprov_anulada = 5  --- estado de la faprov = anulada
 

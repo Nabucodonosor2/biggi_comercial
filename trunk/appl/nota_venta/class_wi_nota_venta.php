@@ -1280,6 +1280,7 @@ class wi_nota_venta extends w_cot_nv {
 	const K_ESTADO_CERRADA			= 2;
 	const K_ESTADO_ANULADA			= 3;
 	const K_ESTADO_CONFIRMADA		= 4;
+	const K_ESTADO_CERRADA_ADM		= 5;
 	const K_PARAM_NOM_EMPRESA 		= 6;
 	const K_PARAM_DIR_EMPRESA 		= 10;
 	const K_PARAM_TEL_EMPRESA 		= 11;
@@ -1517,7 +1518,8 @@ class wi_nota_venta extends w_cot_nv {
 					case NV.COD_ESTADO_NOTA_VENTA
 						when ".self::K_ESTADO_CERRADA." then 'CERRADA'
 						when ".self::K_ESTADO_ANULADA." then 'ANULADA'
-						when ".self::K_ESTADO_CONFIRMADA." then 'CONFIRMADA' 
+						when ".self::K_ESTADO_CONFIRMADA." then 'CONFIRMADA'
+						when ".self::K_ESTADO_CERRADA_ADM." then 'CERRADA ADM' 
 						else ''
 					end TITULO_ESTADO_NOTA_VENTA
 					,case NV.COD_ESTADO_NOTA_VENTA
@@ -2093,7 +2095,7 @@ class wi_nota_venta extends w_cot_nv {
 		parent::habilitar($temp, $habilita);
 		$cod_estado_nota_venta = $this->dws['dw_nota_venta']->get_item(0, 'COD_ESTADO_NOTA_VENTA_H');
 		
-		if ($cod_estado_nota_venta == self::K_ESTADO_ANULADA){
+		if ($cod_estado_nota_venta == self::K_ESTADO_ANULADA || $cod_estado_nota_venta == self::K_ESTADO_CERRADA_ADM){
 			$priv = $this->get_privilegio_opcion_usuario('991075', $this->cod_usuario);
 			if($priv == 'E'){
 				$this->habilita_boton_print($temp, 'print', true);
@@ -2500,6 +2502,23 @@ class wi_nota_venta extends w_cot_nv {
 			$this->b_delete_visible  = false;		
 			
 			// ANULADA => porc despacho siempre en cero
+			$this->dws['dw_nota_venta']->set_item(0, 'PORC_GD', 0);
+		}
+		else if ($COD_ESTADO_NOTA_VENTA == self::K_ESTADO_CERRADA_ADM) {
+			$sql = "select COD_ESTADO_NOTA_VENTA,
+						NOM_ESTADO_NOTA_VENTA
+					from ESTADO_NOTA_VENTA
+					where COD_ESTADO_NOTA_VENTA = ".self::K_ESTADO_CERRADA_ADM;
+
+			unset($this->dws['dw_nota_venta']->controls['COD_ESTADO_NOTA_VENTA']);
+			$this->dws['dw_nota_venta']->add_control(new drop_down_dw('COD_ESTADO_NOTA_VENTA',$sql,141));	
+			$this->dws['dw_nota_venta']->controls['NOM_ESTADO_NOTA_VENTA']->type = 'hidden';
+			
+			$this->b_no_save_visible = false;
+			$this->b_save_visible 	 = false;
+			$this->b_modify_visible  = false;
+			$this->b_delete_visible  = false;		
+			
 			$this->dws['dw_nota_venta']->set_item(0, 'PORC_GD', 0);
 		}
 		else if ($COD_ESTADO_NOTA_VENTA == self::K_ESTADO_CERRADA) {

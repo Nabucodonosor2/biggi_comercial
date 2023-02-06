@@ -278,6 +278,35 @@ function validaFechaNV(){
 		return true;
 }
 
+function display_anticipo_op(ve_cod_usuario){
+	const codNotaVenta	= get_value('COD_NOTA_VENTA_H_0');
+	const comisionV1	= get_value('COMISION_V1_H_0');
+	const codEmpresa	= get_value('COD_EMPRESA_0');
+
+	const url = "COMERCIAL/dlg_anticipo_op.php?cod_nota_venta="+codNotaVenta+"&comision="+comisionV1+"&cod_usuario="+ve_cod_usuario+"&cod_empresa="+ codEmpresa;	
+	$.showModalDialog({
+		url: url,
+		dialogArguments: '',
+		height: 200,
+		width: 370,
+		scrollable: false,
+		onClose: function(){ 
+			const returnVal = this.returnValue;
+			if(returnVal == null)
+				return false;
+			else if(returnVal != ''){
+				const arr = returnVal.split('|');
+				const codOrdenPago = arr[0];
+				const precioAnticipo = number_format(arr[1], 0, ',', '.');
+				
+				document.getElementById('b_no_save').click();
+				alert('Se ha generado la Orden Pago '+codOrdenPago+ ' por un total de $' +precioAnticipo+ '.');
+				return true;	
+			}
+		}
+	});
+}
+
 $(document).ready(function () {
 	$('#NRO_ORDEN_COMPRA_0').keypress(function (e) {
 		var regex =  new RegExp("^[a-zA-Z0-9\/.-]+$");

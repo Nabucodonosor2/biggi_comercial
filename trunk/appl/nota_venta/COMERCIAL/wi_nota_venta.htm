@@ -1015,10 +1015,13 @@
 																									</table>
 																									<table align="left" width="100%"  rules="none" border="0" id="boton_cierre" style="display:{BOTON_CIERRE_DISPLAY}">
 																										<tr>
-																											<td align="left" >
+																											<td align="left">
 																												<input type="button" value="Cerrar" class="Button" onClick="cerrar_nota_venta('{AUTORIZA_CIERRE}', '{ES_VENDEDOR}');" {DISABLE_BUTTON}/>{CIERRE_H}{VALIDA_MOTIVO_CIERRE_H}
 																											</td>
-																											<td align="right" style="display:{BOTON_CIERRE_SIN_P}">
+																											<td align="right">
+																												<input type="button" value="Genera anticipo comisión v1" class="Button" onClick="display_anticipo_op({COD_USUARIO});" {DISABLE_BUTTON}/>
+																											</td>
+																											<td align="right" style="width: 146px; display:'{BOTON_CIERRE_SIN_P}';">
 																												<input type="button" value="Cerrar sin generar participaciones" class="Button" onClick="cerrar_nota_venta_sin_participante('{AUTORIZA_CIERRE}', '{ES_VENDEDOR}');" {DISABLE_BUTTON}/>{CIERRE_SIN_P_H}{MOTIVO_CIERRE_SIN_PART_H}
 																											</td>
 																										</tr>

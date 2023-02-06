@@ -1297,6 +1297,8 @@ class wi_nota_venta extends w_cot_nv {
 	const K_MODIFICA_NOTA_VENTA		 = '991020';
 	const K_AUTORIZA_ANULACION		 = '991025';
 	const K_AUTORIZA_MOD_VENDEDOR2	 = '991055';
+	const K_AUTORIZA_GEN_ANTICIPO	 = '991090';
+	
 	var $porc_desc_permitido = 0;
 	var $desde_wo_inf_backcharge = false;
 	var $desde_wo_inf_por_despachar = false;
@@ -1327,7 +1329,9 @@ class wi_nota_venta extends w_cot_nv {
 			$autoriza_anulacion = 'S';
 		else
 			$autoriza_anulacion = 'N';
-
+		
+		$priv_nv = $this->get_privilegio_opcion_usuario(self::K_AUTORIZA_GEN_ANTICIPO, $this->cod_usuario);
+		
 		// Obtiene el perfil del usuario, si es administrador PREORDEN son siempre visible 
 		$db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
 		$sql = "select COD_PERFIL
@@ -1505,6 +1509,11 @@ class wi_nota_venta extends w_cot_nv {
 						else 'N'
 					end ES_VENDEDOR,
 					
+					case
+						when '$priv_nv' = 'E' AND NV.COD_ESTADO_NOTA_VENTA = ".self::K_ESTADO_CONFIRMADA." then ''
+						else 'none'
+					end BOTON_GENERA_ANTICIPO,
+
 					-- datos anulacion
 					convert(varchar(20), NV.FECHA_ANULA, 103) +'  '+ convert(varchar(20), NV.FECHA_ANULA, 8) FECHA_ANULA,
 					MOTIVO_ANULA,

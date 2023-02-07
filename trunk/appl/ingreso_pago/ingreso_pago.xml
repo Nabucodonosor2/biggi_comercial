@@ -50,7 +50,8 @@
 			<Cell text="{NOM_ESTADO_INGRESO_PAGO}" width="20%" border="B" align="L"  font="Arial" redl="192" greenl="192" bluel="192" newline="1"/>
 			<Cell text="" height="8" newline="1" visible="{OTRO_ANTICIPO} > 0"/>
 			<Cell text="Anticipo Cliente $:" width="17%" align="L"  font="ArialBoldBlue" visible="{OTRO_ANTICIPO} > 0"/>
-			<Cell text="{OTRO_ANTICIPO}" width="12%" border="B" align="R" font="Arial" format="N0,." redl="192" greenl="192" bluel="192" newline="2" visible="{OTRO_ANTICIPO} > 0"/>
+			<Cell text="{OTRO_ANTICIPO}" width="12%" border="B" align="R" font="Arial" format="N0,." redl="192" greenl="192" bluel="192" visible="{OTRO_ANTICIPO} > 0"/>
+			<Cell text="{ESTADO_ANTICIPO}" width="40%" align="R" font="ArialBlue" redl="192" greenl="192" bluel="192" newline="2" visible="{OTRO_ANTICIPO} > 0"/>
 			<Cell text="" height="8" newline="1"/>
 			<Cell text="" height="8" newline="1"/>
 			<Cell text="" height="8" newline="1"/>

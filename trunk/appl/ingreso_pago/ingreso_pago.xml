@@ -24,7 +24,7 @@
 			<Cell text="{FECHA_DOC}" width="11%" align="C" border="LRTB" font="ArialItem"/>
 			<Cell text="{NRO_DOC}" width="12%" align="C" border="LRTB" font="ArialItem"/>
 			<Cell text="{CUOTAS}" width="30%" align="L" border="LRTB" font="ArialItem"/>
-      <Cell text="{NRO_CUOTAS_TBK}" width="10%" align="C" border="LRTB" font="ArialItem"/>
+      		<Cell text="{NRO_CUOTAS_TBK}" width="10%" align="C" border="LRTB" font="ArialItem"/>
 			<Cell text="{MONTO_DOC}**" width="14%" align="R" newline="1" border="LRTB" format="N0,." font="ArialItem"/>
 			<Cell text="" border="B" newline="1" height="1" redl="199" greenl="199" bluel="199"/>		
 	</Content>	
@@ -47,7 +47,10 @@
 			<Cell text="Emisor	:" width="13%" align="R"  font="ArialBoldBlue"/>
 			<Cell text="{INI_USUARIO}" width="11%" border="B" align="C"  font="Arial" redl="192" greenl="192" bluel="192"/>
 			<Cell text="Estado	:" width="14%" align="R"  font="ArialBoldBlue"/>
-			<Cell text="{NOM_ESTADO_INGRESO_PAGO}" width="20%" border="B" align="L"  font="Arial" redl="192" greenl="192" bluel="192" newline="2"/>
+			<Cell text="{NOM_ESTADO_INGRESO_PAGO}" width="20%" border="B" align="L"  font="Arial" redl="192" greenl="192" bluel="192" newline="1"/>
+			<Cell text="" height="8" newline="1" visible="{OTRO_ANTICIPO} > 0"/>
+			<Cell text="Anticipo Cliente $:" width="17%" align="L"  font="ArialBoldBlue" visible="{OTRO_ANTICIPO} > 0"/>
+			<Cell text="{OTRO_ANTICIPO}" width="12%" border="B" align="R" font="Arial" format="N0,." redl="192" greenl="192" bluel="192" newline="2" visible="{OTRO_ANTICIPO} > 0"/>
 			<Cell text="" height="8" newline="1"/>
 			<Cell text="" height="8" newline="1"/>
 			<Cell text="" height="8" newline="1"/>

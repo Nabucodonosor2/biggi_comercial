@@ -665,3 +665,17 @@ function change_cuotas_tbk(ve_campo){
 		return false;
 	}
 }
+
+function valida_anticipo(){
+	const codEmpresa = get_value('COD_EMPRESA_0');
+	const ajax = nuevoAjax();
+	ajax.open("GET", "ajax_revisa_anticipo.php?cod_empresa="+codEmpresa, false);
+    ajax.send(null);
+    const resp = ajax.responseText;
+
+	if(resp == 'SI'){
+		const labelAnticipo = 'Cliente presenta anticipos sin usar!!';
+		set_value('LABEL_ANTICIPO_0', labelAnticipo, labelAnticipo);
+	}else
+		set_value('LABEL_ANTICIPO_0', '', '');	
+}

@@ -505,6 +505,7 @@ class wi_ingreso_pago_base extends w_input {
 							THEN 'Código de Autorización'
 							ELSE 'Nº Documento'
 						END NOM_LABEL_DOC
+						,'' LABEL_ANTICIPO
 				FROM 	INGRESO_PAGO IP
 						left outer join PROYECTO_INGRESO PIN on  IP.COD_PROYECTO_INGRESO = PIN.COD_PROYECTO_INGRESO,
 						EMPRESA E, ESTADO_INGRESO_PAGO EIP, USUARIO U
@@ -521,6 +522,11 @@ class wi_ingreso_pago_base extends w_input {
 					from 	 PROYECTO_INGRESO";
 		$this->dws['dw_ingreso_pago']->add_control(new drop_down_dw('COD_PROYECTO_INGRESO',$sql,150));
 		$this->dws['dw_ingreso_pago']->add_control(new static_text('NOM_TIPO_ORIGEN_PAGO'));
+		$js = $this->dws['dw_ingreso_pago']->controls['COD_EMPRESA']->get_onChange();
+		$js .= " valida_anticipo();";
+		$this->dws['dw_ingreso_pago']->controls['COD_EMPRESA']->set_onChange($js);
+		$this->dws['dw_ingreso_pago']->add_control(new static_text('LABEL_ANTICIPO'));
+
 		//historial de cambio de estado
 		$this->add_auditoria('COD_ESTADO_INGRESO_PAGO');
 
@@ -619,12 +625,32 @@ class wi_ingreso_pago_base extends w_input {
 		$this->dws['dw_doc_ingreso_pago']->add_control($control = new drop_down_dw('COD_TIPO_DOC_PAGO',$sql_tipo_doc,120));
 		$control->set_onChange("valida_tipo_doc_pago(this); valida_asignacion_doc_pago(this)");
 
+		$db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
+		$sql = "SELECT COD_INGRESO_PAGO
+				FROM 	INGRESO_PAGO
+				WHERE 	COD_EMPRESA = $cod_empresa
+				AND 	COD_ESTADO_INGRESO_PAGO = ".self::K_ESTADO_INGRESO_PAGO_CONFIRMADA."
+				AND		OTRO_ANTICIPO > 0
+				AND COD_INGRESO_PAGO not in  (select 	NRO_DOC  
+												from 	DOC_INGRESO_PAGO DIP, INGRESO_PAGO IP 
+												where 	NRO_DOC is not null 
+												AND 	COD_ESTADO_INGRESO_PAGO <> ".self::K_ESTADO_INGRESO_PAGO_ANULADA."
+												AND 	DIP.COD_INGRESO_PAGO = IP.COD_INGRESO_PAGO
+												AND		COD_TIPO_DOC_PAGO = 9)";
+
+		$db->build_results($sql);
+		$row_count = $db->count_rows();	
+
+		if($row_count > 0)
+			$this->dws['dw_ingreso_pago']->set_item(0, 'LABEL_ANTICIPO', 'Cliente presenta anticipos sin usar!!');
+		else
+			$this->dws['dw_ingreso_pago']->set_item(0, 'LABEL_ANTICIPO', '');
+
 		if ($COD_ESTADO_INGRESO_PAGO == self::K_ESTADO_INGRESO_PAGO_EMITIDA) {
       
 			$priv_m = $this->get_privilegio_opcion_usuario(self::K_MODIFICA_INGRESO_PAGO_TBK, $this->cod_usuario);
 			$INGRESO_PAGO_TBK = 'N';
       
-			$db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
 			if($priv_m == 'E'){
 				$sql = "SELECT COD_USUARIO FROM INGRESO_PAGO WHERE COD_INGRESO_PAGO = $cod_ingreso_pago";
 				$result_sum	= $db->build_results($sql);

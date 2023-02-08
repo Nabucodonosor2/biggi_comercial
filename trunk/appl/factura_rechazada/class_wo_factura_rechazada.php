@@ -33,6 +33,7 @@ class wo_factura_rechazada extends w_output_biggi{
 							WHEN dbo.f_get_nc_from_fa(F.COD_FACTURA) IS NULL THEN NULL
 							ELSE dbo.f_get_reFA(F.COD_FACTURA, F.COD_DOC, F.TOTAL_CON_IVA)
 						END NRO_RE_FACTURA
+						,F.COD_USUARIO_VENDEDOR1
 				FROM FACTURA_RECHAZADA FR LEFT OUTER JOIN USUARIO U ON U.COD_USUARIO = FR.COD_USUARIO_RESUELTA
 					,FACTURA F
 					,USUARIO UV1
@@ -59,8 +60,13 @@ class wo_factura_rechazada extends w_output_biggi{
 					select 'N' RESUELTA,
 						   'No' NOM_RESUELTA";
 		$this->add_header($header = new header_drop_down_string('RESUELTA', 'RESUELTA', 'Resuelta',$sql_s_n));	
-		$this->add_header(new header_num('NRO_NOTA_CREDITO', 'dbo.f_get_nc_from_fa(F.COD_FACTURA)', 'NC'));
-		$this->add_header(new header_num('NRO_RE_FACTURA', 'dbo.f_get_nc_from_fa(F.COD_FACTURA)', 'FA'));
+		$this->add_header($control = new header_num('NRO_NOTA_CREDITO', 'dbo.f_get_nc_from_fa(F.COD_FACTURA)', 'NC'));
+		$control->field_bd_order = 'NRO_NOTA_CREDITO';
+		$this->add_header($control = new header_num('NRO_RE_FACTURA', 'CASE
+																			WHEN dbo.f_get_nc_from_fa(F.COD_FACTURA) IS NULL THEN NULL
+																			ELSE dbo.f_get_reFA(F.COD_FACTURA, F.COD_DOC, F.TOTAL_CON_IVA)
+																	   END', 'FA'));
+		$control->field_bd_order = 'NRO_RE_FACTURA';
 
 		$this->dw->add_control(new static_num('RUT'));
 		$this->dw->add_control(new static_num('TOTAL_CON_IVA'));

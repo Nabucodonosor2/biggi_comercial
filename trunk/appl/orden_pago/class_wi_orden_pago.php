@@ -29,7 +29,7 @@ class wi_orden_pago extends w_input {
 						,PORC_DSCTO_CORPORATIVO
 						,dbo.f_nv_get_resultado(NV.COD_NOTA_VENTA, 'MONTO_DSCTO_CORPORATIVO') MONTO_DSCTO_CORPORATIVO
 						,dbo.f_nv_get_resultado(NV.COD_NOTA_VENTA, 'VENTA_NETA') VENTA_NETA_FINAL
-						,dbo.f_get_parametro_porc('GF', getdate())PORC_GF
+						,dbo.f_get_parametro_porc('GF', isnull(NV.FECHA_NOTA_VENTA, getdate())) PORC_GF
 						,dbo.f_nv_get_resultado(NV.COD_NOTA_VENTA, 'MONTO_GASTO_FIJO') MONTO_GASTO_FIJO
 						,dbo.f_nv_get_resultado(NV.COD_NOTA_VENTA, 'SUM_OC_TOTAL') SUM_OC_TOTAL
 						,dbo.f_nv_get_resultado(NV.COD_NOTA_VENTA, 'RESULTADO') RESULTADO
@@ -140,7 +140,7 @@ class wi_orden_pago extends w_input {
 						,PORC_DSCTO_CORPORATIVO
 						,dbo.f_nv_get_resultado(NV.COD_NOTA_VENTA, 'MONTO_DSCTO_CORPORATIVO') MONTO_DSCTO_CORPORATIVO
 						,dbo.f_nv_get_resultado(NV.COD_NOTA_VENTA, 'VENTA_NETA') VENTA_NETA_FINAL
-						,dbo.f_get_parametro_porc('GF', getdate())PORC_GF
+						,dbo.f_get_parametro_porc('GF', isnull(NV.FECHA_NOTA_VENTA, getdate())) PORC_GF
 						,dbo.f_nv_get_resultado(NV.COD_NOTA_VENTA, 'MONTO_GASTO_FIJO') MONTO_GASTO_FIJO
 						,dbo.f_nv_get_resultado(NV.COD_NOTA_VENTA, 'SUM_OC_TOTAL') SUM_OC_TOTAL
 						,dbo.f_nv_get_resultado(NV.COD_NOTA_VENTA, 'RESULTADO') RESULTADO

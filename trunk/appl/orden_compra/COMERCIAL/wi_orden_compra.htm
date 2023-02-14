@@ -123,19 +123,23 @@
                                                   <td> N&ordm; Cta. Cte.:</td>
                                                   <td class="claro" align="left">{NRO_CUENTA_CORRIENTE}</td> -->
                                                 </tr>
+												<tr class="encabezado_right">
+													<td>Respeta Precio:</td>
+													<td class="oscuro" align="left" colspan="5">{RP_CLIENTE}{NOM_USUARIO_RP_CLIENTE}&nbsp;&nbsp;{FECHA_RP_CLIENTE}{COD_USUARIO_ACTUAL_H}</td>
+												</tr>
                                                 <tr class="encabezado_right">
-                                                  <td>Referencia:</td>
-                                                  <td colspan="5" class="oscuro" align="left">{REFERENCIA}</td>
+                                                  	<td>Referencia:</td>
+                                                  	<td colspan="5" class="claro" align="left">{REFERENCIA}</td>
                                                 </tr>
                                                 <tr class="encabezado_right" id="tr_autorizada_te" style="display:{TR_AUTORIZADA_TE}">
 													<td width="110">Autorizado Por:</td>
-													<td width="158" colspan="3" class="claro" align="left">&nbsp;&nbsp;{AUTORIZADA}&nbsp;&nbsp;{USUARIO_AUTORIZA}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{FECHA_AUTORIZA}</td>
+													<td width="158" colspan="3" class="oscuro" align="left">&nbsp;&nbsp;{AUTORIZADA}&nbsp;&nbsp;{USUARIO_AUTORIZA}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{FECHA_AUTORIZA}</td>
 												</tr>
                                                <tr class="encabezado_right" id="tr_anula" style="display:{TR_DISPLAY}">
 													<td>Anulación:</td>
-													<td class="claro" colspan="3" align="left">{MOTIVO_ANULA}</td>
-													<td class="claro" align="center">{FECHA_ANULA}</td>
-													<td class="claro" align="left">{COD_USUARIO_ANULA}</td>
+													<td class="oscuro" colspan="3" align="left">{MOTIVO_ANULA}</td>
+													<td class="oscuro" align="center">{FECHA_ANULA}</td>
+													<td class="oscuro" align="left">{COD_USUARIO_ANULA}</td>
 												</tr>
                                               </table>
 											  <p />
@@ -228,33 +232,34 @@
 													<tr class="titulo_tabla">				
 														<td colspan="11">ÍTEMS</td>
 													</tr>
-													
 													<tr class="encabezado_center">
 														<th width="5%">Sec</th>
-														<th width="5%">IT</th>
-														<th width="14%">Módelo</th>
-														<th width="30%">Descripción</th>
-														<th width="10%">Cantidad</th>
+														<th width="4%">IT</th>
+														<th width="17%">Módelo</th>
+														<th width="37%">Descripción</th>
+														<th width="7%">Cantidad</th>
 														<th width="10%">Precio{PORC_MODIFICA_PRECIO_OC_H}</th>
+														<th width="4%">RP</th>
 														<th width="10%">Total</th>
-														<th width="5%">Eliminar</th>
+														<th width="6%">Eliminar</th>
 													</tr>
 												</table>	
 												<div style="overflow-x:hidden; overflow-y:auto; height:240; margin-top:-1em;">
-												<table width="1000" rules="none" border="1" align="center" class="claro" id="ITEM_ORDEN_COMPRA">								
-													<!-- startBlock(ITEM_ORDEN_COMPRA) -->
-													<tr class="{DW_TR_CSS}" id="{DW_TR_ID}">
-														<td width="5%" align="center">{COD_ITEM_ORDEN_COMPRA}{ORDEN}</td>
-														<td width="5%" align="center">{ITEM}</td>
-														<td width="14%" align="left">{COD_PRODUCTO}{COD_PRODUCTO_OLD}</td>
-														<td width="30%" align="left">{NOM_PRODUCTO}</td>   
-														<td width="10%" align="right">{CANTIDAD}</td>   
-														<td width="10%" align="right">{PRECIO}{PRECIO_H}</td>
-														<td width="10%" align="right">{TOTAL}</td>
-														<td width="6%" align="center">{ELIMINAR_ITEM_ORDEN_COMPRA}{BOTON_PRECIO}{COD_TIPO_TE}{MOTIVO_TE}{MOTIVO_AUTORIZA_TE}</td>   
-													</tr>	
-													<!-- endBlock(ITEM_ORDEN_COMPRA) -->
-												</table>
+													<table width="1000" rules="none" border="1" align="center" class="claro" id="ITEM_ORDEN_COMPRA">								
+														<!-- startBlock(ITEM_ORDEN_COMPRA) -->
+														<tr class="{DW_TR_CSS}" id="{DW_TR_ID}">
+															<td width="5%" align="center">{COD_ITEM_ORDEN_COMPRA}{ORDEN}</td>
+															<td width="4%" align="center">{ITEM}</td>
+															<td width="17%" align="left">{COD_PRODUCTO}{COD_PRODUCTO_OLD}</td>
+															<td width="37%" align="left">{NOM_PRODUCTO}</td>   
+															<td width="7%" align="right">{CANTIDAD}</td>   
+															<td width="10%" align="right">{PRECIO}{PRECIO_H}</td>
+															<td width="4%" align="center">{RP_CLIENTE_IT}</td>
+															<td width="10%" align="right">{TOTAL}</td>
+															<td width="6%" align="center">{ELIMINAR_ITEM_ORDEN_COMPRA}{BOTON_PRECIO}{COD_TIPO_TE}{MOTIVO_TE}{MOTIVO_AUTORIZA_TE}</td>   
+														</tr>	
+														<!-- endBlock(ITEM_ORDEN_COMPRA) -->
+													</table>
 												</div>
 												<table width="1000" border="0" align="center" class="claro">												
 													<tr class="claro">

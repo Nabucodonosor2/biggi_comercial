@@ -163,7 +163,15 @@ class dw_orden_compra extends dw_help_empresa {
                         	ELSE ''
                         END DISPLAY_AUT_MONTO_COMPRA	
                         ,dbo.f_get_parametro(".self::K_PARAM_PORC_DSCTOS_MAX.") PORC_DSCTOS_MAX
-                FROM 	ORDEN_COMPRA O, USUARIO U, EMPRESA E, ESTADO_ORDEN_COMPRA EOC
+						,CREADA_DESDE
+						,RP_CLIENTE
+						,CONVERT(VARCHAR, FECHA_RP_CLIENTE, 103) +' '+ CONVERT(VARCHAR, FECHA_RP_CLIENTE, 108) FECHA_RP_CLIENTE
+						,UV.NOM_USUARIO NOM_USUARIO_RP_CLIENTE
+						,$cod_usuario COD_USUARIO_ACTUAL_H
+                FROM 	 ORDEN_COMPRA O LEFT OUTER JOIN USUARIO UV ON O.COD_USUARIO_RP_CLIENTE = UV.COD_USUARIO
+						,USUARIO U
+						,EMPRESA E
+						,ESTADO_ORDEN_COMPRA EOC
 				WHERE	O.COD_ORDEN_COMPRA = {KEY1} and
 						U.COD_USUARIO = O.COD_USUARIO AND
 						E.COD_EMPRESA = O.COD_EMPRESA AND
@@ -175,6 +183,11 @@ class dw_orden_compra extends dw_help_empresa {
 		
 		// DATOS GENERALES
 		//autorizacion de OC modifica 
+		$this->add_control($control = new edit_check_box('RP_CLIENTE', 'S', 'N'));
+		$control->set_onChange("display_respetar_precio(this);");
+		$this->add_control(new static_text('NOM_USUARIO_RP_CLIENTE'));
+		$this->add_control(new static_text('FECHA_RP_CLIENTE'));
+		$this->add_control(new edit_text_hidden('COD_USUARIO_ACTUAL_H'));
 		$this->add_control(new static_text('AUT_MONTO_NOM_USUARIO'));
 		$this->add_control(new static_text('FECHA_AUTORIZA_MONTO_COMPRA'));
 		$this->add_control(new edit_check_box('AUTORIZA_MONTO_COMPRA_L', 'S', 'N'));
@@ -191,7 +204,6 @@ class dw_orden_compra extends dw_help_empresa {
         //que no se pueda modificar mas alla de un % (de parámetro = 20 % incial)
         $this->add_control(new edit_text('MAXIMO_PRECIO_OC_H',10,10, 'hidden'));
         $this->add_control(new edit_check_box('AUTORIZADA_20_PROC', 'S', 'N'));
-        
 		$this->add_control(new edit_nro_doc('COD_ORDEN_COMPRA','ORDEN_COMPRA'));
 		
 		$sql_usuario			= "select	COD_USUARIO
@@ -383,7 +395,8 @@ class wi_orden_compra_base extends w_cot_nv {
 		
 		$this->add_auditoria_relacionada('ITEM_ORDEN_COMPRA', 'COD_PRODUCTO');		
 		$this->add_auditoria_relacionada('ITEM_ORDEN_COMPRA', 'CANTIDAD');		
-		$this->add_auditoria_relacionada('ITEM_ORDEN_COMPRA', 'PRECIO');		
+		$this->add_auditoria_relacionada('ITEM_ORDEN_COMPRA', 'PRECIO');
+		$this->add_auditoria_relacionada('ITEM_ORDEN_COMPRA', 'RP_CLIENTE_IT');		
 		
 		//auditoria Solicitado por IS.
 		$this->add_auditoria('COD_EMPRESA');
@@ -393,6 +406,7 @@ class wi_orden_compra_base extends w_cot_nv {
 		$this->add_auditoria('COD_SUCURSAL');
 		$this->add_auditoria('COD_PERSONA');
 		$this->add_auditoria('COD_CUENTA_CORRIENTE');
+		$this->add_auditoria('RP_CLIENTE');
 		
 		//autoriza_OC
 		$this->add_auditoria('AUTORIZADA');
@@ -413,7 +427,14 @@ class wi_orden_compra_base extends w_cot_nv {
 
 		//Campo duplicado	
 		$this->dws['dw_orden_compra']->set_entrable('AUTORIZA_MONTO_COMPRA_L', false);
-			
+
+		$priv = $this->get_privilegio_opcion_usuario('991585', $this->cod_usuario);
+		if($priv=='E'){
+			$this->dws['dw_orden_compra']->set_entrable('RP_CLIENTE', true);
+		}else{
+			$this->dws['dw_orden_compra']->set_entrable('RP_CLIENTE', false);
+		}
+
 	}
 	////////////////////
 	// funciones auxiliares para cuando se accede a la FA desde_wo_inf_oc_por_facturar_tdnx
@@ -472,6 +493,7 @@ class wi_orden_compra_base extends w_cot_nv {
 		$this->dws['dw_orden_compra']->set_item(0, 'NOM_ESTADO_ORDEN_COMPRA', 'EMITIDA');		
 		$this->dws['dw_orden_compra']->set_entrable('COD_ESTADO_ORDEN_COMPRA', false);
 		$this->dws['dw_orden_compra']->set_item(0, 'COD_MONEDA', self::K_MONEDA);
+		$this->dws['dw_orden_compra']->set_item(0, 'COD_USUARIO_ACTUAL_H', $this->cod_usuario);
 		
 		$db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
 		$sql = "SELECT ISNULL(PORC_MODIFICA_PRECIO_OC, 0) PORC_MODIFICA_PRECIO_OC_H FROM USUARIO WHERE COD_USUARIO = $this->cod_usuario";
@@ -770,7 +792,7 @@ class wi_orden_compra_base extends w_cot_nv {
 		}
 	}
 	
-	function save_record($db) {	
+	function save_record($db){	
 		$cod_orden_compra 	= $this->get_key();		
 		$cod_usuario 		= $this->dws['dw_orden_compra']->get_item(0, 'COD_USUARIO');
 		$cod_usuario_sol 	= $this->dws['dw_orden_compra']->get_item(0, 'COD_USUARIO_SOLICITA');		
@@ -881,6 +903,11 @@ class wi_orden_compra_base extends w_cot_nv {
 		$autoriza_monto_compra = ($autoriza_monto_compra=='') ? "null" : $autoriza_monto_compra;		
 
 		$cod_orden_compra = ($cod_orden_compra=='') ? "null" : $cod_orden_compra;		
+
+		$creada_desde		= $this->dws['dw_orden_compra']->get_item(0, 'CREADA_DESDE');
+		$creada_desde		= ($creada_desde=='') ? "null" : "'$creada_desde'";
+
+		$rp_cliente			= $this->dws['dw_orden_compra']->get_item(0, 'RP_CLIENTE');
     
 		$sp = 'spu_orden_compra';
 	    if ($this->is_new_record()) {
@@ -935,7 +962,9 @@ class wi_orden_compra_base extends w_cot_nv {
 					,$autoriza_facturacion
 					,$fecha_solicita_autorizacion
 					,$autoriza_monto_compra
-					,".$this->cod_usuario;
+					,".$this->cod_usuario."
+					,$creada_desde
+					,'$rp_cliente'";
 			
 		if ($db->EXECUTE_SP($sp, $param)){
 			if ($this->is_new_record()) {

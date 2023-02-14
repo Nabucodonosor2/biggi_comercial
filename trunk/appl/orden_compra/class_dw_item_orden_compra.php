@@ -15,8 +15,11 @@ class dw_item_orden_compra extends datawindow {
 							PRECIO PRECIO_H,
 							COD_TIPO_TE,
 							MOTIVO_TE,
+							MOTIVO_TE,
+							RP_CLIENTE_IT,
 							'' BOTON_PRECIO, -- se utiliza en funcion comun js 'ingreso_TE'
-							'' MOTIVO_AUTORIZA_TE -- se utiliza en funcion comun js 'ingreso_TE'
+							'' MOTIVO_AUTORIZA_TE, -- se utiliza en funcion comun js 'ingreso_TE'
+							COD_ITEM_NOTA_VENTA
 				FROM		ITEM_ORDEN_COMPRA
 				WHERE		COD_ORDEN_COMPRA = {KEY1}
 				ORDER BY	ORDEN asc";
@@ -26,13 +29,14 @@ class dw_item_orden_compra extends datawindow {
 		
 		$this->add_control(new edit_text_upper('COD_ITEM_ORDEN_COMPRA',10, 10, 'hidden'));
 		$this->add_control(new edit_num('ORDEN',4, 10));
-		$this->add_control(new edit_text('ITEM',4 , 5));
-		$this->add_control(new edit_cantidad('CANTIDAD',12,10));
+		$this->add_control(new edit_text('ITEM',2 , 5));
+		$this->add_control(new edit_cantidad('CANTIDAD',6,10));
 		$this->add_control(new edit_text('COD_TIPO_TE',10, 100, 'hidden'));
 		$this->add_control(new edit_text('MOTIVO_TE',10, 100, 'hidden'));
 		$this->add_control(new edit_text('BOTON_PRECIO',10, 10, 'hidden'));
+		$this->add_control(new edit_check_box('RP_CLIENTE_IT', 'S', 'N'));
 		
-		$this->add_control($control = new edit_precio('PRECIO'));
+		$this->add_control($control = new edit_precio('PRECIO', 10));
 		$control->set_onChange("change_precio(this);");
 		$this->add_control(new edit_text('PRECIO_H',10, 10, 'hidden'));
 		
@@ -73,7 +77,10 @@ class dw_item_orden_compra extends datawindow {
 			$CANTIDAD 				= $this->get_item($i, 'CANTIDAD');
 			$COD_TIPO_TE			= $this->get_item($i, 'COD_TIPO_TE');
 			$COD_TIPO_TE			= ($COD_TIPO_TE =='') ? "null" : "$COD_TIPO_TE";			
-			$MOTIVO_TE		 		= $this->get_item($i, 'MOTIVO_TE');			
+			$MOTIVO_TE		 		= $this->get_item($i, 'MOTIVO_TE');
+			$COD_ITEM_NOTA_VENTA	= $this->get_item($i, 'COD_ITEM_NOTA_VENTA');
+			$COD_ITEM_NOTA_VENTA	= ($COD_ITEM_NOTA_VENTA =='') ? "null" : "$COD_ITEM_NOTA_VENTA";
+			$RP_CLIENTE_IT			= $this->get_item($i, 'RP_CLIENTE_IT');
  			
 			//$PRECIO					= 10;
 			//***********      FALTA IMPLEMENTAR BUSCAR POR COD PRODUCTO ***********/  
@@ -86,7 +93,19 @@ class dw_item_orden_compra extends datawindow {
 			elseif ($statuts == K_ROW_MODIFIED)
 				$operacion = 'UPDATE';
 		
-			$param = "'$operacion',$COD_ITEM_ORDEN_COMPRA, $COD_ORDEN_COMPRA, $ORDEN, '$ITEM', '$COD_PRODUCTO', '$NOM_PRODUCTO', $CANTIDAD, $PRECIO, $COD_TIPO_TE, '$MOTIVO_TE'"; 
+			$param = "'$operacion'
+					 ,$COD_ITEM_ORDEN_COMPRA
+					 ,$COD_ORDEN_COMPRA
+					 ,$ORDEN
+					 ,'$ITEM'
+					 ,'$COD_PRODUCTO'
+					 ,'$NOM_PRODUCTO'
+					 ,$CANTIDAD
+					 ,$PRECIO
+					 ,$COD_TIPO_TE
+					 ,'$MOTIVO_TE'
+					 ,$COD_ITEM_NOTA_VENTA
+					 ,'$RP_CLIENTE_IT'"; 
 			
 			if (!$db->EXECUTE_SP($sp, $param))
 				return false;

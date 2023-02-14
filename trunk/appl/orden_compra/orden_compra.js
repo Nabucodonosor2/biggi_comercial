@@ -321,3 +321,20 @@ function valida_cambio_estado_oc(ve_cod_orden_compra){
 		return false;
 	}
 }
+
+function display_respetar_precio(ve_control){
+	const codUsuario = get_value('COD_USUARIO_ACTUAL_H_0');
+
+	if(ve_control.checked == true){
+		const ajax = nuevoAjax();
+		ajax.open("GET", "ajax_get_usuario_fecha.php?cod_usuario="+codUsuario, false);
+		ajax.send(null);
+		const arr = ajax.responseText.split('|');
+
+		set_value('NOM_USUARIO_RP_CLIENTE_0', arr[0], arr[0]);
+		set_value('FECHA_RP_CLIENTE_0', arr[1], arr[1]);
+	}else{
+		set_value('NOM_USUARIO_RP_CLIENTE_0', '', '');
+		set_value('FECHA_RP_CLIENTE_0', '', '');
+	}
+}

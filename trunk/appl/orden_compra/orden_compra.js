@@ -1,4 +1,4 @@
-function validate() {
+function validate(){
 	var aTR = get_TR('ITEM_ORDEN_COMPRA');
 	if (aTR.length==0) {
 		alert('Debe ingresar al menos 1 item antes de grabar.');
@@ -9,7 +9,7 @@ function validate() {
 	if (to_num(cod_estado_doc_sii_value) == 2){	
 		var motivo_anula = document.getElementById('MOTIVO_ANULA_0');
 		if (motivo_anula.value == '') {
-			alert('Debe ingresar el motivo de Anulaciï¿½n antes de grabar.');
+			alert('Debe ingresar el motivo de Anulación antes de grabar.');
 			motivo_anula.focus();
 			return false;
 		}
@@ -21,6 +21,35 @@ function validate() {
 	//vl_maximo_precio_oc = vl_maximo_precio_oc.replace('.',',');
 	vl_maximo_precio_oc = parseInt(vl_maximo_precio_oc);
 	vl_total_neto_oc = parseInt(to_num(vl_total_neto_oc));
+	const vl_cod_empresa = get_value('COD_EMPRESA_0');
+
+	if(to_num(cod_estado_doc_sii_value) == 4 
+		&& document.getElementById('RP_CLIENTE_0').checked == true
+			&& (vl_cod_empresa == 1302 || vl_cod_empresa == 1138)){
+
+		let alertRP = true;
+		let nomEmpresa;
+
+		for (i = 0; i < aTR.length; i++) {
+			let vl_rec = get_num_rec_field(aTR[i].id);
+			let rp_cliente_it = document.getElementById('RP_CLIENTE_IT_'+ vl_rec).checked;
+
+			if(rp_cliente_it == true){
+				alertRP = false;
+				break;
+			}
+		}
+
+		if(alertRP){
+			if(vl_cod_empresa == 1302)
+				nomEmpresa = 'COMERCIAL TODOINOX LTDA.';
+			else	
+				nomEmpresa = 'BIGGI CHILE SOC LTDA';
+
+			alert('OC se encuentra autorizada para respetar precios en Facturacion '+nomEmpresa+', sin embargo, no existe ningún ítem seleccionado para respetar precio de compra');
+		}
+			
+	}
 	
 	/* VMC, 29-03-2011 se deja comentado hasta que se retome esta restriccion
 		esta restriccion la implemento MU antes de irnos de vacaciones y se hecho para atras porque pedia autorizar de todo

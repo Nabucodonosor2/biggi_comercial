@@ -36,7 +36,7 @@ ALTER PROCEDURE [dbo].[spu_orden_compra]
 			,@ve_autoriza_monto_compra	 		varchar(1) = NULL
 			,@ve_usuario_autoriza_monto_compra	numeric = NULL
 			,@ve_creada_desde					varchar(100) = NULL
-			,@ve_rp_cliente						T_SI_NO = NULL)
+			,@ve_rp_cliente						T_SI_NO = 'N')
 
 			
 
@@ -61,8 +61,7 @@ BEGIN
 			,@vl_fecha_autoriza_monto_compra	datetime
 			,@vl_fecha_rp						datetime
 			,@vl_usuario_rp						numeric
-			,@vl_rp_cliente						T_SI_NO
-				
+			,@vl_rp_cliente						T_SI_NO	
 			
 	set @kl_cod_estado_oc_anulada = 2  --- estado de la oc = anulada
 

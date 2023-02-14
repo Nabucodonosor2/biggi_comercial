@@ -11,7 +11,7 @@ ALTER PROCEDURE [dbo].[spu_item_orden_compra](
 					,@ve_cod_tipo_te				numeric		=NULL
 					,@ve_motivo_te					varchar(100)=NULL
 					,@ve_cod_item_nota_venta		numeric =NULL
-					,@ve_rp_cliente_it				T_SI_NO=NULL)
+					,@ve_rp_cliente_it				T_SI_NO='N')
 AS
 BEGIN
 	if(@ve_operacion='INSERT')begin

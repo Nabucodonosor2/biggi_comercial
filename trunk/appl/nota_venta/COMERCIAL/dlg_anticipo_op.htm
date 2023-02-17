@@ -42,7 +42,6 @@
         const comision          = get_value('COMISION_0');
         const sumTotalNeto      = get_value('SUM_TOTAL_NETO_0');
         const codUsuario        = get_value('COD_USUARIO_0');
-        const codEmpresa        = get_value('COD_EMPRESA_0');
         const codNotaVenta      = get_value('COD_NOTA_VENTA_0');
         
         if(parseInt(precioAnticipo) + parseInt(sumTotalNeto) > parseInt(comision)){
@@ -50,7 +49,7 @@
             return false;
         }else{
             const ajax = nuevoAjax();
-            ajax.open("GET", "ajax_ingresa_op.php?cod_nota_venta="+codNotaVenta+"&cod_usuario="+codUsuario+"&cod_empresa="+codEmpresa+"&precio_anticipo="+precioAnticipo, false);
+            ajax.open("GET", "ajax_ingresa_op.php?cod_nota_venta="+codNotaVenta+"&cod_usuario="+codUsuario+"&precio_anticipo="+precioAnticipo, false);
             ajax.send(null);
             const resp = ajax.responseText;
 
@@ -121,7 +120,7 @@
                 </tr>
                 <tr>
                     <td height="15">
-                        {COMISION}{SUM_TOTAL_NETO}{COD_USUARIO}{COD_EMPRESA}{COD_NOTA_VENTA}
+                        {COMISION}{SUM_TOTAL_NETO}{COD_USUARIO}{COD_NOTA_VENTA}
                     </td>
                 </tr>
                 <tr>

@@ -3,12 +3,19 @@ require_once(dirname(__FILE__)."/../../../../../commonlib/trunk/php/auto_load.ph
 
 $cod_nota_venta     = $_REQUEST["cod_nota_venta"];
 $cod_usuario        = $_REQUEST["cod_usuario"]; 
-$cod_empresa        = $_REQUEST["cod_empresa"]; 
 $precio_anticipo    = $_REQUEST["precio_anticipo"];
 
 $db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
 $sql_param = "select dbo.f_get_parametro(1) PORC_IVA";
 $result_param = $db->build_results($sql_param);
+
+$sql = "SELECT U.COD_EMPRESA 
+        FROM NOTA_VENTA NV, USUARIO U
+        WHERE COD_NOTA_VENTA = $cod_nota_venta
+        AND U.COD_USUARIO = NV.COD_USUARIO_VENDEDOR1";
+$result = $db->build_results($sql);
+$cod_empresa    = $result[0]['COD_EMPRESA'];
+
 //Precios
 $total_neto     = $precio_anticipo;
 $porc_iva       = $result_param[0]['PORC_IVA'];

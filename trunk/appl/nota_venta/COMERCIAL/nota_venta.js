@@ -281,9 +281,8 @@ function validaFechaNV(){
 function display_anticipo_op(ve_cod_usuario){
 	const codNotaVenta	= get_value('COD_NOTA_VENTA_H_0');
 	const comisionV1	= get_value('COMISION_V1_H_0');
-	const codEmpresa	= get_value('COD_EMPRESA_0');
 
-	const url = "COMERCIAL/dlg_anticipo_op.php?cod_nota_venta="+codNotaVenta+"&comision="+comisionV1+"&cod_usuario="+ve_cod_usuario+"&cod_empresa="+ codEmpresa;	
+	const url = "COMERCIAL/dlg_anticipo_op.php?cod_nota_venta="+codNotaVenta+"&comision="+comisionV1+"&cod_usuario="+ve_cod_usuario;	
 	$.showModalDialog({
 		url: url,
 		dialogArguments: '',

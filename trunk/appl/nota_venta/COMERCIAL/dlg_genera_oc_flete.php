@@ -8,14 +8,18 @@ $cod_user = $array_datos[1];
 $nro_cuenta_corriente = $array_datos[2];
 $temp = new Template_appl('dlg_genera_oc_flete.htm');
 	$db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
-	$sql = "select 
-			convert(varchar,RUT)+'-'+DIG_VERIF RUT
-			,ALIAS
-			,COD_EMPRESA
-			,NOM_EMPRESA
-			,'N' PROVEDOR
-			 from EMPRESA where COD_EMPRESA in (294,11484,49,641,3189,147,1601)
-			 ORDER BY RUT";
+	$sql = "SELECT CONVERT(VARCHAR,RUT)+'-'+DIG_VERIF RUT
+				,ALIAS
+				,PP.COD_EMPRESA
+				,NOM_EMPRESA
+				,'N' PROVEDOR
+			FROM PRODUCTO_PROVEEDOR PP
+			,PRODUCTO P
+			,EMPRESA E
+			WHERE PP.COD_PRODUCTO = 'F'
+			AND P.COD_PRODUCTO = PP.COD_PRODUCTO
+			AND E.COD_EMPRESA = PP.COD_EMPRESA
+			ORDER BY RUT";
 	
 	$dw_provedor = new datawindow($sql,'PROVEDORES');
 	

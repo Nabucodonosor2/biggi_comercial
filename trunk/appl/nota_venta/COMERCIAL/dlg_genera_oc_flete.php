@@ -17,6 +17,7 @@ $temp = new Template_appl('dlg_genera_oc_flete.htm');
 			,PRODUCTO P
 			,EMPRESA E
 			WHERE PP.COD_PRODUCTO = 'F'
+			AND PP.ELIMINADO = 'N'
 			AND P.COD_PRODUCTO = PP.COD_PRODUCTO
 			AND E.COD_EMPRESA = PP.COD_EMPRESA
 			ORDER BY RUT";

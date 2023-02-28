@@ -5,6 +5,8 @@ include(dirname(__FILE__)."/../../appl.ini");
 session::set('K_ROOT_DIR', K_ROOT_DIR);
 
 $db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
+$db->query("exec spx_resuelve_fa_rechazadas");
+
 $sql = "select DISTINCT UV1.COD_USUARIO
             ,UV1.NOM_USUARIO
             ,UV1.MAIL

@@ -1,6 +1,5 @@
---------------- spi_ventas_por_mes --------------
-ALTER PROCEDURE [dbo].[spi_ventas_por_mes](@ve_cod_usuario			numeric
-									,@ve_ano				numeric)
+CREATE PROCEDURE [dbo].[spi_ventas_por_mes_alt](@ve_cod_usuario		numeric
+										   ,@ve_ano				numeric)
 AS
 BEGIN
 
@@ -107,15 +106,15 @@ declare
 			 ,CASE
 			 	WHEN NV.COD_USUARIO_VENDEDOR1 = 17 then 1
 			 	WHEN NV.COD_USUARIO_VENDEDOR1 = 7 then 2
-			 	WHEN NV.COD_USUARIO_VENDEDOR1 = 11 then 3	
-			 	WHEN NV.COD_USUARIO_VENDEDOR1 = 14 then 4
-			 	WHEN NV.COD_USUARIO_VENDEDOR1 = 6 then 5
-			 	WHEN NV.COD_USUARIO_VENDEDOR1 = 12 then 6	
-			 	WHEN NV.COD_USUARIO_VENDEDOR1 = 13 then 7
-			 	WHEN NV.COD_USUARIO_VENDEDOR1 = 15 then 8
-			 	WHEN NV.COD_USUARIO_VENDEDOR1 = 10 then 9
-			 	WHEN NV.COD_USUARIO_VENDEDOR1 = 63 then 10	
-			 	WHEN NV.COD_USUARIO_VENDEDOR1 = 38 then 11
+			 	WHEN NV.COD_USUARIO_VENDEDOR1 = 11 then 3
+				WHEN NV.COD_USUARIO_VENDEDOR1 = 38 then 4
+			 	WHEN NV.COD_USUARIO_VENDEDOR1 = 14 then 5
+			 	WHEN NV.COD_USUARIO_VENDEDOR1 = 6 then 6
+			 	WHEN NV.COD_USUARIO_VENDEDOR1 = 12 then 7	
+			 	WHEN NV.COD_USUARIO_VENDEDOR1 = 13 then 8
+			 	WHEN NV.COD_USUARIO_VENDEDOR1 = 15 then 9
+			 	WHEN NV.COD_USUARIO_VENDEDOR1 = 10 then 10
+			 	WHEN NV.COD_USUARIO_VENDEDOR1 = 63 then 11		
 			 	ELSE 999					 					 					 				 				 					 				 	 	
 			 END ORDEN
 	FROM NOTA_VENTA NV, EMPRESA E, USUARIO U, MES M, ESTADO_NOTA_VENTA ENV

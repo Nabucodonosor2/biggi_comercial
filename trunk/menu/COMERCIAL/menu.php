@@ -109,12 +109,16 @@ $informes = array(new item_menu('Facturas por Equipo', '4015', "../appl/inf_vent
 				 ,new item_menu('Facturas por Cliente', '4060', "../appl/inf_facturas_por_cliente/inf_facturas_por_cliente.php")
 				 ,new item_menu('-')
 				 ,new item_menu('Informe Pre-IVA', '4099', "../appl/inf_pre_iva/inf_pre_iva.php")
-				);				
+				);
+				
+$gestion	= array(new item_menu('Reporte x Vendedores', '5005', "../appl/inf_reporte_vendedores/inf_reporte_vendedores.php")
+					);
 				
 $menu = new menu(array(new item_menu('Archivo', '05', '', $archivo), 
 						new item_menu('Maestros', '10', '', $maestro),
 						new item_menu('Ventas', '10', '', $ventas),
 						new item_menu('Administración', '10', '', $administracion),
 						new item_menu('Bodega', '10', '', $bodega),
-						new item_menu('Informes', '10', '', $informes)),280);
+						new item_menu('Informes', '10', '', $informes),
+						new item_menu('Gestión', '10', '', $gestion)),209);
 ?>

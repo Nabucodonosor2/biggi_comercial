@@ -188,6 +188,7 @@ if(isset($_POST['b_back_x'])){
 	$temp->setVar("ANO_FILL", $ano);
 	$temp->setVar("ANO_FILL2", $ano);
 
+	$total = $tot_ca+$tot_ca_sod+$tot_cu+$tot_cu_cdr+$tot_ar+$tot_rb+$tot_rb_cdr+$tot_am+$tot_he+$tot_pv+$tot_eo+$tot_ll+$tot_otros;
 	//se rellena el grafico con los totales
 	$temp->setVar("G_TOT_CA", round($tot_ca));
 	$temp->setVar("G_TOT_CA_SOD", round($tot_ca_sod));
@@ -203,6 +204,34 @@ if(isset($_POST['b_back_x'])){
 	$temp->setVar("G_TOT_LL", round($tot_ll));
 	$temp->setVar("G_TOT_OTROS", round($tot_otros));
 
+	$temp->setVar("C_TOT_CA", number_format(round($tot_ca), 0, ',', '.'));
+	$temp->setVar("C_TOT_CA_SOD", number_format(round($tot_ca_sod), 0, ',', '.'));
+	$temp->setVar("C_TOT_CU", number_format(round($tot_cu), 0, ',', '.'));
+	$temp->setVar("C_TOT_CU_CDR", number_format(round($tot_cu_cdr), 0, ',', '.'));
+	$temp->setVar("C_TOT_AR", number_format(round($tot_ar), 0, ',', '.'));
+	$temp->setVar("C_TOT_RB", number_format(round($tot_rb), 0, ',', '.'));
+	$temp->setVar("C_TOT_RB_CDR", number_format(round($tot_rb_cdr), 0, ',', '.'));
+	$temp->setVar("C_TOT_AM", number_format(round($tot_am), 0, ',', '.'));
+	$temp->setVar("C_TOT_HE", number_format(round($tot_he), 0, ',', '.'));
+	$temp->setVar("C_TOT_PV", number_format(round($tot_pv), 0, ',', '.'));
+	$temp->setVar("C_TOT_EO", number_format(round($tot_eo), 0, ',', '.'));
+	$temp->setVar("C_TOT_LL", number_format(round($tot_ll), 0, ',', '.'));
+	$temp->setVar("C_TOT_OTROS", number_format(round($tot_otros), 0, ',', '.'));
+
+	$temp->setVar("P_TOT_CA", round(($tot_ca*100)/$total));
+	$temp->setVar("P_TOT_CA_SOD", round(($tot_ca_sod*100)/$total));
+	$temp->setVar("P_TOT_CU", round(($tot_cu*100)/$total));
+	$temp->setVar("P_TOT_CU_CDR", round(($tot_cu_cdr*100)/$total));
+	$temp->setVar("P_TOT_AR", round(($tot_ar*100)/$total));
+	$temp->setVar("P_TOT_RB", round(($tot_rb*100)/$total));
+	$temp->setVar("P_TOT_RB_CDR", round(($tot_rb_cdr*100)/$total));
+	$temp->setVar("P_TOT_AM", round(($tot_am*100)/$total));
+	$temp->setVar("P_TOT_HE", round(($tot_he*100)/$total));
+	$temp->setVar("P_TOT_PV", round(($tot_pv*100)/$total));
+	$temp->setVar("P_TOT_EO", round(($tot_eo*100)/$total));
+	$temp->setVar("P_TOT_LL", round(($tot_ll*100)/$total));
+	$temp->setVar("P_TOT_OTROS", round(($tot_otros*100)/$total));
+	
 	// draw
 	$dw->retrieve();
 	$dw->habilitar($temp, false);

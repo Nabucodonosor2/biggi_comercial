@@ -1,4 +1,4 @@
-CREATE PROCEDURE [dbo].[spi_ventas_x_vendedor_alt](@ve_ano          numeric,
+alter PROCEDURE [dbo].[spi_ventas_x_vendedor_alt](@ve_ano          numeric,
                                                    @ve_cod_usuario  numeric)
 AS
 BEGIN
@@ -52,15 +52,21 @@ BEGIN
 	delete INF_VENTAS_X_USUARIO
 										
 	DECLARE C_CURSOR CURSOR FOR									
-	SELECT DISTINCT COD_USUARIO_VENDEDOR1
-		,U.NOM_USUARIO
-		,ORDEN
-	FROM INF_VENTAS_POR_MES I
-		,USUARIO U
-	WHERE I.COD_USUARIO_VENDEDOR1 = U.COD_USUARIO
-	AND YEAR(FECHA_NOTA_VENTA) = @ve_ano
-	AND I.COD_USUARIO = @ve_cod_usuario
-	AND ORDEN <> 999
+	SELECT COD_USUARIO,
+		   NOM_USUARIO,
+		  CASE
+			WHEN COD_USUARIO = 17 then 1
+			WHEN COD_USUARIO = 7 then 2
+			WHEN COD_USUARIO = 11 then 3
+			WHEN COD_USUARIO = 38 then 4
+			WHEN COD_USUARIO = 6 then 6
+			WHEN COD_USUARIO = 12 then 7
+			WHEN COD_USUARIO = 13 then 8
+			WHEN COD_USUARIO = 15 then 9
+			WHEN COD_USUARIO = 10 then 10
+		  END ORDEN
+	FROM USUARIO
+	WHERE COD_USUARIO IN (17, 7, 11, 38, 6, 12, 13, 15, 10)
 	ORDER BY ORDEN
 	
 	set @vl_sub_sum_enero		= 0

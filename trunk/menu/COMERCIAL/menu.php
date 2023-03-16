@@ -63,24 +63,24 @@ $administracion = array(new item_menu('Ingreso Pago', '2505', "../../../commonli
 						//new item_menu('-'),
 						//new item_menu('Depósito', '2515', "../../../commonlib/trunk/php/mantenedor.php?modulo=deposito&cod_item_menu=2515"),
 						new item_menu('-'),
-						new item_menu('Asignación Documentos', '2520', "../../../commonlib/trunk/php/mantenedor.php?modulo=asig_nro_doc_sii&cod_item_menu=2520"),
+						//new item_menu('Asignación Documentos', '2520', "../../../commonlib/trunk/php/mantenedor.php?modulo=asig_nro_doc_sii&cod_item_menu=2520"),
 						new item_menu('-'),
 						new item_menu('Participación Nota Venta', '2527', "../../../commonlib/trunk/php/mantenedor.php?modulo=orden_pago&cod_item_menu=2527"),
 						new item_menu('Pago Participación', '2528', "../../../commonlib/trunk/php/mantenedor.php?modulo=participacion&cod_item_menu=2528"),
-						new item_menu('Cartola Participación', '2529', "../../../commonlib/trunk/php/mantenedor.php?modulo=cartola_participacion&cod_item_menu=2529"),
+						//new item_menu('Cartola Participación', '2529', "../../../commonlib/trunk/php/mantenedor.php?modulo=cartola_participacion&cod_item_menu=2529"),
 						new item_menu('-'),
 						new item_menu('FA Proveedor', '2525', "../../../commonlib/trunk/php/mantenedor.php?modulo=faprov&cod_item_menu=2525"),
 						new item_menu('NC Proveedor', '2526',"../../../commonlib/trunk/php/mantenedor.php?modulo=ncprov&cod_item_menu=2526"),
 						new item_menu('Pago Proveedor', '2530', "../../../commonlib/trunk/php/mantenedor.php?modulo=pago_faprov&cod_item_menu=2530"),
-						new item_menu('Pago Directorio', '2535', "../../../commonlib/trunk/php/mantenedor.php?modulo=pago_directorio&cod_item_menu=2535"),
+						//new item_menu('Pago Directorio', '2535', "../../../commonlib/trunk/php/mantenedor.php?modulo=pago_directorio&cod_item_menu=2535"),
 						new item_menu('-'),
 						new item_menu('Traspaso Softland', '2545', "../../../commonlib/trunk/php/mantenedor.php?modulo=envio_softland&cod_item_menu=2545"),
 						new item_menu('-'),
 						new item_menu('Gasto Fijo', '2550', "../../../commonlib/trunk/php/mantenedor.php?modulo=gasto_fijo&cod_item_menu=2550"),
 						new item_menu('Documentos ADM', '2560', "../appl/cheque_renta/cheque_renta.php"),
 						new item_menu('-'),
-						new item_menu('Facturas Rechazadas', '2590', "../../../commonlib/trunk/php/mantenedor.php?modulo=factura_rechazada&cod_item_menu=2590"),
-						new item_menu('Cheque Rental', '2560', "../appl/cheque_renta/cheque_renta.php"));
+						new item_menu('Facturas Rechazadas', '2590', "../../../commonlib/trunk/php/mantenedor.php?modulo=factura_rechazada&cod_item_menu=2590"));
+						//new item_menu('Cheque Rental', '2560', "../appl/cheque_renta/cheque_renta.php"));
 																				
 $bodega = array( new item_menu('Entrada', '3015', "../../../commonlib/trunk/php/mantenedor.php?modulo=entrada_bodega&cod_item_menu=3015")
 				,new item_menu('Salida', '3020', "../../../commonlib/trunk/php/mantenedor.php?modulo=salida_bodega&cod_item_menu=3020")

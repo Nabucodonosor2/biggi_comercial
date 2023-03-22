@@ -2,6 +2,10 @@
 require_once(dirname(__FILE__)."/../../../../commonlib/trunk/php/auto_load.php");
 require_once(dirname(__FILE__)."/../empresa/class_dw_help_empresa.php");
 require_once(dirname(__FILE__)."/".K_CLIENTE."/rpt_pago_proveedor.php");
+require_once(dirname(__FILE__)."/".K_CLIENTE."/rpt_pago_proveedor1.php");
+require_once(dirname(__FILE__)."/".K_CLIENTE."/rpt_pago_proveedor2.php");
+require_once(dirname(__FILE__)."/".K_CLIENTE."/rpt_pago_proveedor3.php");
+require_once(dirname(__FILE__)."/".K_CLIENTE."/rpt_pago_proveedor4.php");
 ini_set('max_execution_time', 900); //900 seconds = 15 minutes
 
 class dw_pago_faprov_faprov extends datawindow {
@@ -799,8 +803,26 @@ class wi_pago_faprov_base extends w_input {
 					$labels['strCOD_PAGO_FAPROV'] = $cod_pago_faprov;
 					
 					if($COD_TIPO_PAGO_FAPROV == self::K_TIPO_PAGO_FAPROV_CHEQUE ){
-						$this->alert('"¿Esta seguro de imprimir el  archivo? Recuerde cambiar el papel en la impresora"');	
-						$rpt = new rpt_pago_proveedor($sql, $this->root_dir.'appl/pago_faprov/tipo_doc_cheque.xml', $labels, "Pago de Proveedores ".$cod_pago_faprov.".pdf", 0);
+						$this->alert('"¿Esta seguro de imprimir el  archivo? Recuerde cambiar el papel en la impresora"');
+						
+						$cod_usuario = $this->cod_usuario;
+						$sql_plat = "SELECT PLATAFORMA_PRINT_CHEQUE
+									 FROM USUARIO
+									 WHERE COD_USUARIO = $cod_usuario";
+						$result_plat = $db->build_results($sql_plat);
+						$plataforma = $result_plat[0]['PLATAFORMA_PRINT_CHEQUE'];
+
+						if($plataforma == 'WINDOWS' || $plataforma == 'MAC')
+							$rpt = new rpt_pago_proveedor($sql, $this->root_dir.'appl/pago_faprov/tipo_doc_cheque.xml', $labels, "Pago de Proveedores ".$cod_pago_faprov.".pdf", 0);
+						else if($plataforma == 'Win1')
+							$rpt = new rpt_pago_proveedor1($sql, $this->root_dir.'appl/pago_faprov/tipo_doc_cheque.xml', $labels, "Pago de Proveedores ".$cod_pago_faprov.".pdf", 0);
+						else if($plataforma == 'Win2')
+							$rpt = new rpt_pago_proveedor2($sql, $this->root_dir.'appl/pago_faprov/tipo_doc_cheque.xml', $labels, "Pago de Proveedores ".$cod_pago_faprov.".pdf", 0);
+						else if($plataforma == 'Win3')
+							$rpt = new rpt_pago_proveedor3($sql, $this->root_dir.'appl/pago_faprov/tipo_doc_cheque.xml', $labels, "Pago de Proveedores ".$cod_pago_faprov.".pdf", 0);
+						else if($plataforma == 'Win4')
+							$rpt = new rpt_pago_proveedor4($sql, $this->root_dir.'appl/pago_faprov/tipo_doc_cheque.xml', $labels, "Pago de Proveedores ".$cod_pago_faprov.".pdf", 0);
+
 						$rpt = new rpt_reverso_ch($sql, $this->root_dir.'appl/pago_faprov/reverso_cheque.xml', $labels, "Reverso_Cheque".$cod_pago_faprov, 0);
 					}
 					else if ($COD_TIPO_PAGO_FAPROV == self::K_TIPO_PAGO_FAPROV_TRANSFERENCIA){

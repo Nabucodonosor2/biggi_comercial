@@ -62,8 +62,8 @@ class wo_inf_cheque_fecha extends w_informe_pantalla{
 
 		$this->dw->add_control(new static_num('MONTO_DOC'));
 
-		$header->valor_filtro = $this->current_date();
-		$this->make_filtros();
+		//$header->valor_filtro = $this->current_date();
+		//$this->make_filtros();
    }
 	function print_informe(){
 		// reporte

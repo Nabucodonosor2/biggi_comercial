@@ -52,7 +52,7 @@ class wo_inf_cheque_fecha extends w_informe_pantalla{
 		$this->add_header(new header_text('COD_NOTA_VENTA', 'I.COD_NOTA_VENTA', 'N° NV'));
 		$this->add_header(new header_text('NOM_EMPRESA', "I.NOM_EMPRESA", 'Cliente'));
 		$this->add_header(new header_text('RUT', "I.RUT", 'Rut'));
-		$this->add_header(new header_num('COD_INGRESO_PAGO', 'I.COD_INGRESO_PAGO', 'N°'));
+		$this->add_header(new header_num('COD_INGRESO_PAGO', 'I.COD_INGRESO_PAGO', 'N° IP'));
 		$this->add_header($header = new header_date('FECHA_DOC', 'FECHA_DOC', 'Fecha'));
 		$header->field_bd_order = 'DATE_FECHA_DOC';	
 		$this->add_header(new header_num('NRO_DOC', 'I.NRO_DOC', 'Número'));

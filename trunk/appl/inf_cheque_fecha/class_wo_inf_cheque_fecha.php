@@ -36,11 +36,12 @@ class wo_inf_cheque_fecha extends w_informe_pantalla{
 						,COD_DOC_INGRESO_PAGO
 						,I.COD_BANCO
 						,B.NOM_BANCO
+						,ORIGEN_CHEQUE
 				FROM INF_CHEQUE_FECHA I
 					,BANCO B
 				WHERE COD_USUARIO = $cod_usuario
 				AND I.COD_BANCO = B.COD_BANCO
-				ORDER BY COD_INF_CHEQUE_FECHA";
+				ORDER BY DATE_FECHA_DOC ASC";
 
 		parent::w_informe_pantalla('inf_cheque_fecha', $sql, $_REQUEST['cod_item_menu']);
 		
@@ -48,7 +49,14 @@ class wo_inf_cheque_fecha extends w_informe_pantalla{
 		$this->dw->add_control(new edit_text_hidden('COD_DOC_INGRESO_PAGO'));
 		$this->dw->entrable = true;
 		$this->dw->add_control(new edit_check_box('SELECCION', 'S', 'N'));
+
 		// headers
+		$sql = "SELECT 'Comercial' ORIGEN_CHEQUE
+						,'Comercial' NOM_ORIGEN_CHEQUE
+				UNION
+				SELECT 'Rental' ORIGEN_CHEQUE
+						,'Rental' NOM_ORIGEN_CHEQUE";
+        $this->add_header($compromiso = new header_drop_down_string('ORIGEN_CHEQUE', 'ORIGEN_CHEQUE', 'Origen', $sql));
 		$this->add_header(new header_text('COD_NOTA_VENTA', 'I.COD_NOTA_VENTA', 'N° NV'));
 		$this->add_header(new header_text('NOM_EMPRESA', "I.NOM_EMPRESA", 'Cliente'));
 		$this->add_header(new header_text('RUT', "I.RUT", 'Rut'));
@@ -64,7 +72,15 @@ class wo_inf_cheque_fecha extends w_informe_pantalla{
 
 		//$header->valor_filtro = $this->current_date();
 		//$this->make_filtros();
-   }
+   	}
+
+	function make_menu(&$temp){
+		$menu = session::get('menu_appl');
+		$menu->ancho_completa_menu = 410;
+		$menu->draw($temp);
+		$menu->ancho_completa_menu = 209;
+	}
+
 	function print_informe(){
 		// reporte
 		$sql = $this->dw->get_sql();
@@ -92,6 +108,18 @@ class wo_inf_cheque_fecha extends w_informe_pantalla{
 			$this->habilita_boton($temp, 'b_export', false);	
 		}
 	}
+	function redraw_item(&$temp, $ind, $record){
+		parent::redraw_item($temp, $ind, $record);
+		$ORIGEN_CHEQUE = $this->dw->get_item($record, 'ORIGEN_CHEQUE');
+
+		if($ORIGEN_CHEQUE == 'Comercial')
+			$control = '<input name="SELECCION_'.$record.'" type="checkbox" id="SELECCION_'.$record.'" value="S" onblur="this.style.borderColor = this.style.borderWidth = this.style.borderStyle = \'\';" onfocus="this.style.border=\'1px solid #FF0000\'" style="border-image: none 100% / 1 / 0 stretch;">';
+		else
+			$control = '<input name="SELECCION_'.$record.'" type="checkbox" id="SELECCION_'.$record.'" value="S" onblur="this.style.borderColor = this.style.borderWidth = this.style.borderStyle = \'\';" onfocus="this.style.border=\'1px solid #FF0000\'" style="border-image: none 100% / 1 / 0 stretch;" disabled="">';
+
+		$temp->setVar("wo_registro.SELECCION", $control);
+	}
+
 	function paginacion(&$temp){
 		parent::paginacion($temp);
 		$temp->setVar("CANT_DOC", $this->row_count_output);
@@ -162,10 +190,10 @@ class wo_inf_cheque_fecha extends w_informe_pantalla{
 		
 		$db->EXECUTE_SP("spi_cheque_a_fecha", "$this->fecha, $this->cod_usuario");
 
-		$this->headers['FECHA_DOC']->valor_filtro = $this->current_date();
+		//$this->headers['FECHA_DOC']->valor_filtro = $this->current_date();
 			
 		$this->save_SESSION();	
-		$this->make_filtros();
+		//$this->make_filtros();
 		$this->retrieve();
 	}
 	
@@ -179,9 +207,9 @@ class wo_inf_cheque_fecha extends w_informe_pantalla{
 		$db->EXECUTE_SP("spu_inf_cheque_fecha", $param);
 		
 		$db->EXECUTE_SP("spi_cheque_a_fecha", "$this->fecha, $this->cod_usuario");
-		$this->headers['FECHA_DOC']->valor_filtro = $this->current_date();
+		//$this->headers['FECHA_DOC']->valor_filtro = $this->current_date();
 				
-		$this->make_filtros();
+		//$this->make_filtros();
 		$this->retrieve();
 	}
 	

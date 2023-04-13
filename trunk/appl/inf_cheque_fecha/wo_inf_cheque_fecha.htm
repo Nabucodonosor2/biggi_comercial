@@ -31,7 +31,7 @@
 		<!-- ******** END ALLWEBMENUS CODE FOR menu ******** -->
 		<form action="" method="post" name="output" id="output">
 			<input name="wo_hidden" id="wo_hidden" type="hidden" value=""/>
-			<table width="1050" border="0" align="center">
+			<table width="1250" border="0" align="center">
 				<tr bgcolor="#FFFFFF">
 					<!-- menu superior-->
 					<td width="1000"  height="51" align="center" id="awmAnchor-menu" style="width:100px; height:50px;">
@@ -41,7 +41,7 @@
 				</tr>
 				<tr bgcolor="#FFFFFF">
 					<td>
-						<table width="1000" border="0">
+						<table width="1200" border="0">
 							<tr>
 								<td>
 									<table width="592" border="0">
@@ -60,41 +60,43 @@
 				</tr>
 				<tr bgcolor="#FFFFFF">
 					<td style="height: 465px;">	  
-						<table width="1000" border="0" align="center">
+						<table width="1200" border="0" align="center">
 							<tr bgcolor="#FFFFFF">
 								<td valign="top">
-									<table width="1000" align="center">
+									<table width="1200" align="center">
 										<tr class="encabezado_center_informe">
-											<th width="60" colspan="5" bgcolor="#FFFFFF"></th>
+											<th width="60" colspan="6" bgcolor="#FFFFFF"></th>
 											<th width="80" colspan="5">Datos Cheque</th>
 										</tr>
 										<tr class="encabezado_center_informe">
-											<th width="4%"></th>
+											<th width="3%"></th>
+											<th width="7%">{H_ORIGEN_CHEQUE}</th>
 											<th width="8%">{H_COD_NOTA_VENTA}</th>
 											<th width="22%">{H_NOM_EMPRESA}</th>
 											<th width="9%">{H_RUT}</th>
-											<th width="7%">{H_COD_INGRESO_PAGO}</th>
+											<th width="6%">{H_COD_INGRESO_PAGO}</th>
 											<th width="4%">Sel.</th>
-											<th width="10%">{H_FECHA_DOC}</th>
-											<th width="10%">{H_NRO_DOC}</th>
+											<th width="8%">{H_FECHA_DOC}</th>
+											<th width="8%">{H_NRO_DOC}</th>
 											<th width="16%">{H_NOM_BANCO}</th>
-											<th width="10%">{H_MONTO_DOC}</th>
+											<th width="9%">{H_MONTO_DOC}</th>
 										</tr>
 									</table>
 									<div id="wo_scroll" style="overflow-x:hidden; overflow-y:auto; height:300;">						
-										<table width="1000" align="center">
+										<table width="1200" align="center">
 											<!-- startBlock(wo_registro) -->
 											<tr class="{WO_TR_CSS}">
-												<td width="4%" align="center">{WO_DETALLE}{COD_DOC_INGRESO_PAGO}</td>
+												<td width="3%" align="center">{WO_DETALLE}{COD_DOC_INGRESO_PAGO}</td>
+												<td width="7%" align="center">{ORIGEN_CHEQUE}</td>
 												<td width="8%" align="center">{COD_NOTA_VENTA}</td>
 												<td width="22%" align="left">{NOM_EMPRESA}</td>
 												<td width="9%" align="center">{RUT}</td>
-												<td width="7%" align="center">{COD_INGRESO_PAGO}</td>
+												<td width="6%" align="center">{COD_INGRESO_PAGO}</td>
 												<td width="4%" align="center">{SELECCION}</td>
-												<td width="10%" align="center">{FECHA_DOC}</td>
-												<td width="10%" align="center">{NRO_DOC}</td>
+												<td width="8%" align="center">{FECHA_DOC}</td>
+												<td width="8%" align="center">{NRO_DOC}</td>
 												<td width="16%" align="left">{NOM_BANCO}</td>
-												<td width="10%" align="right"><div style="padding-right:20px;">{MONTO_DOC}</div></td>
+												<td width="9%" align="right"><div style="padding-right:20px;">{MONTO_DOC}</div></td>
 											</tr>
 											<!-- endBlock(wo_registro) -->
 										</table>
@@ -103,7 +105,7 @@
 							</tr>
 							<tr bgcolor="#FFFFFF">
 								<td>						
-									<table width="1000" align="center" class="tabla_informe" style="width: 950px">
+									<table width="1200" align="center" class="tabla_informe" style="width: 1200px">
 										<tr>
 											<td width="115" align="right" class="negrita">Cantidad Documentos</td>
 											<td width="3">:</td>
@@ -126,7 +128,7 @@
 							</tr>		
 							<tr bgcolor="#FFFFFF">
 								<td>						
-									<table width="1000" border="0" align="center">
+									<table width="1200" border="0" align="center">
 										<tr valign="middle">
 											<td width="290" >{WO_BACK}</td>
 											<td align="right">{WO_FIRST}{WO_PREV}</td>

@@ -185,9 +185,9 @@ $mail->Timeout      = 30;
 $mail->Subject      = "Informe cheques en cartera al $fecha_actual";
 $mail->ClearAddresses();
 
-//$mail->AddAddress('isra.campos.o@gmail.com', 'Israel Campos');
-$mail->AddAddress('mherrera@biggi.cl','Marcelo Herrera');
-$mail->AddCC('isra.campos.o@gmail.com', 'Israel Campos');
+$mail->AddAddress('sergio.pechoante@biggi.cl', 'Sergio Pechoante');
+$mail->AddAddress('jcatalan@biggi.cl', 'José Catalán');
+$mail->AddBCC('mherrera@biggi.cl','Marcelo Herrera');
 
 //$mail->AddEmbeddedImage("../../images_appl/logobiggipo.jpg",'logo_biggi');
 $mail->Body         = $html;

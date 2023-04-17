@@ -48,6 +48,7 @@ $sql = "SELECT ORIGEN_CHEQUE
                     ELSE CONVERT(VARCHAR, DIP.NEW_FECHA_DOC, 103)
                 END FECHA_DOC
                 ,dbo.number_format(DIP.MONTO_DOC, 0, ',', '.') MONTO_DOC
+                ,DIP.NEW_FECHA_DOC
         FROM INF_CHEQUE_FECHA I
         ,INGRESO_PAGO INP
         ,DOC_INGRESO_PAGO DIP
@@ -67,6 +68,7 @@ $sql = "SELECT ORIGEN_CHEQUE
                     ELSE CONVERT(VARCHAR, DIP.NEW_FECHA_DOC, 103)
                 END FECHA_DOC
                 ,dbo.number_format(DIP.MONTO_DOC, 0, ',', '.') MONTO_DOC
+                ,DIP.NEW_FECHA_DOC
         FROM INF_CHEQUE_FECHA I
         ,RENTAL.dbo.INGRESO_PAGO INP
         ,RENTAL.dbo.DOC_INGRESO_PAGO DIP
@@ -75,7 +77,7 @@ $sql = "SELECT ORIGEN_CHEQUE
         AND CONVERT(VARCHAR, DIP.NEW_FECHA_DOC, 103) = CONVERT(VARCHAR, GETDATE(), 103)
         AND I.COD_INGRESO_PAGO = INP.COD_INGRESO_PAGO
         AND DIP.COD_DOC_INGRESO_PAGO = I.COD_DOC_INGRESO_PAGO
-        ORDER BY FECHA_DOC ASC";
+        ORDER BY DIP.NEW_FECHA_DOC ASC";
 
 $result_tbody1 = $db->build_results($sql);
 
@@ -114,6 +116,7 @@ $sql = "SELECT ORIGEN_CHEQUE
                     ELSE CONVERT(VARCHAR, DIP.NEW_FECHA_DOC, 103)
                 END FECHA_DOC
                 ,dbo.number_format(DIP.MONTO_DOC, 0, ',', '.') MONTO_DOC
+                ,DIP.NEW_FECHA_DOC
         FROM INF_CHEQUE_FECHA I
         ,INGRESO_PAGO INP
         ,DOC_INGRESO_PAGO DIP
@@ -133,6 +136,7 @@ $sql = "SELECT ORIGEN_CHEQUE
                     ELSE CONVERT(VARCHAR, DIP.NEW_FECHA_DOC, 103)
                 END FECHA_DOC
                 ,dbo.number_format(DIP.MONTO_DOC, 0, ',', '.') MONTO_DOC
+                ,DIP.NEW_FECHA_DOC
         FROM INF_CHEQUE_FECHA I
         ,RENTAL.dbo.INGRESO_PAGO INP
         ,RENTAL.dbo.DOC_INGRESO_PAGO DIP
@@ -141,7 +145,7 @@ $sql = "SELECT ORIGEN_CHEQUE
         AND CONVERT(VARCHAR, DIP.NEW_FECHA_DOC, 103) > CONVERT(VARCHAR, GETDATE(), 103)
         AND I.COD_INGRESO_PAGO = INP.COD_INGRESO_PAGO
         AND DIP.COD_DOC_INGRESO_PAGO = I.COD_DOC_INGRESO_PAGO
-        ORDER BY FECHA_DOC ASC";
+        ORDER BY DIP.NEW_FECHA_DOC ASC";
 
 $result_tbody2 = $db->build_results($sql);
 $tbody = "";

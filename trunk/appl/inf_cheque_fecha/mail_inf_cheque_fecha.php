@@ -6,7 +6,8 @@ session::set('K_ROOT_DIR', K_ROOT_DIR);
 
 $cod_usuario    = 1;// se fuerza a que el cod usuario sea el 1 ya queeste no pasa por el login
 $db             = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
-$fecha          = "select convert (varchar ,dbo.f_makedate(day(getdate()), month(getdate()), year(getdate())),103) FECHA
+$fecha          = "select CONVERT(VARCHAR, GETDATE(), 103) FECHA
+                        ,CONVERT(VARCHAR, DATEADD(DAY, -2, GETDATE()), 103) FECHA_ESPECIAL
                         ,dbo.f_get_parametro(53) URL_SMTP
                         ,dbo.f_get_parametro(54) USER_SMTP
                         ,dbo.f_get_parametro(55) PASS_SMTP
@@ -24,13 +25,17 @@ $fecha          = "select convert (varchar ,dbo.f_makedate(day(getdate()), month
 $result         = $db->build_results($fecha);
 
 $fecha_actual   = $result[0]['FECHA'];
+$fecha_especial = $result[0]['FECHA_ESPECIAL'];
 $nombre_day     = $result[0]['NOMBRE_DAY'];
 $host           = $result[0]['URL_SMTP'];
 $Username       = $result[0]['USER_SMTP'];
 $Password       = $result[0]['PASS_SMTP'];
 $Port 	        = $result[0]['PORT_SMTP'];
 
-$fecha1         = str2date($fecha_actual);
+if($nombre_day == 'Lunes')
+    $fecha1     = str2date($fecha_especial);
+else
+    $fecha1     = str2date($fecha_actual);
 
 $db->query("exec spi_cheque_a_fecha $fecha1, $cod_usuario");
 
@@ -50,12 +55,17 @@ $sql = "SELECT ORIGEN_CHEQUE
                 ,dbo.number_format(DIP.MONTO_DOC, 0, ',', '.') MONTO_DOC
                 ,DIP.NEW_FECHA_DOC
         FROM INF_CHEQUE_FECHA I
-        ,INGRESO_PAGO INP
-        ,DOC_INGRESO_PAGO DIP
+            ,INGRESO_PAGO INP
+            ,DOC_INGRESO_PAGO DIP
         WHERE I.COD_USUARIO = $cod_usuario
-        AND ORIGEN_CHEQUE = 'Comercial'
-        AND CONVERT(VARCHAR, DIP.NEW_FECHA_DOC, 103) = CONVERT(VARCHAR, GETDATE(), 103)
-        AND I.COD_INGRESO_PAGO = INP.COD_INGRESO_PAGO
+        AND ORIGEN_CHEQUE = 'Comercial' ";
+
+if($nombre_day == 'Lunes')
+    $sql .= "AND DIP.NEW_FECHA_DOC BETWEEN CONVERT(VARCHAR, DATEADD(DAY, -2, GETDATE()), 103) AND CONVERT(VARCHAR, GETDATE(), 103) ";
+else
+    $sql .= "AND CONVERT(VARCHAR, DIP.NEW_FECHA_DOC, 103) = CONVERT(VARCHAR, GETDATE(), 103) ";
+
+$sql .= "AND I.COD_INGRESO_PAGO = INP.COD_INGRESO_PAGO
         AND DIP.COD_DOC_INGRESO_PAGO = I.COD_DOC_INGRESO_PAGO
         UNION
         SELECT ORIGEN_CHEQUE
@@ -70,12 +80,17 @@ $sql = "SELECT ORIGEN_CHEQUE
                 ,dbo.number_format(DIP.MONTO_DOC, 0, ',', '.') MONTO_DOC
                 ,DIP.NEW_FECHA_DOC
         FROM INF_CHEQUE_FECHA I
-        ,RENTAL.dbo.INGRESO_PAGO INP
-        ,RENTAL.dbo.DOC_INGRESO_PAGO DIP
+            ,RENTAL.dbo.INGRESO_PAGO INP
+            ,RENTAL.dbo.DOC_INGRESO_PAGO DIP
         WHERE I.COD_USUARIO = $cod_usuario
-        AND ORIGEN_CHEQUE = 'Rental'
-        AND CONVERT(VARCHAR, DIP.NEW_FECHA_DOC, 103) = CONVERT(VARCHAR, GETDATE(), 103)
-        AND I.COD_INGRESO_PAGO = INP.COD_INGRESO_PAGO
+        AND ORIGEN_CHEQUE = 'Rental' ";
+
+if($nombre_day == 'Lunes')
+    $sql .= "AND DIP.NEW_FECHA_DOC BETWEEN CONVERT(VARCHAR, DATEADD(DAY, -2, GETDATE()), 103) AND CONVERT(VARCHAR, GETDATE(), 103) ";
+else
+    $sql .= "AND CONVERT(VARCHAR, DIP.NEW_FECHA_DOC, 103) = CONVERT(VARCHAR, GETDATE(), 103) ";
+
+$sql .= "AND I.COD_INGRESO_PAGO = INP.COD_INGRESO_PAGO
         AND DIP.COD_DOC_INGRESO_PAGO = I.COD_DOC_INGRESO_PAGO
         ORDER BY DIP.NEW_FECHA_DOC ASC";
 

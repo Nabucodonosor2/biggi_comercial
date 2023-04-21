@@ -7,7 +7,6 @@ require_once(dirname(__FILE__)."/".$K_CLIENTE."/rpt_santander.php");
 ini_set('max_execution_time', 900); //900 seconds = 15 minutes
 //ini_set('display_errors', 'On');
 
-
 $db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);		
 $temp = new Template_appl('cheque_renta.htm');	
 /**TALONARIO Y SANTANDER OCUPAN LOS MISMOS CAMPOS**/
@@ -128,11 +127,14 @@ $dw_datos->set_item(0,'BANCO','SANTANDER');
 if (isset($_POST['print_talonario'])){
     print_cheque('TALONARIO');
 }
+if (isset($_POST['print_tipo_dos'])){
+    print_cheque('TALONARIO', 'T');
+}
 if (isset($_POST['print_santander'])){
     print_cheque('SANTANDER');
 }
 
-function print_cheque($filtro) {
+function print_cheque($filtro, $reverse = 'F') {
     $BENEFICIARIO =  $_POST['BENEFICIARIO']; 
     $MONTO = $_POST['MONTO_TALONARIO_0'];
     $FECHA = str2date($_POST['FECHA_TALONARIO_0']);
@@ -173,9 +175,14 @@ function print_cheque($filtro) {
 			        ,DATEPART(year, $FECHA)ANO_PAGO_DOCUMENTO
                     ,'$RUT' RUT_COMPLETO
                     ,'$DOCUMENTOS_TALONARIO' DOCUMENTOS";
-	     
-	   $rpt = new rpt_cheque_talonario($sql, $K_ROOT_DIR.'appl/cheque_renta/tipo_doc_cheque.xml', $labels, "Talonario.pdf", 0);
-	   $rpt = new rpt_reverso_cheque_talonario($sql, $K_ROOT_DIR.'appl/cheque_renta/reverso_cheque.xml', $labels, "Reverso_Cheque", 0);    
+	   
+        if($reverse == 'F')
+	        new rpt_cheque_talonario($sql, $K_ROOT_DIR.'appl/cheque_renta/tipo_doc_cheque.xml', $labels, "Talonario_1.pdf", 0);
+        else
+            print " <script>window.open('../cheque_renta/COMERCIAL/rpt_cheque_talonario_reverse.php?sql=".base64_encode($sql)."')</script>";
+            
+	    new rpt_reverso_cheque_talonario($sql, $K_ROOT_DIR.'appl/cheque_renta/reverso_cheque.xml', $labels, "Reverso_Cheque", 0);
+
 	}else if($filtro == 'SANTANDER'){
 	   $ES_NOMINATIVO = "";
        $ES_NOMINATIVO		= ($_POST['ES_NOMINATIVO_SANTANDER_0'] =='') ? "N" : $_POST['ES_NOMINATIVO_SANTANDER_0'];	
@@ -285,13 +292,11 @@ function print_cheque($filtro) {
                     ,'$OC5' OC5
                     ,'$OC6' OC6
                     ,'$REFERENCIA_GRAL' REFERENCIA_GRAL
-                    ,$TOTAL TOTAL"; 
-	   $rpt = new rpt_santander($sql, $K_ROOT_DIR.'appl/cheque_renta/cheque_santander.xml', $labels, "Santander.pdf", 0);
-	   $rpt = new  rpt_reverso_cheque_santander($sql, $K_ROOT_DIR.'appl/cheque_renta/reverso_cheque.xml', $labels, "Reverso_Cheque", 0);    
-	}
-	
-	
-				
+                    ,$TOTAL TOTAL";
+        
+        $rpt = new rpt_santander($sql, $K_ROOT_DIR.'appl/cheque_renta/cheque_santander.xml', $labels, "Santander.pdf", 0);
+	    $rpt = new rpt_reverso_cheque_santander($sql, $K_ROOT_DIR.'appl/cheque_renta/reverso_cheque.xml', $labels, "Reverso_Cheque", 0);    
+	}	
 }
 
 function str2date($fecha_str, $hora_str='00:00:00') {
@@ -314,6 +319,4 @@ $dw_datos->habilitar($temp, $entrable);
 $menu = session::get('menu_appl');
 $menu->draw($temp);
 print $temp->toString();
-
-
 ?>

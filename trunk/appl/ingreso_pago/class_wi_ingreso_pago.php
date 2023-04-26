@@ -224,7 +224,8 @@ class dw_doc_ingreso_pago extends datawindow {
 		$this->add_control(new edit_text_hidden('COD_CHEQUE'));
 		$this->add_control(new edit_text_hidden('COD_BANCO_H'));
 		$this->add_control(new edit_num('NRO_DOC',10, 10, 0, true, false, false));
-		$this->add_control(new edit_date('FECHA_DOC'));
+		$this->add_control($control = new edit_date('FECHA_DOC'));
+		$control->set_onChange("valida_fecha_doc(this);");
 		$this->add_control($control = new edit_precio('MONTO_DOC',10,10));
 		$control->set_onChange("change_monto_doc();");
 

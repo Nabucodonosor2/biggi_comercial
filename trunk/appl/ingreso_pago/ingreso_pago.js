@@ -414,6 +414,7 @@ function valida_tipo_doc_pago(ve_tipo_doc_pago) {
 		cod_banco.removeAttribute('disabled');
 		nro_cuotas_tbk.setAttribute('disabled', "");
 	}
+	valida_fecha_doc(ve_tipo_doc_pago);
 }
 
 
@@ -678,4 +679,22 @@ function valida_anticipo(){
 		set_value('LABEL_ANTICIPO_0', labelAnticipo, labelAnticipo);
 	}else
 		set_value('LABEL_ANTICIPO_0', '', '');	
+}
+
+function valida_fecha_doc(ve_control){
+	const vlRecord		= get_num_rec_field(ve_control.id);
+	const vlTipoDoc		= get_value('COD_TIPO_DOC_PAGO_'+vlRecord);
+	const vlFechaDoc	= get_value('FECHA_DOC_'+vlRecord);
+
+	if((vlTipoDoc == 5 || vlTipoDoc == 6) && vlFechaDoc != ''){
+		const ajax = nuevoAjax();
+		ajax.open("GET", "ajax_validaciones.php?param1="+vlFechaDoc+"&op=validaFechaDoc", false);
+		ajax.send(null);
+		const resp = ajax.responseText;
+
+		if(resp == 'NO'){
+			alert('No puede ingresar fecha de tarjeta mayor al presente, ni menor a 4 días del presente.');
+			set_value('FECHA_DOC_'+vlRecord, '', '');
+		}
+	}
 }

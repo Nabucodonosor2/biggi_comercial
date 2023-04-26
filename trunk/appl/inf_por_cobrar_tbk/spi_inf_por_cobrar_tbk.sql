@@ -1,4 +1,4 @@
-ALTER PROCEDURE spi_inf_por_cobrar_tbk(@ve_cod_usuario	numeric)
+ALTER PROCEDURE [dbo].[spi_inf_por_cobrar_tbk](@ve_cod_usuario	numeric)
 AS
 BEGIN
 	DECLARE
@@ -85,7 +85,7 @@ BEGIN
 
 			IF(@vl_count = 0)BEGIN
 				-- Es un error
-				return 'Error'
+				print 'Error ingreso pago: '+CONVERT(VARCHAR, @vc_cod_ingreso_pago)
 			END
 			ELSE IF(@vl_count = 1)BEGIN
 				-- Encontro FA asociada a una NV para desplegar datos
@@ -93,7 +93,7 @@ BEGIN
 				FROM INGRESO_PAGO_FACTURA
 				WHERE COD_INGRESO_PAGO = @vc_cod_ingreso_pago
 				AND TIPO_DOC = 'FACTURA'
-				
+
 				if(@vl_fecha_actual <= @vl_fecha_abono)BEGIN
 					SELECT @vl_fecha_nota_venta = FECHA_NOTA_VENTA
 						 ,@vl_rut = RUT
@@ -271,7 +271,7 @@ BEGIN
 
 			IF(@vl_count = 0)BEGIN
 				-- Es un error
-				return 'Error'
+				print 'Error ingreso pago: '+CONVERT(VARCHAR, @vc_cod_ingreso_pago)
 			END
 			ELSE IF(@vl_count = 1)BEGIN
 				-- Encontro FA asociada a una NV para desplegar datos

@@ -3,8 +3,12 @@ ALTER PROCEDURE [dbo].[spi_ventas_por_mes](@ve_cod_usuario			numeric
 									,@ve_ano				numeric)
 AS
 BEGIN
+	-- OJO CON ESTE INFORME.
+	-- NO ESTA CONSIDERANDO LAS NOTAS DE VENTA EN ESTADO = 5 LAS CUALES SON "CERRADAS ADM".
+	-- EVENTUALMENTE PODRIA TRAER DIFERENCIAS EN LOS INFORMES.
+	-- MH 04052023
 
-declare
+	declare
 	@vl_fecha_actual		datetime
 
 	set @vl_fecha_actual = getdate()

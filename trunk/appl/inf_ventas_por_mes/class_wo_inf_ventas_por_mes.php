@@ -149,6 +149,13 @@ class wo_inf_ventas_por_mes extends w_informe_pantalla
 	function get_totales() {
 		// Exporta la data
 		$db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
+		$sql_no_sumar	= "select COD_NOTA_VENTA FROM NO_SUMAR_NOTA_VENTA";
+		$result_no_sumar= $db->build_results($sql_no_sumar);
+		$array_no_sumar;
+		for ($i=0; $i < count($result_no_sumar); $i++) { 
+			$array_no_sumar[] = $result_no_sumar[$i]['COD_NOTA_VENTA'];
+		}
+		
 		$sql = $this->dw->get_sql();
 		$res = $db->query($sql);
 
@@ -168,9 +175,11 @@ class wo_inf_ventas_por_mes extends w_informe_pantalla
 			if ($my_row['COD_ESTADO_NOTA_VENTA']==3)		// nula
 				continue;
 				
-			if ($my_row['COD_ESTADO_NOTA_VENTA']==2 || $my_row['COD_ESTADO_NOTA_VENTA']==4)	// cerrada o confirmada
-				$result[0]['NV_CONFIRMADA'] += 1;
-			else if ($my_row['COD_ESTADO_NOTA_VENTA']==1)	// emitida
+			if ($my_row['COD_ESTADO_NOTA_VENTA']==2 || $my_row['COD_ESTADO_NOTA_VENTA']==4){// cerrada o confirmada
+				if(!in_array($my_row['COD_NOTA_VENTA'], $array_no_sumar))
+					$result[0]['NV_CONFIRMADA'] += 1;
+
+			}else if ($my_row['COD_ESTADO_NOTA_VENTA']==1)	// emitida
 				$result[0]['NV_X_CONFIRMAR'] += 1;
 			
 			$result[0]['SUBTOTAL'] += $my_row['SUBTOTAL'];

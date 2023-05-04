@@ -4,7 +4,7 @@ $K_CLIENTE = session::get('K_CLIENTE');
 require_once(dirname(__FILE__)."/".$K_CLIENTE."/rpt_cheque_talonario.php");
 require_once(dirname(__FILE__)."/".$K_CLIENTE."/rpt_santander.php");
 
-ini_set('max_execution_time', 900); //900 seconds = 15 minutes
+//ini_set('max_execution_time', 900); //900 seconds = 15 minutes
 //ini_set('display_errors', 'On');
 
 $db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);		

@@ -4,10 +4,12 @@ require_once(dirname(__FILE__)."/../../../../commonlib/trunk/php/clases/class_PH
 include(dirname(__FILE__)."/../../appl.ini");
 session::set('K_ROOT_DIR', K_ROOT_DIR);
 
-$cod_usuario    = 1;// se fuerza a que el cod usuario sea el 1 ya queeste no pasa por el login
+$cod_usuario    = 1;// se fuerza a que el cod usuario sea el 1 ya que este no pasa por el login
 $db             = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
 $fecha          = "select CONVERT(VARCHAR, GETDATE(), 103) FECHA
-                        ,CONVERT(VARCHAR, DATEADD(DAY, -2, GETDATE()), 103) FECHA_ESPECIAL
+                        ,CONVERT(VARCHAR, DATEADD(DAY, -2, GETDATE()), 103) FECHA_ESPECIAL_LUNES
+                        ,CONVERT(VARCHAR, DATEADD(DAY, -3, GETDATE()), 103) FECHA_ESPECIAL_MARTES
+                        ,CONVERT(VARCHAR, DATEADD(DAY, -4, GETDATE()), 103) FECHA_ESPECIAL_MIERCOLES
                         ,dbo.f_get_parametro(53) URL_SMTP
                         ,dbo.f_get_parametro(54) USER_SMTP
                         ,dbo.f_get_parametro(55) PASS_SMTP
@@ -24,16 +26,22 @@ $fecha          = "select CONVERT(VARCHAR, GETDATE(), 103) FECHA
 
 $result         = $db->build_results($fecha);
 
-$fecha_actual   = $result[0]['FECHA'];
-$fecha_especial = $result[0]['FECHA_ESPECIAL'];
-$nombre_day     = $result[0]['NOMBRE_DAY'];
-$host           = $result[0]['URL_SMTP'];
-$Username       = $result[0]['USER_SMTP'];
-$Password       = $result[0]['PASS_SMTP'];
-$Port 	        = $result[0]['PORT_SMTP'];
+$fecha_actual       = $result[0]['FECHA'];
+$fecha_especial1    = $result[0]['FECHA_ESPECIAL_LUNES'];
+$fecha_especial2    = $result[0]['FECHA_ESPECIAL_MARTES'];
+$fecha_especial3    = $result[0]['FECHA_ESPECIAL_MIERCOLES'];
+$nombre_day         = $result[0]['NOMBRE_DAY'];
+$host               = $result[0]['URL_SMTP'];
+$Username           = $result[0]['USER_SMTP'];
+$Password           = $result[0]['PASS_SMTP'];
+$Port 	            = $result[0]['PORT_SMTP'];
 
 if($nombre_day == 'Lunes')
-    $fecha1     = str2date($fecha_especial);
+    $fecha1     = str2date($fecha_especial1);
+else if($nombre_day == 'Martes')
+    $fecha1     = str2date($fecha_especial2);
+else if($nombre_day == 'Miércoles')
+    $fecha1     = str2date($fecha_especial3);
 else
     $fecha1     = str2date($fecha_actual);
 
@@ -62,6 +70,10 @@ $sql = "SELECT ORIGEN_CHEQUE
 
 if($nombre_day == 'Lunes')
     $sql .= "AND DIP.NEW_FECHA_DOC BETWEEN CONVERT(VARCHAR, DATEADD(DAY, -2, GETDATE()), 103) AND CONVERT(VARCHAR, GETDATE(), 103) ";
+else if($nombre_day == 'Martes')
+    $sql .= "AND DIP.NEW_FECHA_DOC in (DATEADD(DAY, -3, GETDATE()), DATEADD(DAY, -2, GETDATE()), CONVERT(VARCHAR, GETDATE(), 103) ";
+else if($nombre_day == 'Miércoles')
+    $sql .= "AND DIP.NEW_FECHA_DOC in (DATEADD(DAY, -4, GETDATE()), DATEADD(DAY, -3, GETDATE()), CONVERT(VARCHAR, GETDATE(), 103) ";
 else
     $sql .= "AND CONVERT(VARCHAR, DIP.NEW_FECHA_DOC, 103) = CONVERT(VARCHAR, GETDATE(), 103) ";
 
@@ -87,6 +99,10 @@ $sql .= "AND I.COD_INGRESO_PAGO = INP.COD_INGRESO_PAGO
 
 if($nombre_day == 'Lunes')
     $sql .= "AND DIP.NEW_FECHA_DOC BETWEEN CONVERT(VARCHAR, DATEADD(DAY, -2, GETDATE()), 103) AND CONVERT(VARCHAR, GETDATE(), 103) ";
+else if($nombre_day == 'Martes')
+    $sql .= "AND DIP.NEW_FECHA_DOC in (DATEADD(DAY, -3, GETDATE()), DATEADD(DAY, -2, GETDATE()), CONVERT(VARCHAR, GETDATE(), 103) ";
+else if($nombre_day == 'Miércoles')
+    $sql .= "AND DIP.NEW_FECHA_DOC in (DATEADD(DAY, -4, GETDATE()), DATEADD(DAY, -3, GETDATE()), CONVERT(VARCHAR, GETDATE(), 103) ";
 else
     $sql .= "AND CONVERT(VARCHAR, DIP.NEW_FECHA_DOC, 103) = CONVERT(VARCHAR, GETDATE(), 103) ";
 

@@ -165,7 +165,10 @@ BEGIN
 		,RENTAL.dbo.INGRESO_CHEQUE IC
 		,RENTAL.dbo.EMPRESA E
 	WHERE FECHA_DOC >= @ve_fecha
+	/*
+	15/05/2023 MH: No se usa esta funcion ya que solo tiene que desplegar informacion de los cheques en el informe
 	AND RENTAL.dbo.f_ch_saldo(COD_CHEQUE) > 0
+	*/
 	AND IC.COD_ESTADO_INGRESO_CHEQUE = 2
 	AND C.COD_INGRESO_CHEQUE = C.COD_INGRESO_CHEQUE
 	AND IC.COD_EMPRESA = E.COD_EMPRESA

@@ -15,13 +15,13 @@ $fecha          = "select CONVERT(VARCHAR, GETDATE(), 103) FECHA
                         ,dbo.f_get_parametro(55) PASS_SMTP
                         ,dbo.f_get_parametro(71) PORT_SMTP
                         ,CASE DATEPART(dw, GETDATE()) 
-                            when 2 then 'Lunes' 
-                            when 3 then 'Martes' 
-                            when 4 then 'Miércoles' 
-                            when 5 then 'Jueves' 
-                            when 6 then 'Viernes' 
-                            when 7 then 'Sábado' 
-                            when 1 then 'Domingo' 
+                            when 1 then 'Lunes' 
+                            when 2 then 'Martes' 
+                            when 3 then 'Miércoles' 
+                            when 4 then 'Jueves' 
+                            when 5 then 'Viernes' 
+                            when 6 then 'Sábado' 
+                            when 7 then 'Domingo' 
                         END NOMBRE_DAY";
 
 $result         = $db->build_results($fecha);
@@ -71,9 +71,9 @@ $sql = "SELECT ORIGEN_CHEQUE
 if($nombre_day == 'Lunes')
     $sql .= "AND DIP.NEW_FECHA_DOC BETWEEN CONVERT(VARCHAR, DATEADD(DAY, -2, GETDATE()), 103) AND CONVERT(VARCHAR, GETDATE(), 103) ";
 else if($nombre_day == 'Martes')
-    $sql .= "AND DIP.NEW_FECHA_DOC in (DATEADD(DAY, -3, GETDATE()), DATEADD(DAY, -2, GETDATE()), CONVERT(VARCHAR, GETDATE(), 103) ";
+    $sql .= "AND DIP.NEW_FECHA_DOC in (DATEADD(DAY, -3, GETDATE()), DATEADD(DAY, -2, GETDATE()), CONVERT(VARCHAR, GETDATE(), 103)) ";
 else if($nombre_day == 'Miércoles')
-    $sql .= "AND DIP.NEW_FECHA_DOC in (DATEADD(DAY, -4, GETDATE()), DATEADD(DAY, -3, GETDATE()), CONVERT(VARCHAR, GETDATE(), 103) ";
+    $sql .= "AND DIP.NEW_FECHA_DOC in (DATEADD(DAY, -4, GETDATE()), DATEADD(DAY, -3, GETDATE()), CONVERT(VARCHAR, GETDATE(), 103)) ";
 else
     $sql .= "AND CONVERT(VARCHAR, DIP.NEW_FECHA_DOC, 103) = CONVERT(VARCHAR, GETDATE(), 103) ";
 
@@ -100,9 +100,9 @@ $sql .= "AND I.COD_INGRESO_PAGO = INP.COD_INGRESO_PAGO
 if($nombre_day == 'Lunes')
     $sql .= "AND DIP.NEW_FECHA_DOC BETWEEN CONVERT(VARCHAR, DATEADD(DAY, -2, GETDATE()), 103) AND CONVERT(VARCHAR, GETDATE(), 103) ";
 else if($nombre_day == 'Martes')
-    $sql .= "AND DIP.NEW_FECHA_DOC in (DATEADD(DAY, -3, GETDATE()), DATEADD(DAY, -2, GETDATE()), CONVERT(VARCHAR, GETDATE(), 103) ";
+    $sql .= "AND DIP.NEW_FECHA_DOC in (DATEADD(DAY, -3, GETDATE()), DATEADD(DAY, -2, GETDATE()), CONVERT(VARCHAR, GETDATE(), 103)) ";
 else if($nombre_day == 'Miércoles')
-    $sql .= "AND DIP.NEW_FECHA_DOC in (DATEADD(DAY, -4, GETDATE()), DATEADD(DAY, -3, GETDATE()), CONVERT(VARCHAR, GETDATE(), 103) ";
+    $sql .= "AND DIP.NEW_FECHA_DOC in (DATEADD(DAY, -4, GETDATE()), DATEADD(DAY, -3, GETDATE()), CONVERT(VARCHAR, GETDATE(), 103)) ";
 else
     $sql .= "AND CONVERT(VARCHAR, DIP.NEW_FECHA_DOC, 103) = CONVERT(VARCHAR, GETDATE(), 103) ";
 

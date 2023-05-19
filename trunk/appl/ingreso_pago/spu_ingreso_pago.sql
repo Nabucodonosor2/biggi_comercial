@@ -238,6 +238,10 @@ BEGIN
 					WHERE COD_INGRESO_PAGO = @ve_cod_ingreso_pago
                     AND TIPO_DOC = 'NOTA_VENTA'
                     AND MONTO_ASIGNADO <> 0
+                    /*
+                    19-05-2023 MH: CUANDO ENCUENTRA REGISTROS TIPO "NOTA_VENTA" EN LA TABLA "INGRESO_PAGO_FACTURA" PERO EL CAMPO
+                    MONTO_ASIGNADO ES IGUAL A CERO ESOS REGISTRO NO AFECTAN EL PROCESO DE AUTORIZACION DE LA NOTA DE VENTA
+                    */
 					
                     IF(@vl_cant_nv = 0)BEGIN
                         DECLARE @vl_cod_fa         NUMERIC

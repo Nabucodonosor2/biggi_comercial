@@ -1574,6 +1574,44 @@ class wi_guia_despacho extends w_input {
 			
 			$temp->setVar("WSWAP_XML_DTE", $control);
 		}
+		if($boton == 'print'){
+			if($this->cod_usuario == 1){
+				$ruta_imag = '../../../../commonlib/trunk/images/';
+				if (defined('K_CLIENTE')) {
+					if (file_exists('../../images_appl/'.K_CLIENTE.'/images/b_'.$boton.'.jpg')){
+						$ruta_imag = '../../images_appl/'.K_CLIENTE.'/images/';
+					}
+				}
+
+				if($habilita){
+					$control = '<input name="b_'.$boton.'" id="b_'.$boton.'" src="'.$ruta_imag.'b_'.$boton.'.jpg" type="image" '.
+										'onMouseDown="MM_swapImage(\'b_'.$boton.'\',\'\',\''.$ruta_imag.'b_'.$boton.'_click.jpg\',1)" '.
+										'onMouseUp="MM_swapImgRestore()" onMouseOut="MM_swapImgRestore()" '.
+										'onMouseOver="MM_swapImage(\'b_'.$boton.'\',\'\',\''.$ruta_imag.'b_'.$boton.'_over.jpg\',1)" ';
+
+
+					$control .= ' target="_blank" onClick="var vl_tab = document.getElementById(\'wi_current_tab_page\'); if (TabbedPanels1 && vl_tab) vl_tab.value =TabbedPanels1.getCurrentTabIndex();
+											if (document.getElementById(\'b_save\')) {
+												if (validate_save()) {
+														document.getElementById(\'wi_hidden\').value = \'save_desde_print\';
+														document.getElementById(\'b_save\').click();
+														return true;
+													}
+													else
+														return false;
+											}
+											else
+													return dlg_print();" ';
+
+					$control .= '>';
+
+				}else{
+					$control = '<img src="../../../../commonlib/trunk/images/b_print_d.jpg">';
+				}
+			}
+
+			$temp->setVar("WI_PRINT", $control);			
+		}
 	}
 	
 	function navegacion(&$temp){
@@ -1594,6 +1632,19 @@ class wi_guia_despacho extends w_input {
 		}
 		
 		if($COD_ESTADO_DOC_SII == self::K_ESTADO_SII_EMITIDA){
+			if($this->cod_usuario == 1){
+
+				if($RESP_EMITIR_DTE == '' && $TRACK_ID_DTE == ''){ //ingresa por primera vez
+					$this->habilita_boton($temp, 'consultar_dte', false);
+					$this->habilita_boton($temp, 'xml_dte', false);
+				}else if($RESP_EMITIR_DTE <> '' && $TRACK_ID_DTE == ''){ //Reimprime
+					$this->habilita_boton($temp, 'consultar_dte', false);
+					$this->habilita_boton($temp, 'xml_dte', false);
+				}
+
+				$this->habilita_boton($temp, 'reenviar_dte', false);
+			}
+
 			if($RESP_EMITIR_DTE == '' && $TRACK_ID_DTE == ''){ //ingresa por primera vez
 				if($this->tiene_privilegio_opcion(self::K_AUTORIZA_ENVIAR_DTE)== 'S')
 					$this->habilita_boton($temp, 'enviar_dte', true);
@@ -1601,33 +1652,32 @@ class wi_guia_despacho extends w_input {
 					$this->habilita_boton($temp, 'enviar_dte', false);
 				
 				$this->habilita_boton($temp, 'imprimir_dte', false);
-				$this->habilita_boton($temp, 'consultar_dte', false);
-				$this->habilita_boton($temp, 'xml_dte', false);
+				
 			}else if($RESP_EMITIR_DTE <> '' && $TRACK_ID_DTE == ''){ //Reimprime
 				$this->habilita_boton($temp, 'enviar_dte', false);
 				$this->habilita_boton($temp, 'imprimir_dte', false);
-				$this->habilita_boton($temp, 'consultar_dte', false);
-				$this->habilita_boton($temp, 'xml_dte', false);
 			}
-			$this->habilita_boton($temp, 'reenviar_dte', false);
+			
 		}else if ($COD_ESTADO_DOC_SII == self::K_ESTADO_SII_ENVIADA){
 			if($TRACK_ID_DTE <> ''){
-				$this->habilita_boton($temp, 'enviar_dte', false);	
-			
-				if($this->tiene_privilegio_opcion(self::K_AUTORIZA_CONSULTAR_DTE)== 'S')
-					$this->habilita_boton($temp, 'consultar_dte', true);
-				else
-					$this->habilita_boton($temp, 'consultar_dte', false);
-					
-				if($this->tiene_privilegio_opcion(self::K_AUTORIZA_XML_DTE)== 'S')
-					$this->habilita_boton($temp, 'xml_dte', true);
-				else
-					$this->habilita_boton($temp, 'xml_dte', false);
-					
-				if($this->tiene_privilegio_opcion(self::K_AUTORIZA_REENVIAR_DTE)== 'S')
-					$this->habilita_boton($temp, 'reenviar_dte', true);
-				else
-					$this->habilita_boton($temp, 'reenviar_dte', false);
+				if($this->cod_usuario == 1){
+					if($this->tiene_privilegio_opcion(self::K_AUTORIZA_CONSULTAR_DTE)== 'S')
+						$this->habilita_boton($temp, 'consultar_dte', true);
+					else
+						$this->habilita_boton($temp, 'consultar_dte', false);
+						
+					if($this->tiene_privilegio_opcion(self::K_AUTORIZA_XML_DTE)== 'S')
+						$this->habilita_boton($temp, 'xml_dte', true);
+					else
+						$this->habilita_boton($temp, 'xml_dte', false);
+						
+					if($this->tiene_privilegio_opcion(self::K_AUTORIZA_REENVIAR_DTE)== 'S')
+						$this->habilita_boton($temp, 'reenviar_dte', true);
+					else
+						$this->habilita_boton($temp, 'reenviar_dte', false);
+				}
+
+				$this->habilita_boton($temp, 'enviar_dte', false);
 			}
 			
 			if($this->tiene_privilegio_opcion(self::K_AUTORIZA_IMPRIMIR_DTE)== 'S')
@@ -1635,11 +1685,14 @@ class wi_guia_despacho extends w_input {
 			else
 				$this->habilita_boton($temp, 'imprimir_dte', false);
 		}else{
+			if($this->cod_usuario == 1){
+				$this->habilita_boton($temp, 'consultar_dte', false);
+				$this->habilita_boton($temp, 'reenviar_dte', false);
+				$this->habilita_boton($temp, 'xml_dte', false);
+			}
+
 			$this->habilita_boton($temp, 'enviar_dte', false);
 			$this->habilita_boton($temp, 'imprimir_dte', false);
-			$this->habilita_boton($temp, 'consultar_dte', false);
-			$this->habilita_boton($temp, 'xml_dte', false);
-			$this->habilita_boton($temp, 'reenviar_dte', false);
 		}
 	}
 	

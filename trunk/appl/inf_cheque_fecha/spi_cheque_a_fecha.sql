@@ -52,6 +52,7 @@ BEGIN
 	declare C_TEMP INSENSITIVE  cursor for
 	select COD_INGRESO_PAGO
 	from INF_CHEQUE_FECHA
+	where cod_usuario = @ve_cod_usuario
 	
 	declare
 		@vc_cod_ingreso_pago		numeric
@@ -149,8 +150,8 @@ BEGIN
 	and ip.COD_ESTADO_INGRESO_PAGO = 2	--confirmado
 	and e.COD_EMPRESA = ip.COD_EMPRESA
 	UNION
-	SELECT FECHA_INGRESO_CHEQUE
-		  ,IC.COD_USUARIO
+	SELECT @vl_fecha_actual
+		  ,@ve_cod_usuario
 		  ,NULL
 		  ,E.NOM_EMPRESA
 		  ,CONVERT(VARCHAR ,dbo.number_format(E.RUT, 0, ',', '.'))+'-'+CONVERT(VARCHAR, e.DIG_VERIF)
@@ -170,10 +171,10 @@ BEGIN
 	AND RENTAL.dbo.f_ch_saldo(COD_CHEQUE) > 0
 	*/
 	AND IC.COD_ESTADO_INGRESO_CHEQUE = 2
-	AND C.COD_INGRESO_CHEQUE = C.COD_INGRESO_CHEQUE
+	AND COD_TIPO_DOC_PAGO in (2, 12)
+	AND ES_GARANTIA = 'N'
+	AND IC.COD_INGRESO_CHEQUE = C.COD_INGRESO_CHEQUE
 	AND IC.COD_EMPRESA = E.COD_EMPRESA
-	AND C.COD_CHEQUE NOT IN (SELECT DISTINCT COD_CHEQUE 
-							 FROM RENTAL.dbo.DOC_INGRESO_PAGO
-							 WHERE COD_CHEQUE IS NOT NULL)
+	ORDER BY NEW_FECHA_DOC ASC
 	/***********************************RENTAL********************************************/
 END

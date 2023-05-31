@@ -26,17 +26,18 @@ class wo_inf_cheque_fecha extends w_informe_pantalla{
 						,I.COD_NOTA_VENTA COD_NOTA_VENTA_H
 						,I.NOM_EMPRESA
 						,I.RUT
-						,I.COD_INGRESO_PAGO
+						,I.COD_DOC
+						,I.COD_DOC COD_INGRESO_PAGO
 						,I.FECHA_DOC DATE_FECHA_DOC
 						,CONVERT(VARCHAR, I.FECHA_DOC, 103) FECHA_DOC
 						,I.NRO_DOC
 						,I.MONTO_DOC
 						,0 CANT_DOC
 						,NULL SELECCION
-						,COD_DOC_INGRESO_PAGO
+						,COD_ITEM_DOC
 						,I.COD_BANCO
 						,B.NOM_BANCO
-						,ORIGEN_CHEQUE
+						,UPPER(ORIGEN_CHEQUE) ORIGEN_CHEQUE
 				FROM INF_CHEQUE_FECHA I
 					,BANCO B
 				WHERE COD_USUARIO = $cod_usuario
@@ -46,21 +47,21 @@ class wo_inf_cheque_fecha extends w_informe_pantalla{
 		parent::w_informe_pantalla('inf_cheque_fecha', $sql, $_REQUEST['cod_item_menu']);
 		
 		$this->dw->add_control(new edit_text_hidden('COD_NOTA_VENTA_H'));
-		$this->dw->add_control(new edit_text_hidden('COD_DOC_INGRESO_PAGO'));
+		$this->dw->add_control(new edit_text_hidden('COD_ITEM_DOC'));
 		$this->dw->entrable = true;
 		$this->dw->add_control(new edit_check_box('SELECCION', 'S', 'N'));
 
 		// headers
-		$sql = "SELECT 'Comercial' ORIGEN_CHEQUE
-						,'Comercial' NOM_ORIGEN_CHEQUE
+		$sql = "SELECT 'COMERCIAL' ORIGEN_CHEQUE
+						,'COMERCIAL' NOM_ORIGEN_CHEQUE
 				UNION
-				SELECT 'Rental' ORIGEN_CHEQUE
-						,'Rental' NOM_ORIGEN_CHEQUE";
-        $this->add_header($compromiso = new header_drop_down_string('ORIGEN_CHEQUE', 'ORIGEN_CHEQUE', 'Origen', $sql));
+				SELECT 'RENTAL' ORIGEN_CHEQUE
+						,'RENTAL' NOM_ORIGEN_CHEQUE";
+        $this->add_header($compromiso = new header_drop_down_string('ORIGEN_CHEQUE', 'UPPER(ORIGEN_CHEQUE)', 'Origen', $sql));
 		$this->add_header(new header_text('COD_NOTA_VENTA', 'I.COD_NOTA_VENTA', 'N° NV'));
 		$this->add_header(new header_text('NOM_EMPRESA', "I.NOM_EMPRESA", 'Cliente'));
 		$this->add_header(new header_text('RUT', "I.RUT", 'Rut'));
-		$this->add_header(new header_num('COD_INGRESO_PAGO', 'I.COD_INGRESO_PAGO', 'N° IP'));
+		$this->add_header(new header_num('COD_DOC', 'I.COD_DOC', 'N° IP'));
 		$this->add_header($header = new header_date('FECHA_DOC', 'FECHA_DOC', 'Fecha'));
 		$header->field_bd_order = 'DATE_FECHA_DOC';	
 		$this->add_header(new header_num('NRO_DOC', 'I.NRO_DOC', 'Número'));
@@ -112,10 +113,22 @@ class wo_inf_cheque_fecha extends w_informe_pantalla{
 		parent::redraw_item($temp, $ind, $record);
 		$ORIGEN_CHEQUE = $this->dw->get_item($record, 'ORIGEN_CHEQUE');
 
-		if($ORIGEN_CHEQUE == 'Comercial')
+		if($ORIGEN_CHEQUE == 'COMERCIAL'){
 			$control = '<input name="SELECCION_'.$record.'" type="checkbox" id="SELECCION_'.$record.'" value="S" onblur="this.style.borderColor = this.style.borderWidth = this.style.borderStyle = \'\';" onfocus="this.style.border=\'1px solid #FF0000\'" style="border-image: none 100% / 1 / 0 stretch;">';
-		else
+
+			if ($ind % 2 == 0)
+				$temp->setVar("wo_registro.WO_DETALLE", '<input name="b_detalle_'.$ind.'" id="b_detalle_'.$ind.'" value="'.$ind.'" src="../../../../commonlib/trunk/images/lupa1.jpg" type="image">');
+			else
+				$temp->setVar("wo_registro.WO_DETALLE", '<input name="b_detalle_'.$ind.'" id="b_detalle_'.$ind.'" value="'.$ind.'" src="../../../../commonlib/trunk/images/lupa2.jpg" type="image">');
+			
+		}else{
 			$control = '<input name="SELECCION_'.$record.'" type="checkbox" id="SELECCION_'.$record.'" value="S" onblur="this.style.borderColor = this.style.borderWidth = this.style.borderStyle = \'\';" onfocus="this.style.border=\'1px solid #FF0000\'" style="border-image: none 100% / 1 / 0 stretch;" disabled="">';
+
+			if($ind % 2 == 0)
+				$temp->setVar("wo_registro.WO_DETALLE", '<img src="../../images_appl/lupa1_disabled.jpg">');
+			else
+				$temp->setVar("wo_registro.WO_DETALLE", '<img src="../../images_appl/lupa2_disabled.jpg">');
+		}
 
 		$temp->setVar("wo_registro.SELECCION", $control);
 	}
@@ -171,8 +184,9 @@ class wo_inf_cheque_fecha extends w_informe_pantalla{
 		while (($i < $this->row_per_page) && ($ind < $this->row_count_output)){
 			$seleccion = $this->dw->get_item($i, 'SELECCION');
 			if ($seleccion=='S'){
-				$cod_doc_ingreso_pago = $this->dw->get_item($i, 'COD_DOC_INGRESO_PAGO');
+				$cod_doc_ingreso_pago = $this->dw->get_item($i, 'COD_ITEM_DOC');
 				$param = "'CAMBIAR_FECHA', $cod_doc_ingreso_pago, $ve_fecha";
+
 	    		if (!$db->EXECUTE_SP($sp, $param)) {
 	    			$error = true;
 					$db->ROLLBACK_TRANSACTION();

@@ -55,15 +55,16 @@ $temp->setVar("FECHA_DIA", $fecha_actual);
 
 $sql = "SELECT ORIGEN_CHEQUE
                 ,COD_NOTA_VENTA + ' / ' + NOM_EMPRESA NV_CLIENTE
-                ,I.COD_INGRESO_PAGO
-                ,CONVERT(VARCHAR, INP.FECHA_INGRESO_PAGO, 103) FECHA_INGRESO_PAGO
-                ,I.NRO_DOC
+                ,TIPO_DOC
+                ,COD_DOC
+                ,CONVERT(VARCHAR, INP.FECHA_INGRESO_PAGO, 103) FECHA_DOC
+                ,I.NRO_DOC NRO_CHEQUE
                 ,CASE
                     WHEN DIP.FECHA_DOC <> NEW_FECHA_DOC THEN '**'+CONVERT(VARCHAR, DIP.NEW_FECHA_DOC, 103)
                     ELSE CONVERT(VARCHAR, DIP.NEW_FECHA_DOC, 103)
-                END FECHA_DOC
-                ,dbo.number_format(DIP.MONTO_DOC, 0, ',', '.') MONTO_DOC
-                ,DIP.NEW_FECHA_DOC
+                END FECHA_CHEQUE
+                ,dbo.number_format(DIP.MONTO_DOC, 0, ',', '.') MONTO_CHEQUE
+                ,NEW_FECHA_DOC
         FROM INF_CHEQUE_FECHA I
             ,INGRESO_PAGO INP
             ,DOC_INGRESO_PAGO DIP
@@ -79,20 +80,21 @@ else if($nombre_day == 'Miércoles')
 else
     $sql .= "AND DIP.NEW_FECHA_DOC = $datetime_hoy ";
 
-$sql .= "AND I.COD_INGRESO_PAGO = INP.COD_INGRESO_PAGO
-        AND DIP.COD_DOC_INGRESO_PAGO = I.COD_DOC_INGRESO_PAGO
+$sql .= "AND I.COD_DOC = INP.COD_INGRESO_PAGO
+        AND DIP.COD_DOC_INGRESO_PAGO = I.COD_ITEM_DOC
         UNION
         SELECT ORIGEN_CHEQUE
                 ,'-- / ' + NOM_EMPRESA NV_CLIENTE
-                ,I.COD_INGRESO_PAGO
-                ,CONVERT(VARCHAR, INP.FECHA_INGRESO_PAGO, 103) FECHA_INGRESO_PAGO
-                ,I.NRO_DOC
+                ,TIPO_DOC
+                ,COD_DOC
+                ,CONVERT(VARCHAR, INP.FECHA_INGRESO_PAGO, 103) FECHA_DOC
+                ,I.NRO_DOC NRO_CHEQUE
                 ,CASE
                     WHEN DIP.FECHA_DOC <> NEW_FECHA_DOC THEN '**'+CONVERT(VARCHAR, DIP.NEW_FECHA_DOC, 103)
                     ELSE CONVERT(VARCHAR, DIP.NEW_FECHA_DOC, 103)
-                END FECHA_DOC
-                ,dbo.number_format(DIP.MONTO_DOC, 0, ',', '.') MONTO_DOC
-                ,DIP.NEW_FECHA_DOC
+                END FECHA_CHEQUE
+                ,dbo.number_format(DIP.MONTO_DOC, 0, ',', '.') MONTO_CHEQUE
+                ,NEW_FECHA_DOC
         FROM INF_CHEQUE_FECHA I
             ,RENTAL.dbo.INGRESO_PAGO INP
             ,RENTAL.dbo.DOC_INGRESO_PAGO DIP
@@ -108,9 +110,38 @@ else if($nombre_day == 'Miércoles')
 else
     $sql .= "AND DIP.NEW_FECHA_DOC = $datetime_hoy ";
 
-$sql .= "AND I.COD_INGRESO_PAGO = INP.COD_INGRESO_PAGO
-        AND DIP.COD_DOC_INGRESO_PAGO = I.COD_DOC_INGRESO_PAGO
-        ORDER BY DIP.NEW_FECHA_DOC ASC";
+$sql .= "AND I.COD_DOC = INP.COD_INGRESO_PAGO
+        AND DIP.COD_DOC_INGRESO_PAGO = I.COD_ITEM_DOC
+        UNION
+        SELECT ORIGEN_CHEQUE
+                ,'-- / ' + E.NOM_EMPRESA NV_CLIENTE
+                ,TIPO_DOC
+                ,COD_DOC
+                ,CONVERT(VARCHAR, IC.FECHA_INGRESO_CHEQUE, 103) FECHA_DOC
+                ,C.NRO_DOC NRO_CHEQUE
+                ,CONVERT(VARCHAR, C.FECHA_DOC, 103) FECHA_CHEQUE
+                ,dbo.number_format(C.MONTO_DOC, 0, ',', '.') MONTO_CHEQUE
+                ,C.FECHA_DOC NEW_FECHA_DOC
+        FROM INF_CHEQUE_FECHA I
+            ,RENTAL.dbo.INGRESO_CHEQUE IC
+            ,RENTAL.dbo.CHEQUE C
+            ,RENTAL.dbo.EMPRESA E
+        WHERE I.COD_USUARIO = $cod_usuario
+        AND ORIGEN_CHEQUE = 'Rental' ";
+
+if($nombre_day == 'Lunes')
+    $sql .= "AND C.FECHA_DOC BETWEEN DATEADD(DAY, -2, $datetime_hoy) AND $datetime_hoy ";
+else if($nombre_day == 'Martes')
+    $sql .= "AND C.FECHA_DOC in (DATEADD(DAY, -3, $datetime_hoy), DATEADD(DAY, -2, $datetime_hoy), $datetime_hoy) ";
+else if($nombre_day == 'Miércoles')
+    $sql .= "AND C.FECHA_DOC in (DATEADD(DAY, -4, $datetime_hoy), DATEADD(DAY, -3, $datetime_hoy), $datetime_hoy) ";
+else
+    $sql .= "AND C.FECHA_DOC = $datetime_hoy ";
+
+$sql .= "AND I.COD_DOC = IC.COD_INGRESO_CHEQUE
+        AND C.COD_CHEQUE = I.COD_ITEM_DOC
+        AND IC.COD_EMPRESA = E.COD_EMPRESA
+        ORDER BY NEW_FECHA_DOC ASC";
 
 $result_tbody1 = $db->build_results($sql);
 
@@ -121,18 +152,19 @@ if(count($result_tbody1) > 0){
                     <tr bgcolor="#f2f2f2">
                         <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="left" valign="top">'.$result_tbody1[$i]['ORIGEN_CHEQUE'].'</td>
                         <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="left" valign="top">'.$result_tbody1[$i]['NV_CLIENTE'].'</td>
-                        <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="right" valign="top">'.$result_tbody1[$i]['COD_INGRESO_PAGO'].'</td>
-                        <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="center" valign="top">'.$result_tbody1[$i]['FECHA_INGRESO_PAGO'].'</td>
-                        <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="right" valign="top">'.$result_tbody1[$i]['NRO_DOC'].'</td>
+                        <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="left" valign="top">'.$result_tbody1[$i]['TIPO_DOC'].'</td>
+                        <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="right" valign="top">'.$result_tbody1[$i]['COD_DOC'].'</td>
                         <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="center" valign="top">'.$result_tbody1[$i]['FECHA_DOC'].'</td>
-                        <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="right" valign="top">'.$result_tbody1[$i]['MONTO_DOC'].'</td>
+                        <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="right" valign="top">'.$result_tbody1[$i]['NRO_CHEQUE'].'</td>
+                        <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="center" valign="top">'.$result_tbody1[$i]['FECHA_CHEQUE'].'</td>
+                        <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="right" valign="top">'.$result_tbody1[$i]['MONTO_CHEQUE'].'</td>
                     </tr>
                 </tbody>';
     }
 }else{
     $tbody = '<tbody>
                 <tr bgcolor="#f2f2f2">
-                    <td colspan="7" style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="center" valign="top">SIN DOCUMENTOS PARA HOY '.$nombre_day.' '.$fecha_actual.'</td>
+                    <td colspan="8" style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="center" valign="top">SIN DOCUMENTOS PARA HOY '.$nombre_day.' '.$fecha_actual.'</td>
                 </tr>
             </tbody>';
 }
@@ -141,14 +173,14 @@ $temp->setVar("TBODY_UNO", $tbody);
 
 $sql = "SELECT ORIGEN_CHEQUE
                 ,COD_NOTA_VENTA + ' / ' + NOM_EMPRESA NV_CLIENTE
-                ,I.COD_INGRESO_PAGO
-                ,CONVERT(VARCHAR, INP.FECHA_INGRESO_PAGO, 103) FECHA_INGRESO_PAGO
-                ,I.NRO_DOC
+                ,I.COD_DOC
+                ,CONVERT(VARCHAR, INP.FECHA_INGRESO_PAGO, 103) FECHA_DOC
+                ,I.NRO_DOC NRO_CHEQUE
                 ,CASE
                     WHEN DIP.FECHA_DOC <> NEW_FECHA_DOC THEN '**'+CONVERT(VARCHAR, DIP.NEW_FECHA_DOC, 103)
                     ELSE CONVERT(VARCHAR, DIP.NEW_FECHA_DOC, 103)
-                END FECHA_DOC
-                ,dbo.number_format(DIP.MONTO_DOC, 0, ',', '.') MONTO_DOC
+                END FECHA_CHEQUE
+                ,dbo.number_format(DIP.MONTO_DOC, 0, ',', '.') MONTO_CHEQUE
                 ,DIP.NEW_FECHA_DOC
         FROM INF_CHEQUE_FECHA I
         ,INGRESO_PAGO INP
@@ -156,28 +188,8 @@ $sql = "SELECT ORIGEN_CHEQUE
         WHERE I.COD_USUARIO = $cod_usuario
         AND ORIGEN_CHEQUE = 'Comercial'
         AND DIP.NEW_FECHA_DOC > $datetime_hoy
-        AND I.COD_INGRESO_PAGO = INP.COD_INGRESO_PAGO
-        AND DIP.COD_DOC_INGRESO_PAGO = I.COD_DOC_INGRESO_PAGO
-        /*UNION
-        SELECT ORIGEN_CHEQUE
-                ,'-- / ' + NOM_EMPRESA NV_CLIENTE
-                ,I.COD_INGRESO_PAGO
-                ,CONVERT(VARCHAR, INP.FECHA_INGRESO_PAGO, 103) FECHA_INGRESO_PAGO
-                ,I.NRO_DOC
-                ,CASE
-                    WHEN DIP.FECHA_DOC <> NEW_FECHA_DOC THEN '**'+CONVERT(VARCHAR, DIP.NEW_FECHA_DOC, 103)
-                    ELSE CONVERT(VARCHAR, DIP.NEW_FECHA_DOC, 103)
-                END FECHA_DOC
-                ,dbo.number_format(DIP.MONTO_DOC, 0, ',', '.') MONTO_DOC
-                ,DIP.NEW_FECHA_DOC
-        FROM INF_CHEQUE_FECHA I
-        ,RENTAL.dbo.INGRESO_PAGO INP
-        ,RENTAL.dbo.DOC_INGRESO_PAGO DIP
-        WHERE I.COD_USUARIO = $cod_usuario
-        AND ORIGEN_CHEQUE = 'Rental'
-        AND DIP.NEW_FECHA_DOC > $datetime_hoy
-        AND I.COD_INGRESO_PAGO = INP.COD_INGRESO_PAGO
-        AND DIP.COD_DOC_INGRESO_PAGO = I.COD_DOC_INGRESO_PAGO*/
+        AND I.COD_DOC = INP.COD_INGRESO_PAGO
+        AND DIP.COD_DOC_INGRESO_PAGO = I.COD_ITEM_DOC
         ORDER BY DIP.NEW_FECHA_DOC ASC";
 
 $result_tbody2 = $db->build_results($sql);
@@ -186,13 +198,78 @@ if(count($result_tbody2) > 0){
     for($j=0; $j < count($result_tbody2); $j++) { 
         $tbody .='<tbody>
                     <tr bgcolor="#f2f2f2">
-                        <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="left" valign="top">'.$result_tbody2[$j]['ORIGEN_CHEQUE'].'</td>
                         <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="left" valign="top">'.$result_tbody2[$j]['NV_CLIENTE'].'</td>
-                        <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="right" valign="top">'.$result_tbody2[$j]['COD_INGRESO_PAGO'].'</td>
-                        <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="center" valign="top">'.$result_tbody2[$j]['FECHA_INGRESO_PAGO'].'</td>
-                        <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="right" valign="top">'.$result_tbody2[$j]['NRO_DOC'].'</td>
+                        <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="right" valign="top">'.$result_tbody2[$j]['COD_DOC'].'</td>
                         <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="center" valign="top">'.$result_tbody2[$j]['FECHA_DOC'].'</td>
-                        <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="right" valign="top">'.$result_tbody2[$j]['MONTO_DOC'].'</td>
+                        <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="right" valign="top">'.$result_tbody2[$j]['NRO_CHEQUE'].'</td>
+                        <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="center" valign="top">'.$result_tbody2[$j]['FECHA_CHEQUE'].'</td>
+                        <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="right" valign="top">'.$result_tbody2[$j]['MONTO_CHEQUE'].'</td>
+                    </tr>
+                </tbody>';
+    }
+}else{
+    $tbody = '<tbody>
+                <tr bgcolor="#f2f2f2">
+                    <td colspan="6" style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="center" valign="top">SIN DOCUMENTOS PARA LOS SIGUIENTES DIAS</td>
+                </tr>
+            </tbody>';
+}
+
+$temp->setVar("TBODY_DOS", $tbody);
+
+$sql = "SELECT ORIGEN_CHEQUE
+            ,NOM_EMPRESA NV_CLIENTE
+            ,I.COD_DOC
+            ,TIPO_DOC
+            ,CONVERT(VARCHAR, INP.FECHA_INGRESO_PAGO, 103) FECHA_DOC
+            ,I.NRO_DOC NRO_CHEQUE
+            ,CASE
+                WHEN DIP.FECHA_DOC <> NEW_FECHA_DOC THEN '**'+CONVERT(VARCHAR, DIP.NEW_FECHA_DOC, 103)
+                ELSE CONVERT(VARCHAR, DIP.NEW_FECHA_DOC, 103)
+            END FECHA_CHEQUE
+            ,dbo.number_format(DIP.MONTO_DOC, 0, ',', '.') MONTO_CHEQUE
+            ,DIP.NEW_FECHA_DOC
+        FROM INF_CHEQUE_FECHA I
+            ,RENTAL.dbo.INGRESO_PAGO INP
+            ,RENTAL.dbo.DOC_INGRESO_PAGO DIP
+        WHERE I.COD_USUARIO = $cod_usuario
+        AND ORIGEN_CHEQUE = 'Rental'
+        AND DIP.NEW_FECHA_DOC BETWEEN DATEADD(DAY, 1, $datetime_hoy) AND DATEADD(DAY, 31, $datetime_hoy)
+        AND I.COD_DOC = INP.COD_INGRESO_PAGO
+        AND DIP.COD_DOC_INGRESO_PAGO = I.COD_ITEM_DOC
+        UNION
+        SELECT ORIGEN_CHEQUE
+            ,NOM_EMPRESA NV_CLIENTE
+            ,I.COD_DOC
+            ,TIPO_DOC
+            ,CONVERT(VARCHAR, IC.FECHA_INGRESO_CHEQUE, 103) FECHA_DOC
+            ,I.NRO_DOC NRO_CHEQUE
+            ,CONVERT(VARCHAR, C.FECHA_DOC, 103) FECHA_CHEQUE
+            ,dbo.number_format(C.MONTO_DOC, 0, ',', '.') MONTO_CHEQUE
+            ,C.FECHA_DOC NEW_FECHA_DOC
+        FROM INF_CHEQUE_FECHA I
+            ,RENTAL.dbo.INGRESO_CHEQUE IC
+            ,RENTAL.dbo.CHEQUE C
+        WHERE I.COD_USUARIO = $cod_usuario
+        AND ORIGEN_CHEQUE = 'Rental'
+        AND C.FECHA_DOC BETWEEN DATEADD(DAY, 1, $datetime_hoy) AND DATEADD(DAY, 31, $datetime_hoy)
+        AND I.COD_DOC = IC.COD_INGRESO_CHEQUE
+        AND C.COD_CHEQUE = I.COD_ITEM_DOC
+        ORDER BY NEW_FECHA_DOC ASC";
+
+$result_tbody3 = $db->build_results($sql);
+$tbody = "";
+if(count($result_tbody3) > 0){
+    for($j=0; $j < count($result_tbody3); $j++) { 
+        $tbody .='<tbody>
+                    <tr bgcolor="#f2f2f2">
+                        <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="left" valign="top">'.$result_tbody3[$j]['NV_CLIENTE'].'</td>
+                        <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="right" valign="top">'.$result_tbody3[$j]['TIPO_DOC'].'</td>
+                        <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="right" valign="top">'.$result_tbody3[$j]['COD_DOC'].'</td>
+                        <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="center" valign="top">'.$result_tbody3[$j]['FECHA_DOC'].'</td>
+                        <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="right" valign="top">'.$result_tbody3[$j]['NRO_CHEQUE'].'</td>
+                        <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="center" valign="top">'.$result_tbody3[$j]['FECHA_CHEQUE'].'</td>
+                        <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="right" valign="top">'.$result_tbody3[$j]['MONTO_CHEQUE'].'</td>
                     </tr>
                 </tbody>';
     }
@@ -204,7 +281,8 @@ if(count($result_tbody2) > 0){
             </tbody>';
 }
 
-$temp->setVar("TBODY_DOS", $tbody);
+$temp->setVar("TBODY_TRES", $tbody);
+
 $html = $temp->toString();
             
 $mail               = new phpmailer();

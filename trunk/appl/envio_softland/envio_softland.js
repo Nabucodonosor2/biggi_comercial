@@ -1,10 +1,76 @@
 function validate() {
-	var K_ENVIO_CONFIRMADA = 2;
-	var K_TIPO_COMPRA = 2;
+	const K_ENVIO_CONFIRMADA = 2;
+	const K_TIPO_COMPRA = 2;
 	
+	const tipoEnvio = get_value('COD_TIPO_ENVIO_0');
+	const aTR = get_TR('ENVIO_TRANSBANK');
+
+	if(tipoEnvio == '5'){ //si es del tipo transbank
+		const nroComprobante	= get_value('NRO_COMPROBANTE_0');
+		const totalBanco		= get_value('TOTAL_BANCO_0');
+		const totalComision 	= get_value('COMISION_TBK_0');
+		const fechaAbono		= get_value('FECHA_ABONO_0');
+
+		if(nroComprobante == ''){
+			alert('Debe llenar el campo "N° Comprobante"');
+			document.getElementById('NRO_COMPROBANTE_0').focus();
+			return false;
+		}
+		if(totalBanco == ''){
+			alert('Debe llenar el campo "Total Banco"');
+			document.getElementById('TOTAL_BANCO_0').focus();
+			return false;
+		}
+		if(totalComision == ''){
+			alert('Debe llenar el campo "Total Comisión"');
+			document.getElementById('COMISION_TBK_0').focus();
+			return false;
+		}
+		if(fechaAbono == ''){
+			alert('Debe llenar el campo "Fecha Abono"');
+			document.getElementById('FECHA_ABONO_0').focus();
+			return false;
+		}
+
+		let count = 0;
+
+		for (j=0; j < aTR.length; j++){
+			let vl_record = get_num_rec_field(aTR[j].id);
+			
+			let nroAutorizacion	= get_value('NRO_AUTORIZA_TB_'+vl_record);
+			let montoAbono		= get_value('MONTO_ABONO_'+vl_record);
+			let cuota			= get_value('CUOTAS_N_'+vl_record);
+
+			if(nroAutorizacion == '' && montoAbono == '' && cuota == ''){
+				count++;
+			}else{
+				if(nroAutorizacion == ''){
+					alert('Debe llenar el campo "Nro. Autorización"');
+					document.getElementById('NRO_AUTORIZA_TB_'+vl_record).focus();
+					return false;
+				}
+				if(montoAbono == ''){
+					alert('Debe llenar el campo "Monto Abono"');
+					document.getElementById('MONTO_ABONO_'+vl_record).focus();
+					return false;
+				}
+				if(cuota == ''){
+					alert('Debe llenar el campo "Cuota n/n"');
+					document.getElementById('CUOTAS_N_'+vl_record).focus();
+					return false;
+				}
+			}
+		}
+
+		if(aTR.length == count){
+			alert('Debe ingresar al menos 1 item.');
+			return false;
+		}
+	}
+
 	var vl_cod_estado_envio = document.getElementById('COD_ESTADO_ENVIO_0');
-	if (vl_cod_estado_envio) {	// esta ingresable
-		if (vl_cod_estado_envio.value==K_ENVIO_CONFIRMADA) {	// confirmada
+	if(vl_cod_estado_envio){	// esta ingresable
+		if (vl_cod_estado_envio.value==K_ENVIO_CONFIRMADA){	// confirmada
 			// valida que este ingresado el nro del comprobante
 			var vl_nro_comprobante = document.getElementById('NRO_COMPROBANTE_0');
 			if (vl_nro_comprobante.value=='' || vl_nro_comprobante.value==0) {
@@ -13,99 +79,47 @@ function validate() {
 				return false;
 			}
 
-// valida que no existan FA o NC de diferentes meses
-			/*var vl_dif_meses = document.getElementById('RE_DIF_MESES_0');
-			if (vl_dif_meses.innerHTML!='') {
-				alert(vl_dif_meses.innerHTML);
-				return false;
-			}*/
-			
 			// si es envio de compras debe ingresar el correlativo interno
 			var vl_cod_tipo_envio = document.getElementById('COD_TIPO_ENVIO_0').value;
-						if (vl_cod_tipo_envio==K_TIPO_COMPRA) {
-						var vl_nro_correlativo_interno = document.getElementById('NRO_CORRELATIVO_INTERNO_0');
+			if (vl_cod_tipo_envio==K_TIPO_COMPRA) {
+				var vl_nro_correlativo_interno = document.getElementById('NRO_CORRELATIVO_INTERNO_0');
 				if (vl_nro_correlativo_interno.value=='' || vl_nro_correlativo_interno.value==0) {
 					alert("Para confirmar bebe ingresar el número de Correlativo interno");
 					vl_nro_correlativo_interno.focus();
 					return false;					
-									}
-							}
+				}
+			}
 		}
 	}
  
-  var vl_total_banco = document.getElementById('TOTAL_BANCO_0').value;
-  var vl_comision_tbk = document.getElementById('COMISION_TBK_0').value;
-  var vl_monto_abono =0;
-  var total_abono = 0;
-  var total_banco_com = 0;
+	var vl_total_banco = document.getElementById('TOTAL_BANCO_0').value;
+	var vl_comision_tbk = document.getElementById('COMISION_TBK_0').value;
+	var vl_monto_abono =0;
+	var total_abono = 0;
+	var total_banco_com = 0;
  
-	
-
-
-
 	vl_total_banco = parseInt(to_num(vl_total_banco));
 	vl_comision_tbk = parseInt(to_num(vl_comision_tbk));
- 
 	total_abono = parseInt(to_num(total_abono));
- 
- total_banco_com = parseInt(to_num(total_banco_com));
+	total_banco_com = parseInt(to_num(total_banco_com));
 
-	var aTR = get_TR('ENVIO_TRANSBANK');
-		for (i=0; i < aTR.length; i++)	{
-			vl_record = get_num_rec_field(aTR[i].id);
+	for (i=0; i < aTR.length; i++){
+		vl_record = get_num_rec_field(aTR[i].id);
 	
-				vl_monto_abono = document.getElementById('MONTO_ABONO_' + vl_record).value;
-				total_abono = parseInt(to_num(total_abono)) + parseInt(to_num(vl_monto_abono));
-
+		vl_monto_abono = document.getElementById('MONTO_ABONO_' + vl_record).value;
+		total_abono = parseInt(to_num(total_abono)) + parseInt(to_num(vl_monto_abono));
 	}
  
-  total_banco_com = parseInt(to_num(total_abono)) - vl_comision_tbk
+  	total_banco_com = parseInt(to_num(total_abono)) - vl_comision_tbk
  
 	if(parseInt(to_num(total_banco_com))!=parseInt(to_num(vl_total_banco))){
 		alert('El monto total banco: '+ vl_total_banco+' es distinto al monto de los Item menos la comisión Tbk: ' + total_banco_com);
 		return false;
 	}
- 
- 
-	
-	/*var vl_monto_tot_td = document.getElementById('MONTO_TOT_TD_0').value;
-	var vl_monto_tot_tc = document.getElementById('MONTO_TOT_TC_0').value;
-	var vl_tipo_doc_pago=0;
-	var vl_monto_abono_td=0;
-	var vl_monto_abono_tc=0;
-	var total_abono_td = 0;
-	var total_abono_tc = 0;
-
-
-
-	vl_monto_tot_td = parseInt(to_num(vl_monto_tot_td));
-	vl_monto_tot_tc = parseInt(to_num(vl_monto_tot_tc));
-	total_abono_tc = parseInt(to_num(total_abono_tc));
-
-	var aTR = get_TR('ENVIO_TRANSBANK');
-		for (i=0; i < aTR.length; i++)	{
-			vl_record = get_num_rec_field(aTR[i].id);
-			vl_tipo_doc_pago = document.getElementById('COD_TIPO_DOC_PAGO_' + vl_record).value
-			if(vl_tipo_doc_pago==6){
-				vl_monto_abono_tc = document.getElementById('MONTO_ABONO_' + vl_record).value
-				total_abono_tc = parseInt(to_num(total_abono_tc)) + parseInt(to_num(vl_monto_abono_tc));
-			}else if(vl_tipo_doc_pago==5){
-				vl_monto_abono_td = document.getElementById('MONTO_ABONO_' + vl_record).value
-				total_abono_td = parseInt(to_num(total_abono_td)) + parseInt(to_num(vl_monto_abono_td));
-			}
-	}
-	if(parseInt(to_num(total_abono_tc))!=parseInt(to_num(vl_monto_tot_tc))){
-		alert('El monto total del abono '+ total_abono_tc+' no es el mismo de Monto Total Abono TC');
-		return false;
-	}
-
-	if(parseInt(to_num(total_abono_td))!=parseInt(to_num(vl_monto_tot_td))){
-		alert('El monto total del abono '+total_abono_td+ ' no es el mismo de Monto Total Abono TD');
-		return false;
-	}*/
 	
 	return true;
 }
+
 function selecciona_documento(ve_seleccion) {
 	var vl_record = get_num_rec_field(ve_seleccion.id);
 	var vl_tipo;

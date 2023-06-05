@@ -73,7 +73,7 @@ function request_tipo_envio(ve_campo)
 						</table>
 					</td>
 					<td></td>
-					<td></td>
+					<td>{WO_PRINT}</td>
         			<td>{WO_ADD}</td>
         			<td>{WO_EXPORT}</td>
 					<td></td>						
@@ -88,12 +88,13 @@ function request_tipo_envio(ve_campo)
 					<td valign="top">
 						<table width="1000" border="0" align="center">
 							<tr class="encabezado_center">
-								<th width="50">Detalle</th>
-								<th width="100">{H_COD_ENVIO_SOFTLAND}</th>
-								<th width="100">{H_FECHA_ENVIO_SOFTLAND}</th>
-								<th width="300">{H_NOM_USUARIO}</th>
-								<th width="150">{H_NOM_TIPO_ENVIO}</th> 
-								<th width="150">{H_NOM_ESTADO_ENVIO}</th> 
+								<th width="5%">Detalle</th>
+								<th width="5%">Sel.</th>
+								<th width="10%">{H_COD_ENVIO_SOFTLAND}</th>
+								<th width="10%">{H_FECHA_ENVIO_SOFTLAND}</th>
+								<th width="40%">{H_NOM_USUARIO}</th>
+								<th width="15%">{H_NOM_TIPO_ENVIO}</th> 
+								<th width="15%">{H_NOM_ESTADO_ENVIO}</th> 
 								<!-- <th width="150">{H_TOTAL_BANCO}</th> -->
 							</tr>
 						</table>
@@ -101,12 +102,13 @@ function request_tipo_envio(ve_campo)
 						<table width="1000" border="0" align="center">
 							<!-- startBlock(wo_registro) -->
 							<tr class="{WO_TR_CSS}">
-								<td width="50" align="center">{WO_DETALLE}</td>
-								<td width="100" align="center">{COD_ENVIO_SOFTLAND}</td>
-								<td width="100" align="center">{FECHA_ENVIO_SOFTLAND}</td>
-								<td width="300">{NOM_USUARIO}</td>
-								<td width="150">{NOM_TIPO_ENVIO}</td>					 								
-								<td width="150">{NOM_ESTADO_ENVIO}</td>
+								<td width="5%" align="center">{WO_DETALLE}</td>
+								<td width="5%" align="center">{SELECCION}</td>
+								<td width="10%" align="center">{COD_ENVIO_SOFTLAND}</td>
+								<td width="10%" align="center">{FECHA_ENVIO_SOFTLAND}</td>
+								<td width="40%">{NOM_USUARIO}</td>
+								<td width="15%">{NOM_TIPO_ENVIO}</td>					 								
+								<td width="15%">{NOM_ESTADO_ENVIO}</td>
 								<!-- <td width="150" align="right">{TOTAL_BANCO}</td> -->					 								
 							</tr>
 							<!-- endBlock(wo_registro) -->

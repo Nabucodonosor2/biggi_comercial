@@ -55,7 +55,7 @@ class dw_envio_transbank extends datawindow {
 		$this->add_control(new static_text('NOM_TIPO_DOC_PAGO'));
 		$this->add_control(new static_text('CUOTAS'));
 		$this->add_control(new edit_text('COD_EMPRESA',10, 10, 'hidden'));
-    $this->add_control(new static_num('MONTO_DOC'));
+    	$this->add_control(new static_num('MONTO_DOC'));
 
 		$this->set_first_focus('NRO_AUTORIZA_TB');
 
@@ -63,23 +63,23 @@ class dw_envio_transbank extends datawindow {
 
 
 		// asigna los mandatorys
-		$this->set_mandatory('NRO_AUTORIZA_TB', 'Nro de Autorización');
-		$this->set_mandatory('MONTO_ABONO', 'Monto del Abono');
+		//$this->set_mandatory('NRO_AUTORIZA_TB', 'Nro de Autorización');
+		//$this->set_mandatory('MONTO_ABONO', 'Monto del Abono');
 
 	}
-  function new_envio() {
-    
-    for ($i = 0; $i < 15; $i++){
-      $this->insert_row();
-    }
-  }
+	function new_envio() {
+		for ($i = 0; $i < 15; $i++){
+		$this->insert_row();
+		}
+	}
+
 	function insert_row($row=-1) {
 		$row = parent::insert_row($row);
 		//$this->set_item($row, 'NRO_AUTORIZA_TB', 0);
 		return $row;
 	}
-	function update($db)	{
 
+	function update($db){
 		$sp = 'spu_envio_transbank';
 
 		for ($i = 0; $i < $this->row_count(); $i++){
@@ -88,21 +88,25 @@ class dw_envio_transbank extends datawindow {
 			if ($statuts == K_ROW_NOT_MODIFIED || $statuts == K_ROW_NEW)
 				continue;
 
+			$NRO_AUTORIZA_TB 		= $this->get_item($i, 'NRO_AUTORIZA_TB');
+
+			if($NRO_AUTORIZA_TB == '')
+				continue;
+		
 			$COD_ENVIO_TRANSBANK 	= $this->get_item($i, 'COD_ENVIO_TRANSBANK');
-			$COD_ENVIO_SOFTLAND_TB 		= $this->get_item($i, 'COD_ENVIO_SOFTLAND_TB');
-			$COD_NOTA_VENTA 				= $this->get_item($i, 'COD_NOTA_VENTA_I');
-			$COD_INGRESO_PAGO 			= $this->get_item($i, 'COD_INGRESO_PAGO_I');
-			$NRO_AUTORIZA_TB 					= $this->get_item($i, 'NRO_AUTORIZA_TB');
-			$MONTO_ABONO 					= $this->get_item($i, 'MONTO_ABONO');
-			$RAZON_SOCIAL 		= $this->get_item($i, 'RAZON_SOCIAL_I');
+			$COD_ENVIO_SOFTLAND_TB 	= $this->get_item($i, 'COD_ENVIO_SOFTLAND_TB');
+			$COD_NOTA_VENTA 		= $this->get_item($i, 'COD_NOTA_VENTA_I');
+			$COD_INGRESO_PAGO 		= $this->get_item($i, 'COD_INGRESO_PAGO_I');
+			$MONTO_ABONO 			= $this->get_item($i, 'MONTO_ABONO');
+			$RAZON_SOCIAL 			= $this->get_item($i, 'RAZON_SOCIAL_I');
 			$COD_TIPO_DOC_PAGO 		= $this->get_item($i, 'COD_TIPO_DOC_PAGO');
-			$CUOTAS			= $this->get_item($i, 'CUOTAS_I');
-			$CUOTAS_N			= $this->get_item($i, 'CUOTAS_N');
-      $COD_EMPRESA			= $this->get_item($i, 'COD_EMPRESA');
+			$CUOTAS					= $this->get_item($i, 'CUOTAS_I');
+			$CUOTAS_N				= $this->get_item($i, 'CUOTAS_N');
+      		$COD_EMPRESA			= $this->get_item($i, 'COD_EMPRESA');
 
 
-			$COD_ENVIO_TRANSBANK			= ($COD_ENVIO_TRANSBANK =='') ? "null" : "$COD_ENVIO_TRANSBANK";
-      $COD_NOTA_VENTA			= ($COD_NOTA_VENTA =='') ? "null" : "$COD_NOTA_VENTA";
+			$COD_ENVIO_TRANSBANK	= ($COD_ENVIO_TRANSBANK =='') ? "null" : "$COD_ENVIO_TRANSBANK";
+      		$COD_NOTA_VENTA			= ($COD_NOTA_VENTA =='') ? "null" : "$COD_NOTA_VENTA";
 
 			if ($statuts == K_ROW_NEW_MODIFIED)
 				$operacion = 'INSERT';
@@ -110,11 +114,11 @@ class dw_envio_transbank extends datawindow {
 				$operacion = 'UPDATE';
 
 			$param = "'$operacion',$COD_ENVIO_TRANSBANK, $COD_ENVIO_SOFTLAND_TB, $COD_NOTA_VENTA, $COD_INGRESO_PAGO, $NRO_AUTORIZA_TB, $MONTO_ABONO, '$RAZON_SOCIAL', $COD_TIPO_DOC_PAGO, '$CUOTAS', '$CUOTAS_N',$COD_EMPRESA";
-
-  		if (!$db->EXECUTE_SP($sp, $param))
-
+			
+			if (!$db->EXECUTE_SP($sp, $param))
 				return false;
 		}
+
 		for ($i = 0; $i < $this->row_count('delete'); $i++) {
 			$statuts = $this->get_status_row($i, 'delete');
 			if ($statuts == K_ROW_NEW || $statuts == K_ROW_NEW_MODIFIED)
@@ -125,17 +129,10 @@ class dw_envio_transbank extends datawindow {
 				return false;
 			}
 		}
-		//Ordernar
-		/*if ($this->row_count() > 0) {
-			$COD_ENVIO_SOFTLAND = $this->get_item(0, 'COD_ENVIO_SOFTLAND');
-			$parametros_sp = "'ENVIO_TRANSBANK','ENVIO_SOFTLAND', $COD_ENVIO_SOFTLAND";
-			if (!$db->EXECUTE_SP('sp_orden_no_parametricas', $parametros_sp))
-			return false;
-		}*/
 		return true;
 	}
-
 }
+
 class dw_resumen extends datawindow {
 	function dw_resumen() {
 		$sql = "exec spdw_envio_resumen {KEY1}, {KEY2}";
@@ -2063,185 +2060,202 @@ class wi_envio_softland_base extends w_input {
 			$nro_correlativo_interno++;
 		}
 	}
- function export_transbak($handle) {
-   $db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
-   
-   $tb_cod_envio_sofland = $this->dws['dw_envio_softland']->get_item(0, 'COD_ENVIO_SOFTLAND');
-      
-   $sql = "select TOTAL_BANCO
-      		,COMISION_TBK
-      		,'DEPOSITO TRANSBANK VARIOS '+convert(varchar(20), FECHA_ABONO, 103) GLOSA_BANCO
-      		,'COMISION TRANSBANK '+convert(varchar(20), FECHA_ABONO, 103) GLOSA_COM
-      		,convert(varchar(20),GETDATE(), 3) FECHA_ACTUAL
-          ,NRO_COMPROBANTE
-      from  ENVIO_SOFTLAND
-      WHERE COD_ENVIO_SOFTLAND = $tb_cod_envio_sofland";
-  $result = $db->build_results($sql);
-      
-      
-	$TOTAL_BANCO = $result[0]['TOTAL_BANCO'];
- 	$COMISION_TBK = $result[0]['COMISION_TBK'];
-  $GLOSA_BANCO = $result[0]['GLOSA_BANCO'];
-  $GLOSA_COM = $result[0]['GLOSA_COM'];
-  $FECHA_ACTUAL = $result[0]['FECHA_ACTUAL'];
-  $NRO_COMPROBANTE = $result[0]['NRO_COMPROBANTE'];
-  
-  //$FECHA_ACTUAL = $this->formato_fecha($FECHA_ACTUAL);
-     
- 
-   // datos_banco
-		fwrite($handle, '"10-02-003"'.$this->separador);			// Cuenta contable
-		fwrite($handle, $TOTAL_BANCO.$this->separador);						// monto debe
-		fwrite($handle, '0'.$this->separador);						// monto haber
-		fwrite($handle, '"'.$GLOSA_BANCO.'"'.$this->separador);						// glosa movimiento
-		fwrite($handle, '0'.$this->separador);									// equivalencia moneda
-		fwrite($handle, '0'.$this->separador);									// monto al debe adicional
-		fwrite($handle, '0'.$this->separador);									// monto al haber adicional
-		fwrite($handle, '""'.$this->separador);									// condiciones de vta
-		fwrite($handle, '""'.$this->separador);									// codigo vendedor
-		fwrite($handle, '""'.$this->separador);									// codigo ubicacion
-		fwrite($handle, '""'.$this->separador);									// codigo concepto caja
-		fwrite($handle, '""'.$this->separador);									// codigo instrumento financiero
-		fwrite($handle, '0'.$this->separador);									// cantidad instrumento financiero
-		fwrite($handle, '""'.$this->separador);									// codigo detalle de gasto
-		fwrite($handle, '0'.$this->separador);									// cantidad concepto gassto
-		fwrite($handle, '""'.$this->separador);									// codigo detalle de gasto
-    fwrite($handle, '"DP"'.$this->separador);									// codigo centgro costo
-		fwrite($handle, '9'.$this->separador);									// tipo docto conciliacion
-		fwrite($handle, '""'.$this->separador);									// nro docto conciliacion
-		fwrite($handle, '""'.$this->separador);							// codigo auxiliar
-		fwrite($handle, '0'.$this->separador);								// tipo documento
-		//fwrite($handle, $nro_documento.$this->separador);							// nro documento
-		fwrite($handle, '"'.$FECHA_ACTUAL.'"'.$this->separador);						// fecha emision
-		fwrite($handle, '"'.$FECHA_ACTUAL.'"'.$this->separador);				// fecha vencimiento
-		fwrite($handle, '""'.$this->separador);				// tipo docto referencia
-		fwrite($handle, '0'.$this->separador);							// nro docto referencia
-		fwrite($handle, '""'.$this->separador);									// nro correlativo interrno
-		fwrite($handle, '0'.$this->separador);									// monto 1 detalle libro "AFECTO"
-		fwrite($handle, '0'.$this->separador);									// monto 2 detalle libro "EXENTO"
-		fwrite($handle, '0'.$this->separador);									// monto 3 detalle libro "IVA"
-		fwrite($handle, '0'.$this->separador);									// monto 4 detalle libro
-		fwrite($handle, '0'.$this->separador);									// monto 5 detalle libro
-		fwrite($handle, '0'.$this->separador);									// monto 6 detalle libro
-		fwrite($handle, '0'.$this->separador);									// monto 7 detalle libro
-		fwrite($handle, '0'.$this->separador);									// monto 8 detalle libro
-		fwrite($handle, '0'.$this->separador);									// monto 9 detalle libro
-		fwrite($handle, '0'.$this->separador);									// monto suma detalle libro
-		fwrite($handle, '0'.$this->separador);									// numero documento desde
-		fwrite($handle, '0'.$this->separador);									// numerro documento hasta
-		fwrite($handle, $NRO_COMPROBANTE."\r\n");				// nro comprobante
-   
-   // datos_comision
-		fwrite($handle, '"80-01-005"'.$this->separador);			// Cuenta contable
-		fwrite($handle, $COMISION_TBK.$this->separador);						// monto debe
-		fwrite($handle, '0'.$this->separador);						// monto haber
-		fwrite($handle, '"'.$GLOSA_COM.'"'.$this->separador);						// glosa movimiento
-		fwrite($handle, '0'.$this->separador);									// equivalencia moneda
-		fwrite($handle, '0'.$this->separador);									// monto al debe adicional
-		fwrite($handle, '0'.$this->separador);									// monto al haber adicional
-		fwrite($handle, '""'.$this->separador);									// condiciones de vta
-		fwrite($handle, '""'.$this->separador);									// codigo vendedor
-		fwrite($handle, '""'.$this->separador);									// codigo ubicacion
-		fwrite($handle, '""'.$this->separador);									// codigo concepto caja
-		fwrite($handle, '""'.$this->separador);									// codigo instrumento financiero
-		fwrite($handle, '0'.$this->separador);									// cantidad instrumento financiero
-		fwrite($handle, '""'.$this->separador);									// codigo detalle de gasto
-		fwrite($handle, '0'.$this->separador);									// cantidad concepto gassto
-		fwrite($handle, '""'.$this->separador);									// codigo detalle de gasto
-    fwrite($handle, '""'.$this->separador);									// codigo centgro costo
-		fwrite($handle, '""'.$this->separador);									// tipo docto conciliacion
-		fwrite($handle, '""'.$this->separador);									// nro docto conciliacion
-		fwrite($handle, '""'.$this->separador);							// codigo auxiliar
-		fwrite($handle, '0'.$this->separador);								// tipo documento
-		//fwrite($handle, $nro_documento.$this->separador);							// nro documento
-		fwrite($handle, '"'.$FECHA_ACTUAL.'"'.$this->separador);						// fecha emision
-		fwrite($handle, '"'.$FECHA_ACTUAL.'"'.$this->separador);				// fecha vencimiento
-		fwrite($handle, '""'.$this->separador);				// tipo docto referencia
-		fwrite($handle, '0'.$this->separador);							// nro docto referencia
-		fwrite($handle, '""'.$this->separador);									// nro correlativo interrno
-		fwrite($handle, '0'.$this->separador);									// monto 1 detalle libro "AFECTO"
-		fwrite($handle, '0'.$this->separador);									// monto 2 detalle libro "EXENTO"
-		fwrite($handle, '0'.$this->separador);									// monto 3 detalle libro "IVA"
-		fwrite($handle, '0'.$this->separador);									// monto 4 detalle libro
-		fwrite($handle, '0'.$this->separador);									// monto 5 detalle libro
-		fwrite($handle, '0'.$this->separador);									// monto 6 detalle libro
-		fwrite($handle, '0'.$this->separador);									// monto 7 detalle libro
-		fwrite($handle, '0'.$this->separador);									// monto 8 detalle libro
-		fwrite($handle, '0'.$this->separador);									// monto 9 detalle libro
-		fwrite($handle, '0'.$this->separador);									// monto suma detalle libro
-		fwrite($handle, '0'.$this->separador);									// numero documento desde
-		fwrite($handle, '0'.$this->separador);									// numerro documento hasta
-		fwrite($handle, $NRO_COMPROBANTE."\r\n");				// nro comprobante
+	function export_transbak($handle, $array){
+   		$db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
+   		
+		for ($i=0; $i < count($array); $i++){ 
+			$tb_cod_envio_sofland = $array[$i];
+
+			$sql = "select TOTAL_BANCO
+						,COMISION_TBK
+						,'DEPOSITO TRANSBANK VARIOS '+convert(varchar(20), FECHA_ABONO, 103) GLOSA_BANCO
+						,'COMISION TRANSBANK '+convert(varchar(20), FECHA_ABONO, 103) GLOSA_COM
+						,convert(varchar(20),GETDATE(), 3) FECHA_ACTUAL
+						,NRO_COMPROBANTE
+					from  ENVIO_SOFTLAND
+					WHERE COD_ENVIO_SOFTLAND = $tb_cod_envio_sofland";
+
+			$result = $db->build_results($sql);
 		
-		for($i=0; $i < $this->dws['dw_envio_transbank']->row_count(); $i++) {
-			$COD_ENVIO_TRANSBANK = $this->dws['dw_envio_transbank']->get_item($i, 'COD_ENVIO_TRANSBANK');
-      $MONTO_ABONO = $this->dws['dw_envio_transbank']->get_item($i, 'MONTO_ABONO');
-      $CUOTAS_N = $this->dws['dw_envio_transbank']->get_item($i, 'CUOTAS_N');
-      $COD_TIPO_DOC_PAGO = $this->dws['dw_envio_transbank']->get_item($i, 'COD_TIPO_DOC_PAGO');
-      $COD_TIPO_DOC_PAGO = $this->dws['dw_envio_transbank']->get_item($i, 'COD_TIPO_DOC_PAGO');
-      $NRO_AUTORIZA_TB = $this->dws['dw_envio_transbank']->get_item($i, 'NRO_AUTORIZA_TB');
-      
-      if($COD_TIPO_DOC_PAGO ==5){
-        $GLOSA_TRANSBAK = $GLOSA_BANCO;
-      }else{
-        $GLOSA_TRANSBAK = $CUOTAS_N;
-      } 
-      
-      $COD_EMPRESA = $this->dws['dw_envio_transbank']->get_item($i, 'COD_EMPRESA');
-      
-      $sql = "select RUT
-      from  EMPRESA
-      WHERE COD_EMPRESA = $COD_EMPRESA";
-  $result = $db->build_results($sql); 
-	$RUT_CLIENTE = $result[0]['RUT'];
-      
-      // datos_comision
-		fwrite($handle, '"10-05-007"'.$this->separador);			// Cuenta contable
-		fwrite($handle, '0'.$this->separador);						// monto debe
-		fwrite($handle, $MONTO_ABONO.$this->separador);						// monto haber
-		fwrite($handle, '"'.$GLOSA_TRANSBAK.'"'.$this->separador);						// glosa movimiento
-		fwrite($handle, '0'.$this->separador);									// equivalencia moneda
-		fwrite($handle, '0'.$this->separador);									// monto al debe adicional
-		fwrite($handle, '0'.$this->separador);									// monto al haber adicional
-		fwrite($handle, '""'.$this->separador);									// condiciones de vta
-		fwrite($handle, '""'.$this->separador);									// codigo vendedor
-		fwrite($handle, '""'.$this->separador);									// codigo ubicacion
-		fwrite($handle, '""'.$this->separador);									// codigo concepto caja
-		fwrite($handle, '""'.$this->separador);									// codigo instrumento financiero
-		fwrite($handle, '0'.$this->separador);									// cantidad instrumento financiero
-		fwrite($handle, '""'.$this->separador);									// codigo detalle de gasto
-		fwrite($handle, '0'.$this->separador);									// cantidad concepto gassto
-		fwrite($handle, '""'.$this->separador);									// codigo detalle de gasto
-    fwrite($handle, '""'.$this->separador);									// codigo centgro costo
-		fwrite($handle, '"0"'.$this->separador);									// tipo docto conciliacion
-		fwrite($handle, $RUT_CLIENTE.$this->separador);									// nro docto conciliacion
-		fwrite($handle, '"DP"'.$this->separador);							// codigo auxiliar
-		fwrite($handle, '9'.$this->separador);								// tipo documento
-		//fwrite($handle, $nro_documento.$this->separador);							// nro documento
-		fwrite($handle, '"'.$FECHA_ACTUAL.'"'.$this->separador);						// fecha emision
-		fwrite($handle, '"'.$FECHA_ACTUAL.'"'.$this->separador);				// fecha vencimiento
-		fwrite($handle, '"TB"'.$this->separador);				// tipo docto referencia
-		fwrite($handle, $NRO_AUTORIZA_TB.$this->separador);							// nro docto referencia
-		fwrite($handle, '""'.$this->separador);									// nro correlativo interrno
-		fwrite($handle, '0'.$this->separador);									// monto 1 detalle libro "AFECTO"
-		fwrite($handle, '0'.$this->separador);									// monto 2 detalle libro "EXENTO"
-		fwrite($handle, '0'.$this->separador);									// monto 3 detalle libro "IVA"
-		fwrite($handle, '0'.$this->separador);									// monto 4 detalle libro
-		fwrite($handle, '0'.$this->separador);									// monto 5 detalle libro
-		fwrite($handle, '0'.$this->separador);									// monto 6 detalle libro
-		fwrite($handle, '0'.$this->separador);									// monto 7 detalle libro
-		fwrite($handle, '0'.$this->separador);									// monto 8 detalle libro
-		fwrite($handle, '0'.$this->separador);									// monto 9 detalle libro
-		fwrite($handle, '0'.$this->separador);									// monto suma detalle libro
-		fwrite($handle, '0'.$this->separador);									// numero documento desde
-		fwrite($handle, '0'.$this->separador);									// numerro documento hasta
-		fwrite($handle, $NRO_COMPROBANTE."\r\n");				// nro comprobante
-   }
+			$TOTAL_BANCO		= $result[0]['TOTAL_BANCO'];
+			$COMISION_TBK		= $result[0]['COMISION_TBK'];
+			$GLOSA_BANCO		= $result[0]['GLOSA_BANCO'];
+			$GLOSA_COM			= $result[0]['GLOSA_COM'];
+			$FECHA_ACTUAL		= $result[0]['FECHA_ACTUAL'];
+			$NRO_COMPROBANTE	= $result[0]['NRO_COMPROBANTE'];
+			//$FECHA_ACTUAL = $this->formato_fecha($FECHA_ACTUAL);
 		
-   
-  // $COD_ENVIO_TRANSBANK = $this->dws['dw_envio_transbank']->get_item($i, 'COD_ENVIO_TRANSBANK');
-   
- }
+			// datos_banco
+			fwrite($handle, '"10-02-003"'.$this->separador);			// Cuenta contable
+			fwrite($handle, $TOTAL_BANCO.$this->separador);				// monto debe
+			fwrite($handle, '0'.$this->separador);						// monto haber
+			fwrite($handle, '"'.$GLOSA_BANCO.'"'.$this->separador);
+			fwrite($handle, '0'.$this->separador);						// equivalencia moneda
+			fwrite($handle, '0'.$this->separador);						// monto al debe adicional
+			fwrite($handle, '0'.$this->separador);						// monto al haber adicional
+			fwrite($handle, '""'.$this->separador);						// condiciones de vta
+			fwrite($handle, '""'.$this->separador);						// codigo vendedor
+			fwrite($handle, '""'.$this->separador);						// codigo ubicacion
+			fwrite($handle, '""'.$this->separador);						// codigo concepto caja
+			fwrite($handle, '""'.$this->separador);						// codigo instrumento financiero
+			fwrite($handle, '0'.$this->separador);						// cantidad instrumento financiero
+			fwrite($handle, '""'.$this->separador);						// codigo detalle de gasto
+			fwrite($handle, '0'.$this->separador);						// cantidad concepto gassto
+			fwrite($handle, '""'.$this->separador);						// codigo detalle de gasto
+			fwrite($handle, '"DP"'.$this->separador);					// codigo centgro costo
+			fwrite($handle, '9'.$this->separador);						// tipo docto conciliacion
+			fwrite($handle, '""'.$this->separador);						// nro docto conciliacion
+			fwrite($handle, '""'.$this->separador);						// codigo auxiliar
+			fwrite($handle, '0'.$this->separador);						// tipo documento
+			//fwrite($handle, $nro_documento.$this->separador);			// nro documento
+			fwrite($handle, '"'.$FECHA_ACTUAL.'"'.$this->separador);	// fecha emision
+			fwrite($handle, '"'.$FECHA_ACTUAL.'"'.$this->separador);	// fecha vencimiento
+			fwrite($handle, '""'.$this->separador);						// tipo docto referencia
+			fwrite($handle, '0'.$this->separador);						// nro docto referencia
+			fwrite($handle, '""'.$this->separador);						// nro correlativo interrno
+			fwrite($handle, '0'.$this->separador);						// monto 1 detalle libro "AFECTO"
+			fwrite($handle, '0'.$this->separador);						// monto 2 detalle libro "EXENTO"
+			fwrite($handle, '0'.$this->separador);						// monto 3 detalle libro "IVA"
+			fwrite($handle, '0'.$this->separador);						// monto 4 detalle libro
+			fwrite($handle, '0'.$this->separador);						// monto 5 detalle libro
+			fwrite($handle, '0'.$this->separador);						// monto 6 detalle libro
+			fwrite($handle, '0'.$this->separador);						// monto 7 detalle libro
+			fwrite($handle, '0'.$this->separador);						// monto 8 detalle libro
+			fwrite($handle, '0'.$this->separador);						// monto 9 detalle libro
+			fwrite($handle, '0'.$this->separador);						// monto suma detalle libro
+			fwrite($handle, '0'.$this->separador);						// numero documento desde
+			fwrite($handle, '0'.$this->separador);						// numerro documento hasta
+			fwrite($handle, $NRO_COMPROBANTE.$this->separador);			// nro comprobante
+			fwrite($handle, '""'.$this->separador);						// 
+			fwrite($handle, '""'.$this->separador);						// 
+			fwrite($handle, '"'.$GLOSA_BANCO.'"'."\r\n");				// glosa movimiento
+	
+			// datos_comision
+			fwrite($handle, '"80-01-005"'.$this->separador);			// Cuenta contable
+			fwrite($handle, $COMISION_TBK.$this->separador);			// monto debe
+			fwrite($handle, '0'.$this->separador);						// monto haber
+			fwrite($handle, '"'.$GLOSA_COM.'"'.$this->separador);		// glosa movimiento
+			fwrite($handle, '0'.$this->separador);						// equivalencia moneda
+			fwrite($handle, '0'.$this->separador);						// monto al debe adicional
+			fwrite($handle, '0'.$this->separador);						// monto al haber adicional
+			fwrite($handle, '""'.$this->separador);						// condiciones de vta
+			fwrite($handle, '""'.$this->separador);						// codigo vendedor
+			fwrite($handle, '""'.$this->separador);						// codigo ubicacion
+			fwrite($handle, '""'.$this->separador);						// codigo concepto caja
+			fwrite($handle, '""'.$this->separador);						// codigo instrumento financiero
+			fwrite($handle, '0'.$this->separador);						// cantidad instrumento financiero
+			fwrite($handle, '""'.$this->separador);						// codigo detalle de gasto
+			fwrite($handle, '0'.$this->separador);						// cantidad concepto gassto
+			fwrite($handle, '""'.$this->separador);						// codigo detalle de gasto
+			fwrite($handle, '""'.$this->separador);						// codigo centgro costo
+			fwrite($handle, '""'.$this->separador);						// tipo docto conciliacion
+			fwrite($handle, '""'.$this->separador);						// nro docto conciliacion
+			fwrite($handle, '""'.$this->separador);						// codigo auxiliar
+			fwrite($handle, '0'.$this->separador);						// tipo documento
+			//fwrite($handle, $nro_documento.$this->separador);			// nro documento
+			fwrite($handle, '"'.$FECHA_ACTUAL.'"'.$this->separador);	// fecha emision
+			fwrite($handle, '"'.$FECHA_ACTUAL.'"'.$this->separador);	// fecha vencimiento
+			fwrite($handle, '""'.$this->separador);						// tipo docto referencia
+			fwrite($handle, '0'.$this->separador);						// nro docto referencia
+			fwrite($handle, '""'.$this->separador);						// nro correlativo interrno
+			fwrite($handle, '0'.$this->separador);						// monto 1 detalle libro "AFECTO"
+			fwrite($handle, '0'.$this->separador);						// monto 2 detalle libro "EXENTO"
+			fwrite($handle, '0'.$this->separador);						// monto 3 detalle libro "IVA"
+			fwrite($handle, '0'.$this->separador);						// monto 4 detalle libro
+			fwrite($handle, '0'.$this->separador);						// monto 5 detalle libro
+			fwrite($handle, '0'.$this->separador);						// monto 6 detalle libro
+			fwrite($handle, '0'.$this->separador);						// monto 7 detalle libro
+			fwrite($handle, '0'.$this->separador);						// monto 8 detalle libro
+			fwrite($handle, '0'.$this->separador);						// monto 9 detalle libro
+			fwrite($handle, '0'.$this->separador);						// monto suma detalle libro
+			fwrite($handle, '0'.$this->separador);						// numero documento desde
+			fwrite($handle, '0'.$this->separador);						// numerro documento hasta
+			fwrite($handle, $NRO_COMPROBANTE.$this->separador);			// nro comprobante
+			fwrite($handle, '""'.$this->separador);						// 
+			fwrite($handle, '""'.$this->separador);						// 
+			fwrite($handle, '"'.$GLOSA_COM.'"'."\r\n");					// glosa movimiento
+			
+			$sql_it = "SELECT COD_ENVIO_TRANSBANK
+							,MONTO_ABONO
+							,CUOTAS_N
+							,COD_TIPO_DOC_PAGO
+							,NRO_AUTORIZA_TB
+							,COD_EMPRESA                                                                         
+					from  ENVIO_TRANSBANK ET, ENVIO_SOFTLAND ES
+					where  ES.COD_ENVIO_SOFTLAND = $tb_cod_envio_sofland
+					and ET.COD_ENVIO_SOFTLAND = ES.COD_ENVIO_SOFTLAND
+					order by COD_ENVIO_TRANSBANK ASC";
+			$result_item = $db->build_results($sql_it);
+
+			for($k=0; $k < count($result_item); $k++){
+				$COD_ENVIO_TRANSBANK	= $result_item[$k]['COD_ENVIO_TRANSBANK'];
+				$MONTO_ABONO			= $result_item[$k]['MONTO_ABONO'];
+				$CUOTAS_N				= $result_item[$k]['CUOTAS_N'];
+				$COD_TIPO_DOC_PAGO		= $result_item[$k]['COD_TIPO_DOC_PAGO'];
+				$NRO_AUTORIZA_TB		= $result_item[$k]['NRO_AUTORIZA_TB'];
+				$COD_EMPRESA			= $result_item[$k]['COD_EMPRESA'];
+		
+				if($COD_TIPO_DOC_PAGO ==5){
+					$GLOSA_TRANSBAK = $GLOSA_BANCO;
+				}else{
+					$GLOSA_TRANSBAK = $CUOTAS_N;
+				}
+		
+				$sql = "select RUT
+						from  EMPRESA
+						WHERE COD_EMPRESA = $COD_EMPRESA";
+				$result = $db->build_results($sql); 
+				$RUT_CLIENTE = $result[0]['RUT'];
+		
+				// datos_comision
+				fwrite($handle, '"10-05-007"'.$this->separador);			// Cuenta contable
+				fwrite($handle, '0'.$this->separador);						// monto debe
+				fwrite($handle, $MONTO_ABONO.$this->separador);				// monto haber
+				fwrite($handle, '"'.$GLOSA_TRANSBAK.'"'.$this->separador);	// glosa movimiento
+				fwrite($handle, '0'.$this->separador);						// equivalencia moneda
+				fwrite($handle, '0'.$this->separador);						// monto al debe adicional
+				fwrite($handle, '0'.$this->separador);						// monto al haber adicional
+				fwrite($handle, '""'.$this->separador);						// condiciones de vta
+				fwrite($handle, '""'.$this->separador);						// codigo vendedor
+				fwrite($handle, '""'.$this->separador);						// codigo ubicacion
+				fwrite($handle, '""'.$this->separador);						// codigo concepto caja
+				fwrite($handle, '""'.$this->separador);						// codigo instrumento financiero
+				fwrite($handle, '0'.$this->separador);						// cantidad instrumento financiero
+				fwrite($handle, '""'.$this->separador);						// codigo detalle de gasto
+				fwrite($handle, '0'.$this->separador);						// cantidad concepto gassto
+				fwrite($handle, '""'.$this->separador);						// codigo detalle de gasto
+				fwrite($handle, '""'.$this->separador);						// codigo centgro costo
+				fwrite($handle, '"0"'.$this->separador);					// tipo docto conciliacion
+				fwrite($handle, $RUT_CLIENTE.$this->separador);				// nro docto conciliacion
+				fwrite($handle, '"DP"'.$this->separador);					// codigo auxiliar
+				fwrite($handle, '9'.$this->separador);						// tipo documento
+				//fwrite($handle, $nro_documento.$this->separador);			// nro documento
+				fwrite($handle, '"'.$FECHA_ACTUAL.'"'.$this->separador);	// fecha emision
+				fwrite($handle, '"'.$FECHA_ACTUAL.'"'.$this->separador);	// fecha vencimiento
+				fwrite($handle, '"TB"'.$this->separador);					// tipo docto referencia
+				fwrite($handle, $NRO_AUTORIZA_TB.$this->separador);			// nro docto referencia
+				fwrite($handle, '""'.$this->separador);						// nro correlativo interrno
+				fwrite($handle, '0'.$this->separador);						// monto 1 detalle libro "AFECTO"
+				fwrite($handle, '0'.$this->separador);						// monto 2 detalle libro "EXENTO"
+				fwrite($handle, '0'.$this->separador);						// monto 3 detalle libro "IVA"
+				fwrite($handle, '0'.$this->separador);						// monto 4 detalle libro
+				fwrite($handle, '0'.$this->separador);						// monto 5 detalle libro
+				fwrite($handle, '0'.$this->separador);						// monto 6 detalle libro
+				fwrite($handle, '0'.$this->separador);						// monto 7 detalle libro
+				fwrite($handle, '0'.$this->separador);						// monto 8 detalle libro
+				fwrite($handle, '0'.$this->separador);						// monto 9 detalle libro
+				fwrite($handle, '0'.$this->separador);						// monto suma detalle libro
+				fwrite($handle, '0'.$this->separador);						// numero documento desde
+				fwrite($handle, '0'.$this->separador);						// numerro documento hasta
+				fwrite($handle, $NRO_COMPROBANTE.$this->separador);			// nro comprobante
+				fwrite($handle, '""'.$this->separador);						// 
+				fwrite($handle, '""'.$this->separador);						// 
+				fwrite($handle, '"'.$GLOSA_TRANSBAK.'"'."\r\n");			// glosa movimiento
+			}
+			// $COD_ENVIO_TRANSBANK = $this->dws['dw_envio_transbank']->get_item($i, 'COD_ENVIO_TRANSBANK');
+		}
+	}
+
 	function export_egresos($handle) {
 		$db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
 
@@ -3615,10 +3629,18 @@ class wi_envio_softland_base extends w_input {
 		}
 	}
 	///////////////
-	function export_comprobantes() {
+	function export_comprobantes($array = NULL){
 		$this->separador = ',';
-		$cod_tipo_envio = $this->dws['dw_envio_softland']->get_item(0, 'COD_TIPO_ENVIO');
-		$this->nro_comprobante = $this->dws['dw_envio_softland']->get_item(0, 'NRO_COMPROBANTE');
+
+		if($array == NULL){
+			$cod_tipo_envio			= $this->dws['dw_envio_softland']->get_item(0, 'COD_TIPO_ENVIO');
+			$this->nro_comprobante	= $this->dws['dw_envio_softland']->get_item(0, 'NRO_COMPROBANTE');
+			$tb_cod_envio_sofland[] = $this->dws['dw_envio_softland']->get_item(0, 'COD_ENVIO_SOFTLAND');
+		}else{
+			$cod_tipo_envio = 5;
+			$this->nro_comprobante = "";
+			$tb_cod_envio_sofland	= $array;
+		}
 
 		if ($cod_tipo_envio==1)		// ventas
 			$name_archivo = "FACTURA_VENTAS_".$this->nro_comprobante.".TXT";
@@ -3631,9 +3653,13 @@ class wi_envio_softland_base extends w_input {
 		else if ($cod_tipo_envio==4) {		// ingreso
 			$name_archivo = "INGRESOS_".$this->nro_comprobante.".TXT";
 		}
-    else if ($cod_tipo_envio==5) {		// Transbank
-			$name_archivo = "Transbank_".$this->nro_comprobante.".TXT";
+    	else if ($cod_tipo_envio==5) {		// Transbank
+			if($array == NULL)
+				$name_archivo = "Transbank_".$this->nro_comprobante.".TXT";
+			else
+				$name_archivo = "Transbank.TXT";
 		}
+
 		$fname = tempnam("/tmp", $name_archivo);
 		$handle = fopen($fname,"w");
 
@@ -3645,8 +3671,8 @@ class wi_envio_softland_base extends w_input {
 			$this->export_egresos($handle);
 		else if ($cod_tipo_envio==4)		// ingresos
 			$this->export_ingresos($handle);
-    else if ($cod_tipo_envio==5)		// transbak
-			$this->export_transbak($handle);
+    	else if ($cod_tipo_envio==5)		// transbak
+			$this->export_transbak($handle, $tb_cod_envio_sofland);
       
 		fclose($handle);
 		header("Content-Type: application/force-download; name=\"$name_archivo\"");
@@ -3655,6 +3681,7 @@ class wi_envio_softland_base extends w_input {
 		fpassthru($fh);
 		//unlink($fname);
 	}
+
 	function print_record() {
 		$sel = $_POST['wi_hidden'];
 		if ($sel=='auxiliar')

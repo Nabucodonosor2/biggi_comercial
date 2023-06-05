@@ -70,7 +70,8 @@ else{
                          and TDP.COD_TIPO_DOC_PAGO = 5 ";
         }  
       }else{//Tipo 6 (CREDITO)
-        $sql = "select CASE WHEN DATEDIFF(MONTH, '".$result[0]['FECHA_INGRESO_PAGO']."', getdate()) <= 
+        $sql = "SET LANGUAGE Spanish;
+                select CASE WHEN DATEDIFF(MONTH, '".$result[0]['FECHA_INGRESO_PAGO']."', getdate()) <= 
                     CAST(dbo.f_get_parametro(77) as NUMERIC) THEN 'PERMITIDO' ELSE 'NO PERMITIDO' END PERMISO_CREDITO";
         $result_valida = $db->build_results($sql);
   

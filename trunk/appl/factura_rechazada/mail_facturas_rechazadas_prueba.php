@@ -103,12 +103,9 @@ for ($i=0; $i < count($result); $i++){
     $mail->Subject      = "Informe Facturas Rechazadas al $fecha_anterior - $nom_usuario_vendedor";
     $mail->ClearAddresses();
 
-    $mail->AddAddress($mail_usuario_vendedor, $nom_usuario_vendedor);
-    //$mail->AddCC('ascianca@biggi.cl', 'Angel Scianca'); --> Por ahora esta comentado
-    $mail->AddCC('sergio.pechoante@biggi.cl', 'Sergio Pechoante');
-    $mail->AddCC('jcatalan@biggi.cl', 'José Catalán');
-    $mail->AddCC('fpuebla@biggi.cl', 'Felipe Puebla');
-    $mail->AddBCC('mherrera@biggi.cl','Marcelo Herrera');
+    $mail->AddAddress('mherrera@biggi.cl', $nom_usuario_vendedor);
+    $mail->AddCC('isra.campos.o@gmail.com', $nom_usuario_vendedor);
+    $mail->AddCC('soporte.sysquality@gmail.com', $nom_usuario_vendedor);
 
     //$mail->AddEmbeddedImage("../../images_appl/logobiggipo.jpg",'logo_biggi');
     $mail->Body         = $html;

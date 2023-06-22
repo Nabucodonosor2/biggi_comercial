@@ -199,16 +199,16 @@ else if ($row_count == 1){
     if($row_count == 0)
         $respuesta = "err1";
     else if($row_count == 1){
-        $respuesta =  $result_final[0]['COD_INGRESO_PAGO']."|";
-        $respuesta .=  $result_final[0]['NOM_TIPO_ORIGEN_PAGO']."|";
-        $respuesta .=  $result_final[0]['FECHA_INGRESO_PAGO']."|";
-        $respuesta .=  $result_final[0]['NOM_TIPO_DOC_PAGO']."|";
-        $respuesta .=  $result_final[0]['CUOTAS']."|";
-        $respuesta .=  $result_final[0]['CUOTAS_N']."|";
-        $respuesta .=  $result_final[0]['COD_TIPO_DOC_PAGO']."|";
-        $respuesta .=  $result_final[0]['ANNO_INGRESO_PAGO']."|";
-        $respuesta .=  $result_final[0]['MONTO_DOC']."|";
-        $respuesta .=  $result_final[0]['COD_EMPRESA'];
+        $respuesta =  $result[0]['COD_INGRESO_PAGO']."|";
+        $respuesta .=  $result[0]['NOM_TIPO_ORIGEN_PAGO']."|";
+        $respuesta .=  $result[0]['FECHA_INGRESO_PAGO']."|";
+        $respuesta .=  $result[0]['NOM_TIPO_DOC_PAGO']."|";
+        $respuesta .=  $result[0]['CUOTAS']."|";
+        $respuesta .=  $result[0]['CUOTAS_N']."|";
+        $respuesta .=  $result[0]['COD_TIPO_DOC_PAGO']."|";
+        $respuesta .=  $result[0]['ANNO_INGRESO_PAGO']."|";
+        $respuesta .=  $result[0]['MONTO_DOC']."|";
+        $respuesta .=  $result[0]['COD_EMPRESA'];
     }else
         $respuesta = "2registros";
 }

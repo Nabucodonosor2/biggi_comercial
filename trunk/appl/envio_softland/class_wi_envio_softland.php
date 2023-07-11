@@ -988,16 +988,20 @@ class wi_envio_softland_base extends w_input {
 	    else
 	        parent::habilita_boton($temp, $boton, $habilita);
 	}
+
 	function habilitar(&$temp, $habilita) {
 	    $this->habilita_boton($temp, 'b_print_anexo', true);
-		if (!$this->is_new_record())
-			$this->b_print_visible = false;
-		if($this->is_new_record())
-			$this->habilita_boton_print($temp, 'print', false);
-		else
-			$this->habilita_boton_print($temp, 'print', true);
+		$cod_tipo_envio = $this->dws['dw_envio_softland']->get_item(0, 'COD_TIPO_ENVIO');
+
+		if($cod_tipo_envio <> 5){
+			if($this->is_new_record())
+				$this->habilita_boton_print($temp, 'print', false);
+			else
+				$this->habilita_boton_print($temp, 'print', true);
+		}
 	}
-  function navegacion(&$temp){
+
+ 	function navegacion(&$temp){
 		parent::navegacion($temp);
 
 		if($this->modify){
@@ -1006,6 +1010,7 @@ class wi_envio_softland_base extends w_input {
     		$this->habilita_boton($temp, 'add', true);
     	}
 	}
+
 	function new_record() {
 		$tipo_envio = session::get("tipo_envio_softland");
 		if ($tipo_envio=='VENTAS')
@@ -1062,23 +1067,27 @@ class wi_envio_softland_base extends w_input {
 		$this->dws['dw_envio_empresa']->retrieve($cod_envio_softland);
 
 		$cod_estado_envio = $this->dws['dw_envio_softland']->get_item(0, 'COD_ESTADO_ENVIO');
+		$cod_tipo_envio = $this->dws['dw_envio_softland']->get_item(0, 'COD_TIPO_ENVIO');
+
 		if ($cod_estado_envio==1) {	// emitida
 			$this->b_print_visible  	= false;
 			$this->b_modify_visible	 	= true;
 			$this->b_save_visible	 	= true;
 			$this->b_no_save_visible	= true;
-		}
-		else if ($cod_estado_envio==2) { // confirmada
+
+			$this->dws['dw_envio_transbank']->set_entrable_dw(true);
+			$this->dws['dw_envio_softland']->set_entrable('COD_ESTADO_ENVIO', true);
+		}else if ($cod_estado_envio==2) { // confirmada
 			$this->b_print_visible  	= true;
 			$this->b_modify_visible	 	= true;
 			$this->b_save_visible	 	= true;
 			$this->b_no_save_visible	= true;
 
-			$this->dws['dw_envio_softland']->set_entrable('NRO_COMPROBANTE', false);
+			//$this->dws['dw_envio_softland']->set_entrable('NRO_COMPROBANTE', false);
 			$this->dws['dw_envio_softland']->set_entrable('NRO_CORRELATIVO_INTERNO', false);
 
-			$sql = "select COD_ESTADO_ENVIO, NOM_ESTADO_ENVIO from ESTADO_ENVIO where COD_ESTADO_ENVIO in (2,3) order by COD_ESTADO_ENVIO";
-			$this->dws['dw_envio_softland']->add_control(new drop_down_dw('COD_ESTADO_ENVIO', $sql, 0, '', false));
+			/*$sql = "select COD_ESTADO_ENVIO, NOM_ESTADO_ENVIO from ESTADO_ENVIO where COD_ESTADO_ENVIO in (2,3) order by COD_ESTADO_ENVIO";
+			$this->dws['dw_envio_softland']->add_control(new drop_down_dw('COD_ESTADO_ENVIO', $sql, 0, '', false));*/
 
 			$this->dws['dw_lista_factura']->set_entrable_dw(false);
 			$this->dws['dw_lista_nota_credito']->set_entrable_dw(false);
@@ -1088,8 +1097,16 @@ class wi_envio_softland_base extends w_input {
 			$this->dws['dw_lista_pago_faprov']->set_entrable_dw(false);
 			$this->dws['dw_lista_ingreso_pago']->set_entrable_dw(false);
 			$this->dws['dw_envio_empresa']->set_entrable_dw(false);
-		}
-		else if ($cod_estado_envio==3) { // anulada
+
+			if($cod_tipo_envio == 5){// Transbank
+				$this->dws['dw_envio_transbank']->set_entrable_dw(false);
+				$this->dws['dw_envio_softland']->set_entrable('COD_ESTADO_ENVIO', false);
+			}else{
+				$this->dws['dw_envio_transbank']->set_entrable_dw(true);
+				$this->dws['dw_envio_softland']->set_entrable('COD_ESTADO_ENVIO', true);
+			}
+
+		}else if ($cod_estado_envio==3) { // anulada
 			$this->b_print_visible  	= false;
 			$this->b_modify_visible	 	= false;
 			$this->b_save_visible	 	= false;

@@ -52,7 +52,7 @@ class class_envio_mail {
         
         $cod_llamado_enc = encriptar_url($cod_llamado, 'envio_mail_llamado');
         
-        $link = "http://www.biggi.cl/sysbiggi_new/comercial_biggi/biggi/trunk/appl/llamado/envio_mail/formulario.php?";
+        $link = "http://accsisgb.biggi.cl/sysbiggi_new/comercial_biggi/biggi/trunk/appl/llamado/envio_mail/formulario.php?";
         //$link = "http://192.168.2.13/desarrolladores/vmelo/biggi/trunk/appl/llamado/envio_mail/formulario.php?";
         
 		$sql = "select dbo.f_get_parametro(53)         URL_SMTP

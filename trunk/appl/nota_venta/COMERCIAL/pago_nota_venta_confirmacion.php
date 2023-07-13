@@ -6,7 +6,7 @@ require_once ("../../../appl.ini");
 //session::set('K_ROOT_URL',"http://biggi.integrasystem.cl/comercial_biggi/biggi/trunk/");
 /*OFICIAL*/
 session::set('K_ROOT_DIR',"/var/www/html/sysbiggi_new/comercial_biggi/biggi/trunk/");
-session::set('K_ROOT_URL',"http://www.biggi.cl/sysbiggi_new/comercial_biggi/biggi/trunk/");
+session::set('K_ROOT_URL',"http://accsisgb.biggi.cl/sysbiggi_new/comercial_biggi/biggi/trunk/");
 
 $temp = new Template_appl('pago_nota_venta_confirmacion.html');
 

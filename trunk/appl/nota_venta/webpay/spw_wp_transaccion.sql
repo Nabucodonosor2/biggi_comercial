@@ -37,7 +37,7 @@ BEGIN
 		set @vl_cod_wp_transaccion = @@identity
 	
 		UPDATE WP_TRANSACCION
-		SET LINK_PAGO = 'http://www.biggi.cl/sysbiggi_new/comercial_biggi/biggi/trunk/appl/nota_venta/COMERCIAL/pago_nota_venta.php?param='+CONVERT(VARCHAR,@vl_cod_wp_transaccion)
+		SET LINK_PAGO = 'http://accsisgb.biggi.cl/sysbiggi_new/comercial_biggi/biggi/trunk/appl/nota_venta/COMERCIAL/pago_nota_venta.php?param='+CONVERT(VARCHAR,@vl_cod_wp_transaccion)
 		WHERE COD_WP_TRANSACCION = @vl_cod_wp_transaccion
 	end	
 	else if (@ve_operacion = 'UPDATE')

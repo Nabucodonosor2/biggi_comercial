@@ -246,7 +246,7 @@ class print_folleto_producto{
 		$tamanio = 10;
 		$level = 'H';
 		$frameSize = 1;
-		$contenido = "http://www.biggi.cl/sysbiggi_new/biggi_web/print_detalle_producto.php?cod_producto=".urlencode($cod_producto);
+		$contenido = "http://accsisgb.biggi.cl/sysbiggi_new/biggi_web/print_detalle_producto.php?cod_producto=".urlencode($cod_producto);
 	
 		QRcode::png($contenido, $filename, $level, $tamanio, $frameSize);
 		

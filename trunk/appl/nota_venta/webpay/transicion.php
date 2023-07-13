@@ -8,7 +8,7 @@ require_once("class_Template.php");
 //define('SERVER_CERT', 'tbk_server.pem'); //prueba
 define('SERVER_CERT', 'serverTBK.crt'); // para produccion
 $token = $_POST['token_ws'];
-$url_fracaso = "http://www.biggi.cl/fracaso";
+$url_fracaso = "http://accsisgb.biggi.cl/fracaso";
 
 $webpayService = new WebService();
 $getTransactionResult = new getTransactionResult();

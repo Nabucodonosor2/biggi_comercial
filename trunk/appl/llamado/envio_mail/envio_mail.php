@@ -48,7 +48,7 @@ $cod_destinatario_envio = substr ($cod_destinatario_envio, 0, strlen($cod_destin
 
 $cod_llamado_enc = encriptar_url($cod_llamado, 'envio_mail_llamado');
 
-$link = "http://www.biggi.cl/sysbiggi_new/biggi_comercial/trunk/appl/llamado/envio_mail/formulario.php?";
+$link = "http://accsisgb.biggi.cl/sysbiggi_new/biggi_comercial/trunk/appl/llamado/envio_mail/formulario.php?";
 //$link = "http://192.168.2.141/desarrolladores/icampos/biggi/trunk/appl/llamado/envio_mail/formulario.php?";
 
 

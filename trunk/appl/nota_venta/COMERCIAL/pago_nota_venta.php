@@ -8,7 +8,7 @@ ini_set('display_errors', 'OFF');
 /*PRUEBA*/
 /*OFICIAL*/
 session::set('K_ROOT_DIR',"/var/www/sysbiggi_new/biggi_comercial/trunk/");
-session::set('K_ROOT_URL',"http://www.biggi.cl/sysbiggi_new/biggi_comercial/trunk/");
+session::set('K_ROOT_URL',"http://accsisgb.biggi.cl/sysbiggi_new/biggi_comercial/trunk/");
 //session::set('K_ROOT_DIR',"/var/www/desarrolladores/ecastillo/biggi_comercial/trunk/");
 //session::set('K_ROOT_URL',"http://192.168.2.93/desarrolladores/ecastillo/biggi_comercial/trunk/");
 /*OFICIAL*/

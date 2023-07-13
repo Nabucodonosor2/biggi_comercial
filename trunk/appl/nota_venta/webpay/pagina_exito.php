@@ -6,7 +6,7 @@ ini_set('display_errors', 'OFF');
 
 $TBK_TRANSACCION= $_GET['orden_compra'];
 session::set('K_ROOT_DIR',"/var/www/sysbiggi_new/biggi_comercial/trunk/");
-session::set('K_ROOT_URL',"http://www.biggi.cl/sysbiggi_new/biggi_comercial/trunk/");
+session::set('K_ROOT_URL',"http://accsisgb.biggi.cl/sysbiggi_new/biggi_comercial/trunk/");
 //session::set('K_ROOT_DIR',"/var/www/desarrolladores/ecastillo/biggi_comercial/trunk/");
 //session::set('K_ROOT_URL',"http://192.168.2.93/desarrolladores/ecastillo/biggi_comercial/trunk/");
 //$dbc   = new database();
@@ -207,7 +207,7 @@ else if($TBK_TIPO_PAGO=='VN'){
 				<tr>
 					<td colspan="3">
 						<center>
-							<img sr="http://www.biggi.cl/sysbiggi_new/biggi_comercial/trunk/appl/nota_venta/webpay/Header_venta_biggi.png" widht="100%"/> 
+							<img sr="http://accsisgb.biggi.cl/sysbiggi_new/biggi_comercial/trunk/appl/nota_venta/webpay/Header_venta_biggi.png" widht="100%"/> 
 							<font color="red">
 								<h3>Transaccion APROBADA</h3>
 							</font>
@@ -304,7 +304,7 @@ else if($TBK_TIPO_PAGO=='VN'){
 									1726 - Santiago Centro, de lunes a viernes de 08:30 a 13:30 hrs. y
 									de 14:15 a 18:00 hrs. El costo del flete sera asumido integramente
 									por el comprador."</font> <font size=1>En caso de tener alguna duda
-									favor de acceder <a href="http://www.biggi.cl/sysbiggi_new/biggi_web/biggi_web/trunk/contacto.php">AQUI</a>.
+									favor de acceder <a href="http://accsisgb.biggi.cl/sysbiggi_new/biggi_web/biggi_web/trunk/contacto.php">AQUI</a>.
 								</font>
 							</td>
 						</tr>

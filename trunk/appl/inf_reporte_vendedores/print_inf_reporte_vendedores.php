@@ -86,8 +86,10 @@ $pdf->Cell($rect,17, 'CA', 1, '', 'L', true);
 $pdf->SetXY($constX1, $actualY+(17*13));
 $pdf->Cell($rect,17, 'CA SODEXO', 1, '', 'L', true);
 $pdf->SetXY($constX1, $actualY+(17*14));
+$pdf->Cell($rect,17, 'CA COMPASS', 1, '', 'L', true);
+$pdf->SetXY($constX1, $actualY+(17*15));
 $pdf->Cell($rect,17, 'OTROS', 1, '', 'L', true);
-$pdf->SetXY($constX1, $actualY+(17*16));
+$pdf->SetXY($constX1, $actualY+(17*17));
 $pdf->Cell($rect,17, 'TOTALES', 1, '', 'L', true);
 
 $pdf->SetFont('Arial','I', 8);
@@ -98,7 +100,7 @@ $pdf->SetXY($constX1, $actualY+(17*5));
 $pdf->Cell($rect,17, 'SUBTOTAL', 1, '', 'R', true);
 $pdf->SetXY($constX1, $actualY+(17*11));
 $pdf->Cell($rect,17, 'SUBTOTAL', 1, '', 'R', true);
-$pdf->SetXY($constX1, $actualY+(17*15));
+$pdf->SetXY($constX1, $actualY+(17*16));
 $pdf->Cell($rect,17, 'SUBTOTAL', 1, '', 'R', true);
 
 $pdf->SetFont('FuturaBook','', 8);
@@ -123,7 +125,7 @@ for ($i=0; $i < count($result); $i++){
 
     $pdf->SetY($actualY+(17*$i));
 
-    if($i == 5 || $i == 11 || $i == 15)
+    if($i == 5 || $i == 11 || $i == 16)
         $pdf->setFillColor(215, 228, 189);     
     else
         $pdf->setFillColor(234, 234, 234); 

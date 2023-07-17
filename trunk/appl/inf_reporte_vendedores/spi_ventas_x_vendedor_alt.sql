@@ -7,6 +7,7 @@ BEGIN
 		@vc_nom_usuario_vendedor	varchar(100),
 		@vc_orden					numeric,
 		@vl_lista_rut_empresa		varchar(1000),
+		@vl_lista_rut_empresa2		varchar(1000),
 		@vl_sum_enero				numeric,
 		@vl_sum_febrero				numeric,
 		@vl_sum_marzo				numeric,
@@ -102,25 +103,26 @@ BEGIN
 		
 		if(@vc_cod_usuario_vendedor = 6)
 			set @vl_lista_rut_empresa = '76178360,88279900,96945020,76178390,76117696'
-		else if(@vc_cod_usuario_vendedor = 10)
+		else if(@vc_cod_usuario_vendedor = 10)BEGIN
 			set @vl_lista_rut_empresa = '79512160,94623000,96905180,96992160,96550960,96883290,76098841'
-		else if(@vc_cod_usuario_vendedor = 11)
+			set @vl_lista_rut_empresa2 = '96930540,96554490,96651910,78544560'
+		END else if(@vc_cod_usuario_vendedor = 11)
 			set @vl_lista_rut_empresa = '76178360,88279900,96945020,76178390,76117696'			
 		else
 			set @vl_lista_rut_empresa = '0'
 		
-		SELECT @vl_sum_enero		= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 1, @vl_lista_rut_empresa, 'S', @ve_ano, @ve_cod_usuario)
-		SELECT @vl_sum_febrero		= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 2, @vl_lista_rut_empresa, 'S', @ve_ano, @ve_cod_usuario)
-		SELECT @vl_sum_marzo		= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 3, @vl_lista_rut_empresa, 'S', @ve_ano, @ve_cod_usuario)
-		SELECT @vl_sum_abril		= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 4, @vl_lista_rut_empresa, 'S', @ve_ano, @ve_cod_usuario)
-		SELECT @vl_sum_mayo			= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 5, @vl_lista_rut_empresa, 'S', @ve_ano, @ve_cod_usuario)
-		SELECT @vl_sum_junio		= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 6, @vl_lista_rut_empresa, 'S', @ve_ano, @ve_cod_usuario)
-		SELECT @vl_sum_julio		= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 7, @vl_lista_rut_empresa, 'S', @ve_ano, @ve_cod_usuario)
-		SELECT @vl_sum_agosto		= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 8, @vl_lista_rut_empresa, 'S', @ve_ano, @ve_cod_usuario)
-		SELECT @vl_sum_septiembre	= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 9, @vl_lista_rut_empresa, 'S', @ve_ano, @ve_cod_usuario)
-		SELECT @vl_sum_octubre		= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 10, @vl_lista_rut_empresa, 'S', @ve_ano, @ve_cod_usuario)
-		SELECT @vl_sum_noviembre	= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 11, @vl_lista_rut_empresa, 'S', @ve_ano, @ve_cod_usuario)
-		SELECT @vl_sum_diciembre	= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 12, @vl_lista_rut_empresa, 'S', @ve_ano, @ve_cod_usuario)
+		SELECT @vl_sum_enero		= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 1, CONCAT(@vl_lista_rut_empresa, ',', @vl_lista_rut_empresa2), 'S', @ve_ano, @ve_cod_usuario)
+		SELECT @vl_sum_febrero		= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 2, CONCAT(@vl_lista_rut_empresa, ',', @vl_lista_rut_empresa2), 'S', @ve_ano, @ve_cod_usuario)
+		SELECT @vl_sum_marzo		= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 3, CONCAT(@vl_lista_rut_empresa, ',', @vl_lista_rut_empresa2), 'S', @ve_ano, @ve_cod_usuario)
+		SELECT @vl_sum_abril		= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 4, CONCAT(@vl_lista_rut_empresa, ',', @vl_lista_rut_empresa2), 'S', @ve_ano, @ve_cod_usuario)
+		SELECT @vl_sum_mayo			= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 5, CONCAT(@vl_lista_rut_empresa, ',', @vl_lista_rut_empresa2), 'S', @ve_ano, @ve_cod_usuario)
+		SELECT @vl_sum_junio		= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 6, CONCAT(@vl_lista_rut_empresa, ',', @vl_lista_rut_empresa2), 'S', @ve_ano, @ve_cod_usuario)
+		SELECT @vl_sum_julio		= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 7, CONCAT(@vl_lista_rut_empresa, ',', @vl_lista_rut_empresa2), 'S', @ve_ano, @ve_cod_usuario)
+		SELECT @vl_sum_agosto		= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 8, CONCAT(@vl_lista_rut_empresa, ',', @vl_lista_rut_empresa2), 'S', @ve_ano, @ve_cod_usuario)
+		SELECT @vl_sum_septiembre	= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 9, CONCAT(@vl_lista_rut_empresa, ',', @vl_lista_rut_empresa2), 'S', @ve_ano, @ve_cod_usuario)
+		SELECT @vl_sum_octubre		= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 10, CONCAT(@vl_lista_rut_empresa, ',', @vl_lista_rut_empresa2), 'S', @ve_ano, @ve_cod_usuario)
+		SELECT @vl_sum_noviembre	= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 11, CONCAT(@vl_lista_rut_empresa, ',', @vl_lista_rut_empresa2), 'S', @ve_ano, @ve_cod_usuario)
+		SELECT @vl_sum_diciembre	= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 12, CONCAT(@vl_lista_rut_empresa, ',', @vl_lista_rut_empresa2), 'S', @ve_ano, @ve_cod_usuario)
 		
 		INSERT INF_VENTAS_X_USUARIO values (@vc_nom_usuario_vendedor
 											,@vl_sum_enero
@@ -189,6 +191,49 @@ BEGIN
 			set @vl_sub_sum_octubre		= @vl_sub_sum_octubre + @vl_sum_octubre
 			set @vl_sub_sum_noviembre	= @vl_sub_sum_noviembre + @vl_sum_noviembre
 			set @vl_sub_sum_diciembre	= @vl_sub_sum_diciembre + @vl_sum_diciembre
+
+			if(@vc_cod_usuario_vendedor = 10)BEGIN
+				--CA COMPASS
+				SELECT @vl_sum_enero		= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 1, @vl_lista_rut_empresa2, 'N', @ve_ano, @ve_cod_usuario)
+				SELECT @vl_sum_febrero		= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 2, @vl_lista_rut_empresa2, 'N', @ve_ano, @ve_cod_usuario)
+				SELECT @vl_sum_marzo		= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 3, @vl_lista_rut_empresa2, 'N', @ve_ano, @ve_cod_usuario)
+				SELECT @vl_sum_abril		= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 4, @vl_lista_rut_empresa2, 'N', @ve_ano, @ve_cod_usuario)
+				SELECT @vl_sum_mayo			= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 5, @vl_lista_rut_empresa2, 'N', @ve_ano, @ve_cod_usuario)
+				SELECT @vl_sum_junio		= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 6, @vl_lista_rut_empresa2, 'N', @ve_ano, @ve_cod_usuario)
+				SELECT @vl_sum_julio		= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 7, @vl_lista_rut_empresa2, 'N', @ve_ano, @ve_cod_usuario)
+				SELECT @vl_sum_agosto		= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 8, @vl_lista_rut_empresa2, 'N', @ve_ano, @ve_cod_usuario)
+				SELECT @vl_sum_septiembre	= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 9, @vl_lista_rut_empresa2, 'N', @ve_ano, @ve_cod_usuario)
+				SELECT @vl_sum_octubre		= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 10, @vl_lista_rut_empresa2, 'N', @ve_ano, @ve_cod_usuario)
+				SELECT @vl_sum_noviembre	= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 11, @vl_lista_rut_empresa2, 'N', @ve_ano, @ve_cod_usuario)
+				SELECT @vl_sum_diciembre	= dbo.f_get_total_neto_vendedor_alt(@vc_cod_usuario_vendedor, 12, @vl_lista_rut_empresa2, 'N', @ve_ano, @ve_cod_usuario)
+			
+				INSERT INF_VENTAS_X_USUARIO values (@vc_nom_usuario_vendedor
+													,@vl_sum_enero
+													,@vl_sum_febrero
+													,@vl_sum_marzo
+													,@vl_sum_abril
+													,@vl_sum_mayo
+													,@vl_sum_junio
+													,@vl_sum_julio
+													,@vl_sum_agosto
+													,@vl_sum_septiembre
+													,@vl_sum_octubre
+													,@vl_sum_noviembre
+													,@vl_sum_diciembre)
+			
+				set @vl_sub_sum_enero		= @vl_sub_sum_enero + @vl_sum_enero
+				set @vl_sub_sum_febrero		= @vl_sub_sum_febrero + @vl_sum_febrero
+				set @vl_sub_sum_marzo		= @vl_sub_sum_marzo + @vl_sum_marzo
+				set @vl_sub_sum_abril		= @vl_sub_sum_abril + @vl_sum_abril
+				set @vl_sub_sum_mayo		= @vl_sub_sum_mayo + @vl_sum_mayo
+				set @vl_sub_sum_junio		= @vl_sub_sum_junio + @vl_sum_junio
+				set @vl_sub_sum_julio		= @vl_sub_sum_julio + @vl_sum_julio
+				set @vl_sub_sum_agosto		= @vl_sub_sum_agosto + @vl_sum_agosto
+				set @vl_sub_sum_septiembre	= @vl_sub_sum_septiembre + @vl_sum_septiembre
+				set @vl_sub_sum_octubre		= @vl_sub_sum_octubre + @vl_sum_octubre
+				set @vl_sub_sum_noviembre	= @vl_sub_sum_noviembre + @vl_sum_noviembre
+				set @vl_sub_sum_diciembre	= @vl_sub_sum_diciembre + @vl_sum_diciembre
+			END
 		END
 		
 		if(@vc_cod_usuario_vendedor = 38 OR @vc_cod_usuario_vendedor = 15)BEGIN

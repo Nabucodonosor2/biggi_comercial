@@ -1,5 +1,7 @@
 <?php
 require_once(dirname(__FILE__)."/../../../../commonlib/trunk/php/auto_load.php");
+ini_set('memory_limit', '720M');
+ini_set('max_execution_time', 900); //900 seconds = 15 minutes
 
 if(isset($_POST['b_back_x'])){
     base::presentacion();
@@ -25,6 +27,7 @@ if(isset($_POST['b_back_x'])){
 	//variables totales
 	$tot_ca = "";
 	$tot_ca_sod = "";
+	$tot_ca_com = "";
 	$tot_cu = "";
 	$tot_cu_cdr = "";
 	$tot_ar = "";
@@ -112,10 +115,14 @@ if(isset($_POST['b_back_x'])){
 			$tot_ca_sod = $tot_linea;
 			$css = "claro";
 		}else if($i == 14){
+			$nv = "<td width=\"6.6%\" class=\"box\" align=\"left\">CA COMPASS</td>";
+			$tot_ca_com = $tot_linea;
+			$css = "claro";
+		}else if($i == 15){
 			$nv = "<td width=\"6.6%\" class=\"box\" align=\"left\">OTROS</td>";
 			$tot_otros = $tot_linea;
 			$css = "claro";
-		}else if($i == 15){
+		}else if($i == 16){
 			$nv = "<td width=\"6.6%\" class=\"subtotal box\" align=\"right\"><i>SUBTOTAL<i/></td>";
 			$css = "subtotal";
 		}else{
@@ -124,7 +131,7 @@ if(isset($_POST['b_back_x'])){
 			$css = "claro";
 		}
 
-		if($i == 16)//ultimo registro
+		if($i == 17)//ultimo registro
 			$linea_total = "<td width=\"7.6%\" class=\"subtotal box\" style=\"font-weight: bold;\" align=\"right\">".number_format($tot_linea, 0, ',', '.')."</td>";
 		else
 			$linea_total = "<td width=\"7.6%\" class=\"subtotal box\" align=\"right\">".number_format($tot_linea, 0, ',', '.')."</td>";
@@ -188,10 +195,11 @@ if(isset($_POST['b_back_x'])){
 	$temp->setVar("ANO_FILL", $ano);
 	$temp->setVar("ANO_FILL2", $ano);
 
-	$total = $tot_ca+$tot_ca_sod+$tot_cu+$tot_cu_cdr+$tot_ar+$tot_rb+$tot_rb_cdr+$tot_am+$tot_he+$tot_pv+$tot_eo+$tot_ll+$tot_otros;
+	$total = $tot_ca+$tot_ca_sod+$tot_ca_com+$tot_cu+$tot_cu_cdr+$tot_ar+$tot_rb+$tot_rb_cdr+$tot_am+$tot_he+$tot_pv+$tot_eo+$tot_ll+$tot_otros;
 	//se rellena el grafico con los totales
 	$temp->setVar("G_TOT_CA", round($tot_ca));
 	$temp->setVar("G_TOT_CA_SOD", round($tot_ca_sod));
+	$temp->setVar("G_TOT_CA_COM", round($tot_ca_sod));
 	$temp->setVar("G_TOT_CU", round($tot_cu));
 	$temp->setVar("G_TOT_CU_CDR", round($tot_cu_cdr));
 	$temp->setVar("G_TOT_AR", round($tot_ar));
@@ -206,6 +214,7 @@ if(isset($_POST['b_back_x'])){
 
 	$temp->setVar("C_TOT_CA", number_format(round($tot_ca), 0, ',', '.'));
 	$temp->setVar("C_TOT_CA_SOD", number_format(round($tot_ca_sod), 0, ',', '.'));
+	$temp->setVar("C_TOT_CA_COM", number_format(round($tot_ca_sod), 0, ',', '.'));
 	$temp->setVar("C_TOT_CU", number_format(round($tot_cu), 0, ',', '.'));
 	$temp->setVar("C_TOT_CU_CDR", number_format(round($tot_cu_cdr), 0, ',', '.'));
 	$temp->setVar("C_TOT_AR", number_format(round($tot_ar), 0, ',', '.'));
@@ -220,6 +229,7 @@ if(isset($_POST['b_back_x'])){
 
 	$temp->setVar("P_TOT_CA", round(($tot_ca*100)/$total));
 	$temp->setVar("P_TOT_CA_SOD", round(($tot_ca_sod*100)/$total));
+	$temp->setVar("P_TOT_CA_COM", round(($tot_ca_com*100)/$total));
 	$temp->setVar("P_TOT_CU", round(($tot_cu*100)/$total));
 	$temp->setVar("P_TOT_CU_CDR", round(($tot_cu_cdr*100)/$total));
 	$temp->setVar("P_TOT_AR", round(($tot_ar*100)/$total));

@@ -2038,12 +2038,18 @@ class wi_factura_base extends w_cot_nv {
         $cod_factura = $this->get_key();
         $PORC_IVA = $this->dws['dw_factura']->get_item(0, 'PORC_IVA');
         
-        $sql= "SELECT f.NRO_FACTURA ,u.MAIL 
+        $sql= "SELECT f.NRO_FACTURA ,u.MAIL ,f.NOM_EMPRESA
+        		,convert(varchar(20), f.FECHA_FACTURA, 103) FECHA_FACTURA
+        		,f.TOTAL_CON_IVA
 			   FROM FACTURA f, USUARIO u 
 			   WHERE COD_FACTURA = $cod_factura
                AND u.COD_USUARIO = f.COD_USUARIO_VENDEDOR1";
         $rs = $db->build_results($sql);
         $nro_factura = $rs[0]['NRO_FACTURA'];
+        $nom_empresa = $rs[0]['NOM_EMPRESA'];
+        $fecha_factura = $rs[0]['FECHA_FACTURA'];
+        $total_con_iva = number_format($rs[0]['TOTAL_CON_IVA'], 0, ',', '.');
+
         $MAIL_VENDEDOR_FA = $rs[0]['MAIL'];
         
         if ($PORC_IVA==0){
@@ -2099,13 +2105,17 @@ class wi_factura_base extends w_cot_nv {
         
         $mail->Port = 465;
         $mail->From 	="facturacion@biggi.cl";
-        $mail->FromName = "Biggi - Copía de Factura";
+        $mail->FromName = "BIGGI - Copia de Factura";
         $mail->Timeout=30;
-        $mail->Subject = "Factura [$nro_factura]";
+        $glosa_subjet = "Factura Electrónica N° ".$nro_factura. " de COMERCIAL BIGGI (CHILE) S.A. (91.462.001-5)";
+        $mail->Subject = $glosa_subjet;
         $mail->AddAttachment($name_archivo,$name_archivo);
         
         $temp = new Template_appl('envio_mail.htm');
         $temp->setVar("NRO_FACTURA", $nro_factura);
+        $temp->setVar("NOM_EMPRESA", $nom_empresa);
+        $temp->setVar("FECHA_FACTURA", $fecha_factura);
+        $temp->setVar("TOTAL_CON_IVA", $total_con_iva);
         $html = $temp->toString();
         
         
@@ -2140,6 +2150,7 @@ class wi_factura_base extends w_cot_nv {
         }
         
         $mail->AddBCC("mherrera@biggi.cl");
+        $mail->AddBCC("jcatalan@biggi.cl");
         
         $exito = $mail->Send();
         if($creado_recien){

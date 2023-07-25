@@ -537,6 +537,7 @@ class wi_producto_web extends w_input{
 		$this->dws['dw_producto_web']->add_control(new edit_text('NOM_PRODUCTOT1',40, 100));
 		$this->dws['dw_producto_web']->add_control(new edit_text('NOM_PRODUCTOT2',40, 100));
 		$this->dws['dw_producto_web']->add_control(new edit_text('NOM_PRODUCTOT3',40, 100));
+		$this->dws['dw_producto_web']->add_control(new static_num('PRECIO_VENTA_PUBLICO_NO_ING'));
 		$this->dws['dw_producto_web']->set_computed('VOLUMEN', '[LARGO] * [ANCHO] * [ALTO] / 1000000', 4);
 		$this->dws['dw_producto_web']->set_computed('VOLUMEN_EMBALADO', '[LARGO_EMBALADO] * [ANCHO_EMBALADO] * [ALTO_EMBALADO] / 1000000', 4);
 		

@@ -79,7 +79,10 @@ switch ($cod_empresa) {
 		$cod_suc_factura = 1601;
 		$cod_persona = 2139;		
 	break;
-	
+	case 27202:
+		$cod_suc_factura = 30719;
+		$cod_persona = 44148;		
+	break;
 }
 
 $porc_descto1 = 0;

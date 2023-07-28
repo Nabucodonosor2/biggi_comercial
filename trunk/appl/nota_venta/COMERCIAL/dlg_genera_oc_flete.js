@@ -67,7 +67,7 @@ function genera_oc(){
 			respuesta = "exito"
 			}
 		else{
-			alert("No se puede crear la OC en estos momentos");
+			alert("No se puede crear la OC en estos momentos. Favor notificar a Dpto. Informática");
 			respuesta = "fracaso"
 		}	
 		returnValue = respuesta;

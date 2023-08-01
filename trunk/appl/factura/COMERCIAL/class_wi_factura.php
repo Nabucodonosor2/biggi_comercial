@@ -17,14 +17,14 @@ class dw_referencias extends datawindow {
 		
 		// controls
 		$this->add_control(new edit_date('FECHA_REFERENCIA'));
-		$this->add_control($control = new edit_text('DOC_REFERENCIA', 20, 100));
+		$this->add_control($control = new edit_text('DOC_REFERENCIA', 50, 100));
 		$control->set_onChange("valida_referencias(this);");
 		
 		$sql = "select COD_TIPO_REFERENCIA
 						,NOM_TIPO_REFERENCIA
 				from TIPO_REFERENCIA
 				order by NOM_TIPO_REFERENCIA";
-		$this->add_control($control = new drop_down_dw('COD_TIPO_REFERENCIA', $sql, 103));
+		$this->add_control($control = new drop_down_dw('COD_TIPO_REFERENCIA', $sql, 240));
 		$control->set_onChange("valida_referencias(this);");
 
 		// mandatory
@@ -996,6 +996,9 @@ class wi_factura extends wi_factura_base {
 				
 			if($COD_TIPO_REFERENCIA == 9)//MIGO
 				$count_ref_receptor++;
+
+			if($COD_TIPO_REFERENCIA == 10)//HEP LIDER 76.134.941-4
+				$count_ref_heplider++;
 		}
 		/*
 		 * DW de Referencia y de solo contacto
@@ -1348,6 +1351,30 @@ class wi_factura extends wi_factura_base {
 				$c['Referencia'][$i]['FolioRef']	= substr($FolioRef, 0, 18);
 				$c['Referencia'][$i]['FchRef']		= substr($FchRef, 0, 10);
 				$c['Referencia'][$i]['RazonRef']	= "CONTRATO";
+				$i++;
+				
+				$tiene_Folio = 'S';
+			}
+		}
+
+		if($count_ref_heplider > 0){
+			$sql = "SELECT REPLACE(CONVERT(varchar,FECHA_REFERENCIA,102),'.','-') FECHA_REFERENCIA
+						  ,DOC_REFERENCIA
+					FROM REFERENCIA
+					WHERE COD_FACTURA = $cod_factura
+					AND COD_TIPO_REFERENCIA = 10";
+			$result = $db->build_results($sql);
+			
+			for($h=0;$h<count($result);$h++){
+			
+				$FolioRef	= $result[$h]['DOC_REFERENCIA'];
+				$FchRef		= $result[$h]['FECHA_REFERENCIA'];
+				
+				$c['Referencia'][$i]['NroLinRef']	= $i+1;
+				$c['Referencia'][$i]['TpoDocRef']	= "802";
+				$c['Referencia'][$i]['FolioRef']	= substr($FolioRef, 0, 18);
+				$c['Referencia'][$i]['FchRef']		= substr($FchRef, 0, 10);
+				$c['Referencia'][$i]['RazonRef']	= "HEP";
 				$i++;
 				
 				$tiene_Folio = 'S';

@@ -36,7 +36,7 @@ class wo_producto_web extends w_output_biggi{
 
 		
 		// headers
-		$this->add_header(new header_text_rango('COD_PRODUCTO', 'COD_PRODUCTO', 'Modelo'));
+		$this->add_header(new header_text_rango('COD_PRODUCTO', 'FP.COD_PRODUCTO', 'Modelo'));
 		$sql = "SELECT COD_ZONA
 					 ,NOM_ZONA
 				FROM ZONA

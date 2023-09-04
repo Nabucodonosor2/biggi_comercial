@@ -479,12 +479,15 @@
 															<table width="1000" border="0" align="center">
 																<tr>
 																	<td width="500">
-																		<table border="0" align="center" rules="none">											
+																		<table border="0" align="center" rules="none" style="margin-left: 0px;margin-right: 0px;">											
 																			<tr class="encabezado_right">
-																				<td width="150" class="claro">
+																				<td width="200" class="claro">
 																					<input type="button" value="Usar Secuencia" class="Button" onClick="usar_secuencia('ITEM_NOTA_VENTA');" {DISABLE_BUTTON}/>
 																				</td>
-																				<td width="350" class="claro">{BTN_CONSULTA_STK}</td>
+																				<td width="200" class="claro">
+																					<input type="button" value="Costo Transbank" class="Button" onClick="costo_tbk();"/>
+																				</td>
+																				<td width="100" class="claro">{BTN_CONSULTA_STK}</td>
 																			</tr>													
 																		</table>
 																		<table border="0" align="right" rules="none">											
@@ -914,7 +917,9 @@
 																										<tr class="claro">
 																											<td align="right"></td>
 																											<td width="200">Notas de Credito</td>
-																											<td width="20"><input name="" id="BOTON_LISTA_NC" type="button" class="Button" value="Lista NC" onClick="lista_nc();" {DISABLE_BUTTON}{BTN_LISTA_NC}></td>
+																											<td width="20">
+																												<input name="" id="BOTON_LISTA_NC" type="button" class="Button" value="Lista NC Venta" onClick="lista_nc();" {DISABLE_BUTTON}{BTN_LISTA_NC}>
+																											</td>
 																											<td align="right">{SUMA_NC}{RESULT_NV_NC}</td>
 																										</tr>
 																										<tr class="claro">
@@ -940,8 +945,13 @@
 																										</tr>
 																										<tr class="claro">
 																											<td></td>
-																											<td colspan = "2">Rebaja Compra Neta</td>
-																											<td align="right">{REBAJA}</td>
+																											<td width="200">Rebaja Compra Neta</td>
+																											<td width="20">
+																												<div style="display: {DISPLAY_BTN_LISTA_NC};">
+																													<input name="" id="BOTON_LISTA_NC_COMPRA" type="button" class="Button" value="Lista NC Compra" onClick="lista_nc_compra();" {DISABLE_BUTTON}>																											
+																												</div>
+																											</td>
+																											<td align="right">{REBAJA}{REBAJA_H}{REGISTRO_LISTA_NC_COMPRA}</td>
 																										</tr>
 																										<tr class="oscuro_bold">
 																											<td></td>

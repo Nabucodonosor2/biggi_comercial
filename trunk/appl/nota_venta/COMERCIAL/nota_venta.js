@@ -1,3 +1,54 @@
+function costo_tbk(){
+	const totalNeto = get_value('TOTAL_NETO_0');
+	var url = "../nota_venta/COMERCIAL/dlg_costo_tbk.php?total_neto="+totalNeto;
+
+	$.showModalDialog({
+		url: url,
+		dialogArguments: '',
+		height: 220,
+		width: 480,
+		scrollable: false
+    });
+}
+
+function lista_nc_compra(){
+	const cod_nota_venta = document.getElementById('COD_NOTA_VENTA_H_0').value;
+	var url = "../nota_venta/COMERCIAL/dlg_lista_nc_compra.php?cod_nota_venta="+cod_nota_venta;
+
+	$.showModalDialog({
+		url: url,
+		dialogArguments: '',
+		height: 560,
+		width: 820,
+		scrollable: false,
+		onClose: function(){ 
+			const returnVal = this.returnValue;
+			const array_result = returnVal.split("/");
+			
+			set_value('REGISTRO_LISTA_NC_COMPRA_0', array_result[0], array_result[0]);
+
+			set_value('REBAJA_0', number_format(array_result[1], 0, ',', '.'), number_format(array_result[1], 0, ',', '.'));
+			set_value('REBAJA_H_0', array_result[1], array_result[1]);
+			calcula_rebaja(array_result[1]);
+	   }
+    });
+}
+
+function calcula_rebaja(ve_value){
+	const vl_ct_sum_oc_total	= findAndReplace(document.getElementById('SUM_OC_TOTAL_0').innerHTML, ".", "");
+	
+	if(ve_value == '')
+		ve_value = 0;
+		
+	if(vl_ct_sum_oc_total == '')
+		vl_ct_sum_oc_total = 0;	
+		
+	const vl_sum_oc_total_neto = parseInt(vl_ct_sum_oc_total) - parseInt(ve_value);
+	document.getElementById('SUM_OC_TOTAL_NETA_0').innerHTML = number_format(vl_sum_oc_total_neto, 0, ',', '.');	
+	computed(get_num_rec_field('SUM_OC_TOTAL_0'), 'RESULTADO');
+	computed(get_num_rec_field('SUM_OC_TOTAL_0'), 'STATIC_RESULTADO');
+}
+
 function valida_correo(){
 
 	var vl_cod_vendedor_1 = document.getElementById('COD_VENDEDOR1_H').value;

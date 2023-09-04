@@ -15,22 +15,6 @@ function f_valida_oc(){
 	}
 }
 
-function calcula_rebaja(ve_control){
-	var vl_ct_sum_oc_total	= findAndReplace(document.getElementById('SUM_OC_TOTAL_0').innerHTML, ".", "");
-	var vl_rebaja			= ve_control.value;
-	
-	if(vl_rebaja == '')
-		vl_rebaja = 0;
-		
-	if(vl_ct_sum_oc_total == '')
-		vl_ct_sum_oc_total = 0;	
-		
-	vl_sum_oc_total_neto = parseInt(vl_ct_sum_oc_total) - parseInt(vl_rebaja);
-	document.getElementById('SUM_OC_TOTAL_NETA_0').innerHTML = number_format(vl_sum_oc_total_neto, 0, ',', '.');	
-	computed(get_num_rec_field('SUM_OC_TOTAL_0'), 'RESULTADO');
-	computed(get_num_rec_field('SUM_OC_TOTAL_0'), 'STATIC_RESULTADO');
-}
-
 function confirm_suma_nv(){
 	var vl_es_no_suma_nv_informe = document.getElementById('ES_NO_SUMA_NV_INFORME_0').value;
 	var str_confirm = "";

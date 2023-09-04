@@ -1567,6 +1567,7 @@ class wi_nota_venta extends w_cot_nv {
 					,NULL RESULT_NV_NC
 					,'' BTN_LISTA_NC
 					,ISNULL(REBAJA, 0) REBAJA
+					,ISNULL(REBAJA, 0) REBAJA_H
 					,AUTORIZA_PROCESAR_VENTA
 					,dbo.f_get_last_mod_aut_venta(COD_NOTA_VENTA) LAST_USUARIO_MOD
 					,NO_TIENE_OC
@@ -1575,6 +1576,8 @@ class wi_nota_venta extends w_cot_nv {
                     ,NV.COD_INGRESO_PAGO
                     ,NV.CORREO_FA
                     ,NV.NOTAS_INTERNAS
+					,NULL REGISTRO_LISTA_NC_COMPRA
+					,'' DISPLAY_BTN_LISTA_NC
 				from NOTA_VENTA NV, USUARIO U, EMPRESA E, ESTADO_NOTA_VENTA ENV, CUENTA_CORRIENTE CC, USUARIO V1
 				where COD_NOTA_VENTA = {KEY1} and
 					U.COD_USUARIO = NV.COD_USUARIO and
@@ -1591,8 +1594,11 @@ class wi_nota_venta extends w_cot_nv {
 		
 		$this->dws['dw_nota_venta']->add_control(new edit_nro_doc('COD_NOTA_VENTA','NOTA_VENTA'));
 		
-		$this->dws['dw_nota_venta']->add_control($control = new edit_num('REBAJA',7, 10));
-		$control->set_onChange("calcula_rebaja(this);");
+		$this->dws['dw_nota_venta']->add_control(new static_num('REBAJA'));
+		$this->dws['dw_nota_venta']->add_control(new edit_text_hidden('REBAJA_H'));
+		$this->dws['dw_nota_venta']->add_control(new edit_text_hidden('REGISTRO_LISTA_NC_COMPRA'));
+
+		//$control->set_onChange("calcula_rebaja(this);");
 		$this->dws['dw_nota_venta']->add_control($control = new edit_text_upper('NRO_ORDEN_COMPRA', 18, 18));
 		$control->set_onChange("change_orden_compra(this);");
 		$this->dws['dw_nota_venta']->add_control(new edit_date('FECHA_ORDEN_COMPRA_CLIENTE'));
@@ -1980,7 +1986,7 @@ class wi_nota_venta extends w_cot_nv {
 		$this->dws['dw_nota_venta']->set_item(0, 'D_AUTORIZADO', 'none');
 		
 		$this->dws['dw_nota_venta']->set_entrable('AUTORIZA_PROCESAR_VENTA', false);
-		
+		$this->dws['dw_nota_venta']->set_item(0, 'DISPLAY_BTN_LISTA_NC', 'none');
 		
 	}
 	//deshabilita boton valida_correo(); cuando se esta agregando una nueva nota de venta 
@@ -2208,6 +2214,11 @@ class wi_nota_venta extends w_cot_nv {
 			$this->dws['dw_nota_venta']->controls['PORC_VENDEDOR2']->readonly = true;
 		}
 		
+		if($COD_NOTA_VENTA > 106889)
+			$this->dws['dw_nota_venta']->set_item(0, 'DISPLAY_BTN_LISTA_NC', '');
+		else
+			$this->dws['dw_nota_venta']->set_item(0, 'DISPLAY_BTN_LISTA_NC', 'none');
+
 		//DISPLAY_DESCARGA
 		$db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
 		$sql="	SELECT COUNT(*) TIENE_DESCARGA
@@ -2561,7 +2572,7 @@ class wi_nota_venta extends w_cot_nv {
 		}else{
 			$this->dws['dw_nota_venta']->set_item(0, 'BTN_LISTA_NC', 'disabled');
 			$this->dws['dw_tipo_pendiente_nota_venta']->set_entrable_dw(false);
-			$this->dws['dw_nota_venta']->set_entrable('REBAJA', false);
+			//$this->dws['dw_nota_venta']->set_entrable('REBAJA', false);
 		}
 		$this->dws['dw_tipo_pendiente_nota_venta']->retrieve($COD_NOTA_VENTA);
 		$this->dws['dw_docs']->retrieve($COD_NOTA_VENTA);
@@ -2790,6 +2801,7 @@ class wi_nota_venta extends w_cot_nv {
 		$INGRESO_USUARIO_DSCTO2 = $this->dws['dw_nota_venta']->get_item(0, 'INGRESO_USUARIO_DSCTO2');
 		$PORC_DSCTO_CORPORATIVO = $this->dws['dw_nota_venta']->get_item(0, 'PORC_DSCTO_CORPORATIVO_H');
 		$NO_TIENE_OC			= $this->dws['dw_nota_venta']->get_item(0, 'NO_TIENE_OC');
+		$REGISTRO_LISTA_NC_COMPRA = $this->dws['dw_nota_venta']->get_item(0, 'REGISTRO_LISTA_NC_COMPRA');
 		
 		$CIERRE_H			= $this->dws['dw_nota_venta']->get_item(0, 'CIERRE_H');
 		$CIERRE_SIN_P_H		= $this->dws['dw_nota_venta']->get_item(0, 'CIERRE_SIN_P_H');
@@ -2801,7 +2813,7 @@ class wi_nota_venta extends w_cot_nv {
 			$MOTIVO_CIERRE_SIN_PART_H = "'$MOTIVO_CIERRE_SIN_PART_H'";
 			
 		}
-		$REBAJA = $this->dws['dw_nota_venta']->get_item(0, 'REBAJA');
+		$REBAJA = $this->dws['dw_nota_venta']->get_item(0, 'REBAJA_H');
 		
 		$FECHA_PLAZO_CIERRE = $this->dws['dw_nota_venta']->get_item(0, 'FECHA_PLAZO_CIERRE');
 		$COD_USUARIO_CONFIRMA = $this->dws['dw_nota_venta']->get_item(0, 'COD_USUARIO_CONFIRMA_H');
@@ -3094,6 +3106,36 @@ class wi_nota_venta extends w_cot_nv {
             	if (!$db->EXECUTE_SP($sp, $param))
 							return false;
             }
+
+			if($REGISTRO_LISTA_NC_COMPRA <> ""){
+				$list_nc = explode(',', $REGISTRO_LISTA_NC_COMPRA);
+
+				for ($i=0; $i < count($list_nc); $i++){ 
+					$field = explode('|', $list_nc[$i]);
+
+					$nro_oc = $field[0];
+					$monto_oc = $field[1];
+					$cod_empresa_prov = $field[2];
+					$nro_fa = $field[3];
+					$monto_fa = $field[4];
+					$nro_nc = $field[5];
+					$monto_nc = $field[6];
+
+					$sp = 'sp_lista_nc_compra';
+
+					$param = "$COD_NOTA_VENTA
+							 ,$nro_oc
+							 ,$monto_oc
+							 ,$cod_empresa_prov
+							 ,$nro_fa
+							 ,$monto_fa
+							 ,$nro_nc
+							 ,$monto_nc";				
+						
+					if(!$db->EXECUTE_SP($sp, $param))
+						return false;
+				}
+			}
             
             return true;
 		}
@@ -3322,6 +3364,7 @@ class wi_nota_venta extends w_cot_nv {
 					,NULL RESULT_NV_NC
 					,'' BTN_LISTA_NC
 					,0 REBAJA
+					,0 REBAJA_H
 					,0 SUMA_NC
 					,'N' AUTORIZA_PROCESAR_VENTA
 					,'N' NO_TIENE_OC
@@ -3329,6 +3372,8 @@ class wi_nota_venta extends w_cot_nv {
                     , 'none' D_NO_AUTORIZADO
                     ,NULL CORREO_FA
                     ,'' NOTAS_INTERNAS
+					,NULL REGISTRO_LISTA_NC_COMPRA
+					,'none' DISPLAY_BTN_LISTA_NC
 				from COTIZACION C, USUARIO U, EMPRESA E, CUENTA_CORRIENTE CTA, USUARIO V1
 				WHERE C.COD_COTIZACION = ".$cod_cotizacion." and
 					U.COD_USUARIO = ".$this->cod_usuario." and
@@ -3838,7 +3883,9 @@ class wi_nota_venta extends w_cot_nv {
 						dbo.f_get_parametro(".self::K_PARAM_PAIS_EMPRESA.") PAIS_EMPRESA,
 						dbo.f_get_parametro(".self::K_PARAM_SITIO_WEB_EMPRESA.") SITIO_WEB_EMPRESA,
 						ENV.NOM_ESTADO_NOTA_VENTA,
-						ISNULL(REBAJA, 0) REBAJA
+						ISNULL(REBAJA, 0) REBAJA,
+						ISNULL(REBAJA, 0) REBAJA_H,
+						NULL REGISTRO_LISTA_NC_COMPRA
 				FROM	NOTA_VENTA NV left outer join ITEM_NOTA_VENTA INV on NV.COD_NOTA_VENTA = INV.COD_NOTA_VENTA,
 						SUCURSAL SF, SUCURSAL SD, EMPRESA E,
 						MONEDA M, PERSONA P, ESTADO_NOTA_VENTA ENV
@@ -3924,7 +3971,9 @@ class wi_nota_venta extends w_cot_nv {
 					dbo.f_get_parametro(".self::K_PARAM_PAIS_EMPRESA.") PAIS_EMPRESA,
 					dbo.f_get_parametro(".self::K_PARAM_SITIO_WEB_EMPRESA.") SITIO_WEB_EMPRESA,
 					ENV.NOM_ESTADO_NOTA_VENTA,
-					0 REBAJA
+					0 REBAJA,
+					0 REBAJA_H,
+					NULL REGISTRO_LISTA_NC_COMPRA
 			FROM	NOTA_VENTA NV left outer join ITEM_NOTA_VENTA INV on NV.COD_NOTA_VENTA = INV.COD_NOTA_VENTA,
 					SUCURSAL SF, SUCURSAL SD, EMPRESA E,
 					MONEDA M, PERSONA P, ESTADO_NOTA_VENTA ENV

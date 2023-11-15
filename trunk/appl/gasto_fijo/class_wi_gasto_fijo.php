@@ -305,19 +305,11 @@ class drop_down_iva_oc_negativo extends drop_down_iva  {
 
 		$porc_bh = $this->get_parametro(self::K_PARAM_BH);
 		$porc_bh = number_format( - $porc_bh, 2, ',', '.');
+		
+		$porc_bh2 = 16;
+		$porc_bh2 = number_format( - $porc_bh2, 2, ',', '.');
    
-   //$monto_iva			= $this->get_item(0, 'MONTO_IVA');
-   //echo '$monto_iva:'+$monto_iva; 
-   /*
-   $sql = "select ";
-		$result = $db->build_results($sql);
-		$autorizar = $result[0]['AUTORIZA'];*/
-  // $db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
-   
-  /* $cod_orden_compra 	= $this->dws['dw_orden_compra']->get_item(0, 'COD_ORDEN_COMPRA');
-   echo '$cod_orden_compra:'.$cod_orden_compra;*/
-   
-		parent::drop_down_list('PORC_IVA',array($porc_iva,$porc_bh,0),array($porc_iva,$porc_bh,'0'),52);
+		parent::drop_down_list('PORC_IVA',array($porc_iva, $porc_bh2, $porc_bh, 0),array($porc_iva, $porc_bh2, $porc_bh, '0'),52);
 	}
 }
 

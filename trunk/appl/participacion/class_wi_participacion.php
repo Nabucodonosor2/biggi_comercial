@@ -465,6 +465,23 @@ class wi_participacion extends w_input {
 			if ($tipo_participacion == '')		$tipo_participacion = 'FA';
 		}
 
+		/*
+		--Marcelo
+		--Segun lo conversado, adjunto nombres de quienes tienen 3% adicional en sus boletas 
+		--Pago Participacion
+		--Hector Escudero = 16%
+		--Rodrigo Barraza = 16%
+		--Eduardo Olmedo = 16%
+		--Gasto fijo, agregar 16% al seleccionar el % de impuesto 
+		--JC / SP
+		--13/10/2023
+		*/
+		if($cod_usuario == 11 || $cod_usuario == 7 || $cod_usuario == 12){
+			$porc_part = "16";
+		}else{
+			$porc_part = "dbo.f_get_parametro(2)";
+		}
+
 		$sql_crea_desde = "SELECT null COD_PARTICIPACION
 								,convert(nvarchar, getdate(), 103) FECHA_PARTICIPACION
 								,".$this->cod_usuario." COD_USUARIO
@@ -476,7 +493,7 @@ class wi_participacion extends w_input {
 								,0 TOTAL_NETO
 								,0 TOTAL_NETO_H
 								,case '".$tipo_participacion."' 
-									when 'BH' then dbo.f_get_parametro(2) 
+									when 'BH' then $porc_part 
 									when 'FA' then dbo.f_get_parametro(1)
 									when 'SUELDO' then '0'
 								end PORC_IVA
@@ -487,7 +504,7 @@ class wi_participacion extends w_input {
 								,null MOTIVO_ANULA			
 								,'none' TR_DISPLAY	
 								,dbo.f_get_parametro(1) PORC_IVA_H
-								,dbo.f_get_parametro(2) RETENCION_BH_H
+								,$porc_part RETENCION_BH_H
 								,case '".$tipo_participacion."' 
 									when 'BH' then 'BH' 
 									when 'FA' then 'IVA' 

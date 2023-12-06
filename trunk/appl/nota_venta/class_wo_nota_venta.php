@@ -54,6 +54,14 @@ class wo_nota_venta extends w_output_biggi {
 							,dbo.f_nv_get_resultado(NV.COD_NOTA_VENTA, 'REMANENTE') REMANENTE
 							,dbo.f_header_porc_facturado(NV.COD_NOTA_VENTA) PORC_FACTURADO
 							,dbo.f_nv_porc_facturado(NV.COD_NOTA_VENTA) PORC_FACTURADO_S
+							,Round((dbo.f_nv_total_pago(NV.COD_NOTA_VENTA) / TOTAL_CON_IVA) * 100, 1) PORC_PAGOS_MH
+
+							,CASE NV.COD_ESTADO_NOTA_VENTA
+								WHEN 3 THEN 0
+								ELSE
+									ROUND(dbo.f_nv_despachado_neto(NV.COD_NOTA_VENTA), 0)
+							END DESPACHADO_NETO_MH
+
 							/*FIN_CAMPOS*/
 				from 		NOTA_VENTA NV,
 							EMPRESA E,
@@ -82,7 +90,7 @@ class wo_nota_venta extends w_output_biggi {
 		
 		$this->add_header(new header_vendedor('INI_USUARIO', 'NV.COD_USUARIO_VENDEDOR1', 'V1'));
 		
-		$this->add_header(new header_text('NRO_ORDEN_COMPRA', 'NRO_ORDEN_COMPRA', 'N° OC'));
+		$this->add_header(new header_text('NRO_ORDEN_COMPRA', 'NRO_ORDEN_COMPRA', 'Nro OC'));
 		  
 		$sql_nv = "select COD_ESTADO_NOTA_VENTA ,NOM_ESTADO_NOTA_VENTA from ESTADO_NOTA_VENTA order by ORDEN";
 		$this->add_header(new header_drop_down('NOM_ESTADO_NOTA_VENTA', 'ENV.COD_ESTADO_NOTA_VENTA', 'Estado', $sql_nv));
@@ -97,10 +105,13 @@ class wo_nota_venta extends w_output_biggi {
 			$this->add_header(new header_num('MONTO_GASTO_FIJO', 'MONTO_GASTO_FIJO', 'Gasto Fijo'));
 			$this->add_header(new header_num('SUM_OC_TOTAL', 'SUM_OC_TOTAL', 'Compra Neta Total'));
 			$this->add_header(new header_num('RESULTADO', 'RESULTADO', 'Resultado'));
-			$this->add_header(new header_num('MONTO_DIRECTORIO', 'MONTO_DIRECTORIO', 'Aporte a Administración'));
-			$this->add_header(new header_num('COMISION_V1', 'COMISION_V1', 'Participación'));
-			$this->add_header(new header_num('COMISION_ADM', 'COMISION_ADM', 'Participación Administración'));
+			$this->add_header(new header_num('MONTO_DIRECTORIO', 'MONTO_DIRECTORIO', 'Aporte a Administracion'));
+			$this->add_header(new header_num('COMISION_V1', 'COMISION_V1', 'PParticipacion'));
+			$this->add_header(new header_num('COMISION_ADM', 'COMISION_ADM', 'Participacion Administracion'));
 			$this->add_header(new header_num('REMANENTE', 'REMANENTE', 'Remanente'));
+			$this->add_header(new header_num('PORC_FACTURADO_S', 'PORC_FACTURADO_S', 'PORCENTAJE FACTURADO'));
+			$this->add_header(new header_num('PORC_PAGOS_MH', 'PORC_PAGOS_MH', 'PORC PAGO CLIENTE'));
+			$this->add_header(new header_num('DESPACHADO_NETO_MH', 'DESPACHADO_NETO_MH', 'MONTO NETO DESPACHADO'));
 		}	
 		
 		$sql = "SELECT 0 PORC_FACTURADO,
@@ -108,7 +119,7 @@ class wo_nota_venta extends w_output_biggi {
 				UNION 
 				SELECT 1 PORC_FACTURADO,
 					   'Facturado' NOM_PORC_FACTURADO";
-		$this->add_header($control = new header_drop_down_string('PORC_FACTURADO', 'dbo.f_header_porc_facturado(NV.COD_NOTA_VENTA)', '% Facturado', $sql));
+		$this->add_header($control = new header_drop_down_string('PORC_FACTURADO', 'dbo.f_header_porc_facturado(NV.COD_NOTA_VENTA)', 'Porc Facturado', $sql));
 		
     }
 	

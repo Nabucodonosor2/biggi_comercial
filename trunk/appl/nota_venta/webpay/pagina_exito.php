@@ -22,7 +22,7 @@ $result = $dbc->get_row();
 $cant = $result['CANTIDAD'];
 
 if($cant == 0){
-	header ('Location: '.'http://biggi.cl/fracaso');
+	header ('Location: '.'http://accsisgb.biggi.cl/fracaso');
 	return;
 }
 
@@ -262,7 +262,7 @@ else if($TBK_TIPO_PAGO=='VN'){
 						</tr>
 						<tr class="encabezado_right">
 							<td width="15%" align="left">Descripcion:</td>
-							<td width="35%" class="oscuro" align="left">Pago de la Nota Venta <a href="http://biggi.cl/confirm?param=<?php echo base64_encode($TBK_TRANSACCION);?>"><?php echo $COD_NOTA_VENTA;?></td>
+							<td width="35%" class="oscuro" align="left">Pago de la Nota Venta <a href="http://accsisgb.biggi.cl/confirm?param=<?php echo base64_encode($TBK_TRANSACCION);?>"><?php echo $COD_NOTA_VENTA;?></td>
 						</tr>
 						<tr class="encabezado_right">
 							<td width="15%" align="left">Url del Sitio:</td>

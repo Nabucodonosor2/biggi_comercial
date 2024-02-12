@@ -177,6 +177,7 @@ class dw_orden_compra extends dw_help_empresa {
 		$sql = "SELECT	 O.COD_ORDEN_COMPRA
 						,substring(convert(varchar(20), O.FECHA_ORDEN_COMPRA, 103) + ' ' + convert(varchar(20), O.FECHA_ORDEN_COMPRA, 108), 1, 16) FECHA_ORDEN_COMPRA
 						,O.COD_USUARIO
+						,O.COD_USUARIO COD_USUARIO_H
 						,U.NOM_USUARIO										
 						,O.COD_ESTADO_ORDEN_COMPRA			
 						,O.COD_CUENTA_CORRIENTE
@@ -204,8 +205,8 @@ class dw_orden_compra extends dw_help_empresa {
 						,substring(convert(varchar(20), O.FECHA_ANULA, 103) + ' ' + convert(varchar(20), O.FECHA_ANULA, 108), 1, 16) FECHA_ANULA						
 						,O.MOTIVO_ANULA
 						,O.COD_USUARIO_ANULA	
-						,INGRESO_USUARIO_DSCTO1  
-						,INGRESO_USUARIO_DSCTO2	
+						,O.INGRESO_USUARIO_DSCTO1  
+						,O.INGRESO_USUARIO_DSCTO2	
 						,case O.COD_ESTADO_ORDEN_COMPRA
 							when ".self::K_ESTADO_ANULADA." then '' 
 							else 'none'
@@ -215,12 +216,21 @@ class dw_orden_compra extends dw_help_empresa {
 							else ''
 						end TITULO_ESTADO_NOTA_VENTA
 						,dbo.f_emp_get_mail_cargo_persona(O.COD_PERSONA, '[EMAIL]') MAIL_CARGO_PERSONA
-				FROM 	ORDEN_COMPRA O, USUARIO U, EMPRESA E, ESTADO_ORDEN_COMPRA EOC
+						,ESTADO_OC_PLANO
+						,NRO_COTIZACION
+						,NRO_NOTA_VENTA
+						,OBSERVACIONES
+						,(SELECT NOM_USUARIO FROM USUARIO WHERE COD_USUARIO = C.COD_USUARIO_VENDEDOR1) NOM_VENDEDOR_C
+						,C.REFERENCIA REF_COTIZACION
+						,(SELECT NOM_USUARIO FROM USUARIO WHERE COD_USUARIO = NV.COD_USUARIO_VENDEDOR1) NOM_VENDEDOR_NV
+						,NV.REFERENCIA REF_NOTA_VENTA
+				FROM 	ORDEN_COMPRA O LEFT OUTER JOIN COTIZACION C ON O.NRO_COTIZACION = C.COD_COTIZACION
+									   LEFT OUTER JOIN NOTA_VENTA NV ON O.NRO_NOTA_VENTA = NV.COD_NOTA_VENTA
+						,USUARIO U, EMPRESA E, ESTADO_ORDEN_COMPRA EOC
 				WHERE	O.COD_ORDEN_COMPRA = {KEY1} and
 						U.COD_USUARIO = O.COD_USUARIO AND
 						E.COD_EMPRESA = O.COD_EMPRESA AND
-						EOC.COD_ESTADO_ORDEN_COMPRA = O.COD_ESTADO_ORDEN_COMPRA";
-							
+						EOC.COD_ESTADO_ORDEN_COMPRA = O.COD_ESTADO_ORDEN_COMPRA";		
 
 		parent::dw_help_empresa($sql, '', false, false, 'P');	// El último parametro indica que solo acepta proveedores
 		
@@ -283,7 +293,34 @@ class dw_orden_compra extends dw_help_empresa {
 		$this->add_control(new edit_num('VALIDEZ_OFERTA',2,2));
 		$this->add_control(new edit_text_upper('GARANTIA',109,140));
 		$this->add_control(new edit_text_multiline('OBS',54,4));
-			
+
+		/////////////////////////////////////////////////
+
+
+		$sql = "SELECT 'I' ESTADO_OC_PLANO, 'INGRESADO' NOM_ESTADO_OC_PLANO, 1 ORDEN 
+				UNION 
+				SELECT 'E' ESTADO_OC_PLANO , 'EN PROCESO' NOM_ESTADO_OC_PLANO, 2 ORDEN
+				UNION 
+				SELECT 'T' ESTADO_OC_PLANO , 'TERMINADO' NOM_ESTADO_OC_PLANO, 3 ORDEN
+				ORDER BY ORDEN";
+
+		$this->add_control(new drop_down_dw('ESTADO_OC_PLANO',$sql,150));
+
+		$this->add_control($control = new edit_num('NRO_COTIZACION', 16, 16, 0, true, false, false));
+		$control->set_onChange("ajax_cotizacion(this);");
+
+		$this->add_control($control = new edit_num('NRO_NOTA_VENTA', 16, 16, 0, true, false, false));
+		$control->set_onChange("ajax_nota_venta(this);");
+
+		$this->add_control(new edit_text_multiline('OBSERVACIONES',54,4));
+		$this->add_control(new static_text('NOM_VENDEDOR_C'));
+		$this->add_control(new static_text('REF_COTIZACION'));
+		$this->add_control(new static_text('NOM_VENDEDOR_NV'));
+		$this->add_control(new static_text('REF_NOTA_VENTA'));
+		$this->add_control(new edit_text_hidden('COD_USUARIO_H'));
+
+		///////////////////////////////////////////////////
+
 		// asigna los mandatorys/
 		$this->set_mandatory('COD_ESTADO_ORDEN_COMPRA', 'un Estado');
 		//$this->set_mandatory('COD_CUENTA_CORRIENTE', 'Cuenta Corriente');
@@ -394,6 +431,7 @@ class wi_gasto_fijo_base extends w_input {
 		$this->dws['dw_orden_compra']->set_item(0, 'COD_ESTADO_ORDEN_COMPRA', self::K_ESTADO_EMITIDA);
 		$this->dws['dw_orden_compra']->set_entrable('COD_ESTADO_ORDEN_COMPRA', false);
 		$this->dws['dw_item_orden_compra']->insert_row();
+		$this->dws['dw_orden_compra']->set_item(0, 'ESTADO_OC_PLANO', 'I');
 	}
 	
 	function load_record() {
@@ -551,7 +589,19 @@ class wi_gasto_fijo_base extends w_input {
 		$ingreso_usuario_dscto2 = $this->dws['dw_orden_compra']->get_item(0, 'INGRESO_USUARIO_DSCTO2');;
 		$ingreso_usuario_dscto2 = ($ingreso_usuario_dscto2 =='') ? "null" : "'$ingreso_usuario_dscto2'";
 
-		$cod_orden_compra = ($cod_orden_compra=='') ? "null" : $cod_orden_compra;		
+		$cod_orden_compra = ($cod_orden_compra=='') ? "null" : $cod_orden_compra;
+
+		$estado_oc_plano	= $this->dws['dw_orden_compra']->get_item(0, 'ESTADO_OC_PLANO');
+		$nro_cotizacion		= $this->dws['dw_orden_compra']->get_item(0, 'NRO_COTIZACION');
+		$nro_nota_venta		= $this->dws['dw_orden_compra']->get_item(0, 'NRO_NOTA_VENTA');
+		$observaciones		= $this->dws['dw_orden_compra']->get_item(0, 'OBSERVACIONES');
+
+		$estado_oc_plano	= ($estado_oc_plano =='') ? "null" : "'$estado_oc_plano'";
+		$nro_cotizacion		= ($nro_cotizacion =='') ? "null" : "$nro_cotizacion";
+		$nro_nota_venta		= ($nro_nota_venta =='') ? "null" : "$nro_nota_venta";
+
+		$observaciones		= str_replace("'", "''", $observaciones);
+		$observaciones		= ($observaciones =='') ? "null" : "'$observaciones'";
     
 		$sp = 'spu_orden_compra';
 	    if ($this->is_new_record())
@@ -588,7 +638,19 @@ class wi_gasto_fijo_base extends w_input {
 						,'GASTO_FIJO'
 						, null
 						, 'S'
-						, 'S'";
+						, 'S'
+						,NULL
+						,NULL
+						,NULL
+						,NULL
+						,NULL
+						,NULL
+						,NULL
+						,'N'
+						,$estado_oc_plano
+						,$nro_cotizacion
+						,$nro_nota_venta
+						,$observaciones";
 
 		if ($db->EXECUTE_SP($sp, $param)){
 			if ($this->is_new_record()) {

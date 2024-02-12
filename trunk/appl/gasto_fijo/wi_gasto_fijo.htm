@@ -68,9 +68,10 @@
 								<td height="528">
 									<div id="TabbedPanels1" class="TabbedPanels">
 										<ul class="TabbedPanelsTabGroup">
-										<li class="TabbedPanelsTab" tabindex="0" style="display:{TAB_152005}">Gasto Fijo</li>
-										<li class="TabbedPanelsTab" tabindex="0" style="display:{TAB_152010}">Ítems</li>
-										<li class="TabbedPanelsTab" tabindex="0" style="display:{TAB_152025}">Pagos Doc</li>										
+											<li class="TabbedPanelsTab" tabindex="0" style="display:{TAB_152005}">Gasto Fijo</li>
+											<li class="TabbedPanelsTab" tabindex="0" style="display:{TAB_152010}">Ítems</li>
+											<li class="TabbedPanelsTab" tabindex="0" style="display:{TAB_152025}">Pagos Doc</li>
+											<li class="TabbedPanelsTab" tabindex="0" style="display:{TAB_255005}">Area Diseño</li>										
 										</ul>
 										<div class="TabbedPanelsContentGroup">									
 										<!--INI ORDEN_COMPRA-->
@@ -85,7 +86,7 @@
                                                   <td width="166">Fecha:</td>
                                                   <td width="166" class="claro" align="left">{FECHA_ORDEN_COMPRA}</td>
                                                   <td width="166">Emisor:</td>
-                                                  <td width="166" class="claro" align="left">{NOM_USUARIO}</td>
+                                                  <td width="166" class="claro" align="left">{NOM_USUARIO}{COD_USUARIO_H}</td>
                                                 </tr>
                                                 <tr class="encabezado_right">
                                                   <td>Estado:</td>
@@ -289,9 +290,88 @@
 												<!-- endBlock(PAGO_DOCS_LINK) -->
 												</table>
 											</div>
-											<!--FIN PAGOS_DOC-->											
-										</div><!--FIN TabbedPanelsContentGroup-->	
-									</div>								</td>																
+											<!--FIN PAGOS_DOC-->
+											
+											<!--INI AREA_DISEÑO-->
+											<div class="TabbedPanelsContent" style="height: 491px; display: block;">
+												<table width="1000" rules="none" border="1" align="center">
+													<tr class="titulo_tabla">				
+														<td colspan="6">DATOS GENERALES</td>
+													</tr>
+													<tr class="encabezado_right">
+														<td width="166">Nº GF:</td>
+														<td width="166" class="claro" align="left">{COD_ORDEN_COMPRA}</td>
+														<td width="166">Fecha:</td>
+														<td width="166" class="claro" align="left">{FECHA_ORDEN_COMPRA}</td>
+														<td width="166">Emisor:</td>
+														<td width="166" class="claro" align="left">{NOM_USUARIO}</td>
+													</tr>
+												</table>
+												<br />
+												<table width="1000" rules="none" border="1" align="center">
+													<tr class="titulo_tabla">				
+														<td colspan="6">AREA DISEÑO</td>
+													</tr>
+													<tr style="display:hidden">
+														<td width="166"></td>
+														<td width="166"></td>
+														<td width="166"></td>
+														<td width="166"></td>
+														<td width="166"></td>
+														<td width="166"></td>
+													</tr>
+													<tr class="encabezado_right">
+														<td>Estado Solicitud:</td>
+														<td class="oscuro" align="left" colspan="5">{ESTADO_OC_PLANO}</td>
+													</tr>
+
+													<tr class="encabezado_right">
+														<td class="claro" align="left" colspan="6"></td>
+													</tr>
+
+													<tr class="encabezado_right">
+														<td>Nº Cotización:</td>
+														<td class="oscuro" align="left">{NRO_COTIZACION}</td>
+														<td>Vendedor:</td>
+														<td class="oscuro" align="left" colspan="3">{NOM_VENDEDOR_C}</td>
+													</tr>
+													<tr class="encabezado_right">
+														<td>Referencia:</td>
+														<td class="claro" align="left" colspan="5">{REF_COTIZACION}</td>
+													</tr>
+													
+													<tr class="encabezado_right">
+														<td class="oscuro" align="left" colspan="6"></td>
+													</tr>
+
+													<tr class="encabezado_right">
+														<td>Nº Nota Venta:</td>
+														<td class="claro" align="left">{NRO_NOTA_VENTA}</td>
+														<td>Vendedor:</td>
+														<td class="claro" align="left" colspan="3">{NOM_VENDEDOR_NV}</td>
+													</tr>
+													<tr class="encabezado_right">
+														<td>Referencia:</td>
+														<td class="oscuro" align="left" colspan="5">{REF_NOTA_VENTA}</td>
+													</tr>
+													
+													<tr class="encabezado_right">
+														<td class="claro" align="left" colspan="6"></td>
+													</tr>
+
+													<tr class="encabezado_right">
+														<td>Observaciones:</td>
+														<td class="oscuro" align="left" colspan="5">{OBSERVACIONES}</td>
+													</tr>
+
+												</table>
+											</div>
+											<!--FIN AREA_DISEÑO-->
+
+										</div>
+										<!--FIN TabbedPanelsContentGroup-->	
+									</div>								
+								</td>																
 							</tr>
 						</table>
 						<table width="1000" border="0" align="center">

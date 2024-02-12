@@ -8,6 +8,19 @@ function validate() {
 			return false;
 		}
 	}
+
+	const cod_usuario_h = get_value('COD_USUARIO_H_0');
+	
+	if(cod_usuario_h == 102){
+		const nro_cotizacion	= get_value('NRO_COTIZACION_0');
+		const nro_nv			= get_value('NRO_NOTA_VENTA_0');
+
+		if(nro_cotizacion == "" && nro_nv == ""){
+			alert('Debe ingresar alguna cotización u nota de venta');
+			return false;
+		}
+	}
+
 	return true;
 }
 
@@ -112,4 +125,61 @@ function crear_gf(){
 			}
 		}
 	});			
+}
+
+function ajax_cotizacion(ve_control){
+	const nro_cotizacion = ve_control.value;
+
+	if(nro_cotizacion != ''){
+		const ajax = nuevoAjax();
+		ajax.open("GET", "ajax_gasto_fijo.php?fx=getCotizacion&variable="+nro_cotizacion, false);
+		ajax.send(null);
+
+		if(URLDecode(ajax.responseText) != 'NULL'){
+			const resp = URLDecode(ajax.responseText).split('|');
+
+			set_value('NOM_VENDEDOR_C_0', resp[0], resp[0]);
+			set_value('REF_COTIZACION_0', resp[1], resp[1]);
+		}else{
+			alert('Nro de cotización no existe');
+			set_value('NRO_COTIZACION_0', '', '');
+			set_value('REF_COTIZACION_0', '', '');
+			set_value('NOM_VENDEDOR_C_0', '', '');
+
+			ve_control.focus();
+		}
+	}else{
+		set_value('REF_COTIZACION_0', '', '');
+		set_value('NOM_VENDEDOR_C_0', '', '');
+	}
+	
+}
+
+function ajax_nota_venta(ve_control){
+	const nro_nota_venta = ve_control.value;
+
+	if(nro_nota_venta != ''){
+		const ajax = nuevoAjax();
+		ajax.open("GET", "ajax_gasto_fijo.php?fx=getNotaVenta&variable="+nro_nota_venta, false);
+		ajax.send(null);
+		const resp = URLDecode(ajax.responseText).split('|');
+
+		if(URLDecode(ajax.responseText) != 'NULL'){
+			const resp = URLDecode(ajax.responseText).split('|');
+
+			set_value('NOM_VENDEDOR_NV_0', resp[0], resp[0]);
+			set_value('REF_NOTA_VENTA_0', resp[1], resp[1]);
+		}else{
+			alert('Nro de nota de venta no existe');
+			set_value('NRO_NOTA_VENTA_0', '', '');
+			set_value('NOM_VENDEDOR_NV_0', '', '');
+			set_value('REF_NOTA_VENTA_0', '', '');
+
+			ve_control.focus();
+		}
+	}else{
+		set_value('NOM_VENDEDOR_NV_0', '', '');
+		set_value('REF_NOTA_VENTA_0', '', '');
+	}
+	
 }

@@ -36,7 +36,11 @@ ALTER PROCEDURE [dbo].[spu_orden_compra]
 			,@ve_autoriza_monto_compra	 		varchar(1) = NULL
 			,@ve_usuario_autoriza_monto_compra	numeric = NULL
 			,@ve_creada_desde					varchar(100) = NULL
-			,@ve_rp_cliente						T_SI_NO = 'N')
+			,@ve_rp_cliente						T_SI_NO = 'N'
+			,@ve_estado_oc_plano				varchar(1) = NULL
+			,@ve_nro_cotizacion					numeric = NULL
+			,@ve_nro_nota_venta					numeric = NULL
+			,@ve_observaciones					text = NULL)
 
 			
 
@@ -136,6 +140,10 @@ BEGIN
 				,RP_CLIENTE					=	 @ve_rp_cliente
 				,FECHA_RP_CLIENTE			=	 @vl_fecha_rp
 				,COD_USUARIO_RP_CLIENTE		=	 @vl_usuario_rp
+				,ESTADO_OC_PLANO			=	 @ve_estado_oc_plano
+				,NRO_COTIZACION				=	 @ve_nro_cotizacion
+				,NRO_NOTA_VENTA				=	 @ve_nro_nota_venta
+				,OBSERVACIONES				=	 @ve_observaciones
            	   	
 				WHERE cod_orden_compra = @ve_cod_orden_compra
 				
@@ -203,7 +211,11 @@ BEGIN
            	   	,FECHA_SOLICITA_FACTURACION
 				,RP_CLIENTE
 				,FECHA_RP_CLIENTE
-				,COD_USUARIO_RP_CLIENTE)
+				,COD_USUARIO_RP_CLIENTE
+				,ESTADO_OC_PLANO
+				,NRO_COTIZACION
+				,NRO_NOTA_VENTA
+				,OBSERVACIONES)
 			values
 				(getdate()		 					
 				,@ve_cod_usuario		
@@ -242,7 +254,11 @@ BEGIN
            	   	,@ve_fecha_aut_facturacion
 				,@ve_rp_cliente
 				,@vl_fecha_rp
-				,@vl_usuario_rp)
+				,@vl_usuario_rp
+				,@ve_estado_oc_plano
+				,@ve_nro_cotizacion
+				,@ve_nro_nota_venta
+				,@ve_observaciones)
 				
 			end 
 		else if(@ve_operacion='RECALCULA')

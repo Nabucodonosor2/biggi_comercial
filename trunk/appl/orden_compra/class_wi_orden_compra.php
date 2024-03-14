@@ -294,7 +294,11 @@ class drop_down_iva_oc_negativo extends drop_down_iva  {
 
 		$porc_bh = $this->get_parametro(self::K_PARAM_BH);
 		$porc_bh = number_format( - $porc_bh, 2, ',', '.');
-		parent::drop_down_list('PORC_IVA',array($porc_iva,$porc_bh,0),array($porc_iva,$porc_bh,'0'),52);
+
+		// 14032024 MH AGREGA TIPO 16.75 SEGUN CORREO DE ADMINISTRACION
+		$porc_bh2 = 16.75;
+		$porc_bh2 = number_format( - $porc_bh2, 2, ',', '.');
+		parent::drop_down_list('PORC_IVA',array($porc_iva,$porc_bh,$porc_bh2,0),array($porc_iva,$porc_bh,$porc_bh2,'0'),52);
 	}
 }
 class drop_down_iva_oc_negativo_no_zero extends drop_down_iva  {

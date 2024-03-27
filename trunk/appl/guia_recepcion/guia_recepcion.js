@@ -8,41 +8,63 @@ function validate() {
 			return false;
 		}
 	}
-	var aTR = get_TR('ITEM_GUIA_RECEPCION');
-	var res= 0;
-		
+
+	if(cod_estado_gr_value == 1){
+		var aTR = get_TR('ITEM_GUIA_RECEPCION');
+		var res= 0;
+			
 		if (aTR.length==0) {
 			alert('Debe ingresar al menos 1 item antes de grabar.');
 			return false;
 		}
 
-	for (i=0; i<aTR.length; i++){
-		var rec_tr =get_num_rec_field(aTR[i].id);
-		var cantidad = document.getElementById('CANTIDAD_' + rec_tr).value;
-		cantidad = cantidad.replace(",",".")
-		res = res + parseFloat(cantidad);
-	}
-				
-	if (res == 0){
-		alert('Debe ingresar "Cantidad" antes de grabar');
-		document.getElementById('CANTIDAD_0').focus();
-		return false;
-	}
-
-	/*var tr_tipo_doc = document.getElementById('tr_tipo_doc');
-	var cod_tipo_gr = to_num(document.getElementById('COD_TIPO_GUIA_RECEPCION_0').value);
-	var	nro_doc	= document.getElementById('NRO_DOC_0').value;
-	
-	if (to_num(cod_tipo_gr)!= 3) {
-		if(nro_doc == ''){
-			alert('Debe ingresar Nº Documento');
+		for (i=0; i<aTR.length; i++){
+			var rec_tr =get_num_rec_field(aTR[i].id);
+			var cantidad = document.getElementById('CANTIDAD_' + rec_tr).value;
+			cantidad = cantidad.replace(",",".")
+			res = res + parseFloat(cantidad);
+		}
+					
+		if (res == 0){
+			alert('Debe ingresar "Cantidad" antes de grabar');
+			document.getElementById('CANTIDAD_0').focus();
 			return false;
 		}
-	}*/
+	}
 	
-	
-	
+	const resuelta	= document.getElementById('GR_RESUELTA_0').checked;
+	if(resuelta){
+		const tipo_doc	= get_value('COD_DOC_GR_RESUELTA_0');
+		const cod_doc	= get_value('COD_DOC_RESUELTA_0');
+		if(tipo_doc == '' || cod_doc == ''){
+			alert('Favor debe indicar un tipo de Documento, y un número de documento con el cual se confirme esta Guía de recepción como resuelta');
+			return false;
+		}
+	}
+
 	return true;
+}
+
+function valida_doc(){
+	const tipo_doc	= get_value('COD_DOC_GR_RESUELTA_0');
+	const cod_doc	= get_value('COD_DOC_RESUELTA_0');
+	const dropdown	= document.getElementById('COD_DOC_GR_RESUELTA_0');
+	const text		= dropdown.options[dropdown.selectedIndex].text;
+
+	if(tipo_doc != '' && cod_doc != ''){
+		ajax = nuevoAjax();
+		ajax.open("GET", "ajax_guia_recepcion.php?tipo_doc="+tipo_doc+"&cod_doc="+cod_doc+"&fx=valida_doc", false);
+		ajax.send(null);
+		const resp = ajax.responseText;
+		
+		if(resp == 'NO_EXISTE'){
+			alert('El numero de '+text+' ingresado no existe.');
+			set_value('COD_DOC_RESUELTA_0', '', '');
+		}else if(resp == 'ANULADO'){
+			alert('El numero de '+text+' ingresado está en estado "Anulado".');
+			set_value('COD_DOC_RESUELTA_0', '', '');
+		}
+	}
 }
 
 function dlg_print(){
@@ -67,9 +89,8 @@ function dlg_print(){
 	return true;
 }
 
-function recepcionar_todo()
-{
-var aTR = get_TR('ITEM_GUIA_RECEPCION');
+function recepcionar_todo(){
+	var aTR = get_TR('ITEM_GUIA_RECEPCION');
 
 	if (aTR.length==0) {
 		alert('No existe item para recepcionar.');
@@ -85,7 +106,7 @@ var aTR = get_TR('ITEM_GUIA_RECEPCION');
 	}
 }
 
-function valida_ct_x_gd(ve_campo) {
+function valida_ct_x_gd(ve_campo){
 	var aTR = get_TR('ITEM_GUIA_RECEPCION');
 	var res= 0;
 		

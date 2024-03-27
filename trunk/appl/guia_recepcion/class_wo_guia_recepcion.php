@@ -80,9 +80,9 @@ class wo_guia_recepcion extends w_output_biggi{
    	
    	function make_menu(&$temp) {
    	    $menu = session::get('menu_appl');
-   	    $menu->ancho_completa_menu = 650;
+   	    $menu->ancho_completa_menu = 471;
    	    $menu->draw($temp);
-   	    $menu->ancho_completa_menu = 280;    // volver a setear el tamaño original
+   	    $menu->ancho_completa_menu = 209;    // volver a setear el tamaño original
    	}
 }
 ?>

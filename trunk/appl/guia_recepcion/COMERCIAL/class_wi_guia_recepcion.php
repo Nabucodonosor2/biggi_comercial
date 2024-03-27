@@ -204,6 +204,10 @@ class dw_guia_recepcion extends dw_guia_recepcion_base{
 						,TIPO_RECEPCION TIPO_RECEPCION_H
 						,dbo.f_get_nro_nota_venta(GR.COD_DOC, GR.TIPO_DOC, GR.COD_GUIA_RECEPCION, 'N') COD_NOTA_VENTA
                         ,GR.NO_BODEGA
+						,GR_RESUELTA
+						,COD_DOC_GR_RESUELTA
+						,COD_DOC_RESUELTA
+						,GR_RESUELTA_OBS
 				FROM	GUIA_RECEPCION GR, EMPRESA E,ESTADO_GUIA_RECEPCION EGR,
 						TIPO_GUIA_RECEPCION TGR, USUARIO U
 				WHERE	GR.COD_GUIA_RECEPCION = {KEY1} AND
@@ -218,8 +222,7 @@ class dw_guia_recepcion extends dw_guia_recepcion_base{
 		parent::dw_help_empresa($sql);
 
 		// DATOS GENERALES
-		$this->add_control(new edit_nro_doc('COD_GUIA_RECEPCION','GUIA_RECEPCION'));
-		
+		$this->add_control(new edit_nro_doc('COD_GUIA_RECEPCION','GUIA_RECEPCION'));	
 		$this->add_control(new static_text('COD_NOTA_VENTA'));
 		$this->add_control(new edit_text_upper('TIPO_DOC',20,30));
 		$this->add_control($control = new drop_down_list('TIPO_DOC',array('','FACTURA','GUIA_DESPACHO','NOTA_VENTA'),array('','FACTURA','GUIA DESPACHO','NOTA VENTA'),150));
@@ -285,6 +288,17 @@ class dw_guia_recepcion extends dw_guia_recepcion_base{
 		
 		$this->add_control($control = new edit_check_box('NO_BODEGA','S', 'N'));
 		$control->set_onChange("compruebaBodega(this);");
+
+		$this->add_control($control = new edit_check_box('GR_RESUELTA','S', 'N'));
+		$sql	=  "SELECT COD_DOC_GR_RESUELTA
+						  ,NOM_DOC_GR_RESUELTA
+					FROM DOC_GR_RESUELTA";
+		$this->add_control($control = new drop_down_dw('COD_DOC_GR_RESUELTA',$sql,100));
+		$control->set_onChange("valida_doc();");
+
+		$this->add_control($control = new edit_num('COD_DOC_RESUELTA', 10, 10, 0, true, false, false));
+		$control->set_onChange("valida_doc();");
+		$this->add_control(new edit_text_multiline('GR_RESUELTA_OBS',54,3));
 
 		// asigna los mandatorys
 		$this->set_mandatory('COD_TIPO_GUIA_RECEPCION', 'Tipo Guia Recepción');
@@ -517,6 +531,10 @@ class wi_guia_recepcion extends wi_guia_recepcion_base {
 		$COD_USUARIO_RESPONSABLE	= $this->dws['dw_guia_recepcion']->get_item(0, 'COD_USUARIO_RESPONSABLE');
 		$OBS_POST_VENTA				= $this->dws['dw_guia_recepcion']->get_item(0, 'OBS_POST_VENTA');
 		$NO_BODEGA                  = $this->dws['dw_guia_recepcion']->get_item(0, 'NO_BODEGA');
+		$GR_RESUELTA				= $this->dws['dw_guia_recepcion']->get_item(0, 'GR_RESUELTA');
+		$COD_DOC_GR_RESUELTA		= $this->dws['dw_guia_recepcion']->get_item(0, 'COD_DOC_GR_RESUELTA');
+		$COD_DOC_RESUELTA			= $this->dws['dw_guia_recepcion']->get_item(0, 'COD_DOC_RESUELTA');
+		$GR_RESUELTA_OBS            = $this->dws['dw_guia_recepcion']->get_item(0, 'GR_RESUELTA_OBS');
 		
 		if (($MOTIVO_ANULA != '') && ($COD_USUARIO_ANULA== '')) // se anula 
 			$COD_USUARIO_ANULA		= $this->cod_usuario;
@@ -533,6 +551,10 @@ class wi_guia_recepcion extends wi_guia_recepcion_base {
 		$COD_USUARIO_RESPONSABLE	= ($COD_USUARIO_RESPONSABLE =='') ? "null" : $COD_USUARIO_RESPONSABLE;
 		$OBS_POST_VENTA				= ($OBS_POST_VENTA =='') ? "null" : "'$OBS_POST_VENTA'";	
 		$NO_BODEGA		            = ($NO_BODEGA =='') ? "NULL" : "'$NO_BODEGA'";
+		$GR_RESUELTA		        = ($GR_RESUELTA =='') ? "NULL" : "'$GR_RESUELTA'";
+		$COD_DOC_GR_RESUELTA		= ($COD_DOC_GR_RESUELTA =='') ? "NULL" : "$COD_DOC_GR_RESUELTA";
+		$COD_DOC_RESUELTA		    = ($COD_DOC_RESUELTA =='') ? "NULL" : "$COD_DOC_RESUELTA";
+		$GR_RESUELTA_OBS		    = ($NO_BODEGA =='') ? "NULL" : "'$GR_RESUELTA_OBS'";
     
 		$sp = 'spu_guia_recepcion';
 	    if ($this->is_new_record())
@@ -557,7 +579,11 @@ class wi_guia_recepcion extends wi_guia_recepcion_base {
 					,$TIPO_RECEPCION
 					,$COD_USUARIO_RESPONSABLE
 					,$OBS_POST_VENTA
-                    ,$NO_BODEGA";
+                    ,$NO_BODEGA
+					,$GR_RESUELTA
+					,$COD_DOC_GR_RESUELTA
+					,$COD_DOC_RESUELTA
+					,$GR_RESUELTA_OBS";
 
 		if ($db->EXECUTE_SP($sp, $param)){
 			if ($this->is_new_record()) {
@@ -639,13 +665,9 @@ class wi_guia_recepcion extends wi_guia_recepcion_base {
 		
 		$mailto = $result[0]['MAIL'];
 		$mailtoname = $result[0]['NOM_USUARIO_RESPONSABLE'];
-		
-		//$mailcc = array('ascianca@biggi.cl', 'sergio.pechoante@biggi.cl', 'rescudero@biggi.cl','fpuebla@biggi.cl', 'jcatalan@biggi.cl', 'psilva@biggi.cl');
-		//$mailccname = array('ANGEL SCIANCA','SERGIO PECHOANTE','RAFAEL ESCUDERO','FELIPE PUEBLA','JOSE CATALAN', 'PIERO SILVA');
 
-
-		$mailcc = array('ascianca@biggi.cl', 'sergio.pechoante@biggi.cl','fpuebla@biggi.cl', 'jcatalan@biggi.cl', 'psilva@biggi.cl');
-		$mailccname = array('ANGEL SCIANCA','SERGIO PECHOANTE','FELIPE PUEBLA','JOSE CATALAN', 'PIERO SILVA');
+		$mailcc = array('ascianca@biggi.cl', 'sergio.pechoante@biggi.cl','fpuebla@biggi.cl', 'jcatalan@biggi.cl', 'psilva@biggi.cl', 'mscianca@todoinox.cl', 'lsun@todoinox.cl', 'rsanchez@todoinox.cl', 'lwu@todoinox.cl');
+		$mailccname = array('ANGEL SCIANCA','SERGIO PECHOANTE','FELIPE PUEBLA','JOSE CATALAN', 'PIERO SILVA', 'Margarita Scianca', 'Lifen Sun', 'Ricardo Sanchez', 'Loreto Wu');
 			
 		if($result[0]['NOM_USUARIO'] <> $mailtoname){
 			$mailcc[]		= $result[0]['MAIL_EMISOR'];

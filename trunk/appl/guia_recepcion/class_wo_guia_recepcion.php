@@ -37,6 +37,10 @@ class wo_guia_recepcion extends w_output_biggi{
 						,U.INI_USUARIO
 						,dbo.f_get_nro_nota_venta(GR.COD_DOC, GR.TIPO_DOC, GR.COD_GUIA_RECEPCION, 'S') COD_NOTA_VENTA
 						,dbo.f_get_modelo_gr(GR.COD_GUIA_RECEPCION) MODELO_GR
+						,CASE
+							WHEN GR_RESUELTA = 'S' THEN 'Resuelta'
+							ELSE 'No Resuelta'
+						END GR_RESUELTA
 				FROM	GUIA_RECEPCION GR LEFT OUTER JOIN USUARIO U ON GR.COD_USUARIO_RESPONSABLE = U.COD_USUARIO
 						, EMPRESA E, ESTADO_GUIA_RECEPCION EGR, TIPO_GUIA_RECEPCION TGR 
 				WHERE	GR.COD_EMPRESA = E.COD_EMPRESA AND
@@ -63,19 +67,17 @@ class wo_guia_recepcion extends w_output_biggi{
 		$this->add_header(new header_drop_down('NOM_TIPO_GUIA_RECEPCION', 'TGR.COD_TIPO_GUIA_RECEPCION', 'Tipo GR', $sql_tipo_gr));
 		
 		$this->add_header(new header_vendedor('INI_USUARIO', 'GR.COD_USUARIO_RESPONSABLE', 'Responsable'));
-		/*$sql = "SELECT NULL COD_USUARIO_RESPONSABLE
-					  ,'SIN ASIGNAR' NOM_USUARIO
-				UNION
-				SELECT COD_USUARIO COD_USUARIO_RESPONSABLE
-					 ,NOM_USUARIO 
-				FROM USUARIO 
-				WHERE VENDEDOR_VISIBLE_FILTRO = 1 
-				ORDER BY COD_USUARIO_RESPONSABLE ASC";
-		$this->add_header(new header_drop_down('NOM_USUARIO', 'COD_USUARIO_RESPONSABLE', 'Responsable', $sql));*/
+		
 		$this->add_header($header_nv = new header_text('COD_NOTA_VENTA', "dbo.f_get_nro_nota_venta(GR.COD_DOC, GR.TIPO_DOC, GR.COD_GUIA_RECEPCION, 'S')", 'Nº NV'));
 		$header_nv->sorteable = false;
         $this->add_header($header = new header_text('MODELO_GR', "dbo.f_get_modelo_gr(GR.COD_GUIA_RECEPCION)", 'Modelo'));
 		$header->sorteable = false;
+		$sql = "SELECT 'S' GR_RESUELTA
+						,'Resuelta' NOM_GR_RESUELTA
+				UNION
+				SELECT 'N' GR_RESUELTA
+						,'No Resuelta' NOM_GR_RESUELTA";
+		$this->add_header(new header_drop_down_string('GR_RESUELTA', "GR_RESUELTA", 'ESTADO GR', $sql));
    	}
    	
    	function make_menu(&$temp) {

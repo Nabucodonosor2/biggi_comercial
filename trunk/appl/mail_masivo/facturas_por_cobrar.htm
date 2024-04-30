@@ -1,92 +1,223 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
-<title>Sistema Grupo de Empresas Biggi</title>
+    <!-- Compiled with Bootstrap Email version: 1.3.1 -->
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="x-apple-disable-message-reformatting">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
+    <style type="text/css">
+        body,table,td{font-family:Helvetica,Arial,sans-serif !important}.ExternalClass{width:100%}.ExternalClass,.ExternalClass p,.ExternalClass span,.ExternalClass font,.ExternalClass td,.ExternalClass div{line-height:150%}a{text-decoration:none}*{color:inherit}a[x-apple-data-detectors],u+#body a,#MessageViewBody a{color:inherit;text-decoration:none;font-size:inherit;font-family:inherit;font-weight:inherit;line-height:inherit}img{-ms-interpolation-mode:bicubic}table:not([class^=s-]){font-family:Helvetica,Arial,sans-serif;mso-table-lspace:0pt;mso-table-rspace:0pt;border-spacing:0px;border-collapse:collapse}table:not([class^=s-]) td{border-spacing:0px;border-collapse:collapse}@media screen and (max-width: 600px){.w-full,.w-full>tbody>tr>td{width:100% !important}.w-24,.w-24>tbody>tr>td{width:96px !important}.w-40,.w-40>tbody>tr>td{width:160px !important}.p-lg-10:not(table),.p-lg-10:not(.btn)>tbody>tr>td,.p-lg-10.btn td a{padding:0 !important}.p-3:not(table),.p-3:not(.btn)>tbody>tr>td,.p-3.btn td a{padding:12px !important}.p-6:not(table),.p-6:not(.btn)>tbody>tr>td,.p-6.btn td a{padding:24px !important}*[class*=s-lg-]>tbody>tr>td{font-size:0 !important;line-height:0 !important;height:0 !important}.s-4>tbody>tr>td{font-size:16px !important;line-height:16px !important;height:16px !important}.s-6>tbody>tr>td{font-size:24px !important;line-height:24px !important;height:24px !important}.s-10>tbody>tr>td{font-size:40px !important;line-height:40px !important;height:40px !important}}
+    </style>
 </head>
-<body bgcolor="FFFFFF" text="171717">
-Sr(a). {NOM_VENDEDOR}
-<p>Ud tiene {TOTAL_REGISTROS}   facturas por cobrar, por un total de <strong>$ {TOTAL_SALDO}</strong></p>
-<p>Le recordamos que es parte de su gestion el agilizar estas cobranzas.</p>
-<p>Las facturas mas antiguas son:</p>
-<table width="75%" align="center" id="FA_ANTIGUA" border="1" bordercolor="171717">
-  <tbody>
-    <tr>
-      <td width="13%">
-      <div align="center"><strong>N&ordm; Factura</strong></div>
-      </td>
-      <td width="13%">
-      <div align="center"><strong>Fecha</strong></div>
-      </td>
-      <td width="50%">
-      <div align="center"><strong>Cliente</strong></div>
-      </td>
-      <td width="15%">
-      <div align="center"><strong>Monto</strong></div>
-      </td>
-      <td width="8%">
-      <div align="center"><strong>%</strong></div>
-      </td>
-    </tr>
-    <!-- startBlock(FA_ANTIGUA) -->
-    <tr id="{DW_TR_ID}">
-      <td>
-      <div align="center">{NRO_FACTURA}</div>
-      </td>
-      <td>
-      <div align="center">{FECHA_FACTURA}</div>
-      </td>
-      <td>{NOM_EMPRESA}</td>
-      <td>
-      <div align="right">{MONTO}</div>
-      </td>
-      <td>
-      <div align="right">{PORC}</div>
-      </td>
-    </tr>
-    <!-- endBlock(FA_ANTIGUA) -->
-  </tbody>
-</table>
-<p>Atte.</p>
-<p>Comercial Biggi</p>
-<p>Este mensaje ha sido enviado por nuestro servidor de base de datos.</p>
-<p><br>
-<strong>Total detalle Facturas por Cobrar</strong></p>
-<table width="75%" align="center" id="FA_TODAS" border="1" bordercolor="171717">
-  <tbody>
-    <tr>
-      <td width="13%">
-      <div align="center"><strong>N&ordm; Factura</strong></div>
-      </td>
-      <td width="13%">
-      <div align="center"><strong>Fecha</strong></div>
-      </td>
-      <td width="50%">
-      <div align="center"><strong>Cliente</strong></div>
-      </td>
-      <td width="15%">
-      <div align="center"><strong>Monto</strong></div>
-      </td>
-      <td width="8%">
-      <div align="center"><strong>%</strong></div>
-      </td>
-    </tr>
-    <!-- startBlock(FA_TODAS) -->
-    <tr id="{DW_TR_ID}">
-      <td>
-      <div align="center">{NRO_FACTURA}</div>
-      </td>
-      <td>
-      <div align="center">{FECHA_FACTURA}</div>
-      </td>
-      <td>{NOM_EMPRESA}</td>
-      <td>
-      <div align="right">{MONTO}</div>
-      </td>
-      <td>
-      <div align="right">{PORC}</div>
-      </td>
-    </tr>
-    <!-- endBlock(FA_TODAS) -->
-  </tbody>
-</table>
+<body class="bg-light" style="outline: 0; width: 100%; min-width: 100%; height: 100%; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; font-family: Helvetica, Arial, sans-serif; line-height: 24px; font-weight: normal; font-size: 16px; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; color: #000000; margin: 0; padding: 0; border-width: 0;" bgcolor="#f7fafc">
+    <table class="bg-light body" valign="top" role="presentation" border="0" cellpadding="0" cellspacing="0" style="outline: 0; width: 100%; min-width: 100%; height: 100%; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; font-family: Helvetica, Arial, sans-serif; line-height: 24px; font-weight: normal; font-size: 16px; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; color: #000000; margin: 0; padding: 0; border-width: 0;" bgcolor="#f7fafc">
+        <tbody>
+            <tr>
+                <td valign="top" style="line-height: 24px; font-size: 16px; margin: 0;" align="left" bgcolor="#f7fafc">
+                    <table class="container" role="presentation" border="0" cellpadding="0" cellspacing="0" style="width: 100%;">
+                        <tbody>
+                            <tr>
+                                <td align="center" style="line-height: 24px; font-size: 16px; margin: 0; padding: 0 16px;">
+                                    <!--[if (gte mso 9)|(IE)]>
+                                    <table align="center" role="presentation">
+                                        <tbody>
+                                        <tr>
+                                            <td width="600">
+                                    <![endif]-->
+                                    <table align="center" role="presentation" border="0" cellpadding="0" cellspacing="0" style="width: 100%; max-width: 1000px; margin: 0 auto;">
+                                        <tbody>
+                                            <tr>
+                                                <td style="line-height: 24px; font-size: 16px; margin: 0;" align="left">
+                                                    <table class="card p-6 p-lg-10 space-y-4" role="presentation" border="0" cellpadding="0" cellspacing="0" style="border-radius: 6px; border-collapse: separate !important; width: 100%; overflow: hidden; border: 1px solid #e2e8f0;" bgcolor="#ffffff">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td style="line-height: 24px; font-size: 16px; width: 100%; margin: 0; padding: 10px; background-color: #919191;color: white;"" align="left" bgcolor="#ffffff">
+                                                                    
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                    
+                                                    <table class="card p-6 p-lg-10 space-y-4" role="presentation" border="0" cellpadding="0" cellspacing="0" style="border-radius: 6px; border-collapse: separate !important; width: 100%; overflow: hidden; border: 1px solid #e2e8f0;" bgcolor="#ffffff">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td style="line-height: 24px; font-size: 16px; width: 100%; margin: 0; padding: 20px 20px 20px 40px; background-color: #eb1e22;color: white;"" align="left" bgcolor="#ffffff">
+                                                                    <h1 class="h3 fw-700" style="padding-top: 0; padding-bottom: 0; font-weight: 700 !important; vertical-align: baseline; font-size: 20px; line-height: 33.6px; margin: 0;" align="left">
+                                                                        Sr(a). {NOM_VENDEDOR}
+                                                                    </h1>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+
+                                                    <table class="card p-6 p-lg-10 space-y-4" role="presentation" border="0" cellpadding="0" cellspacing="0" style="border-radius: 6px; border-collapse: separate !important; width: 100%; overflow: hidden; border: 1px solid #e2e8f0;" bgcolor="#ffffff">
+                                                        <tbody>
+                                                                <tr>
+                                                                    <td style="line-height: 24px; font-size: 16px; width: 100%; margin: 0; padding: 40px;" align="left" bgcolor="#ffffff">
+                                                                        <p class="" style="line-height: 24px; font-size: 16px; width: 100%; margin: 0;" align="left">
+                                                                            Ud tiene {TOTAL_REGISTROS}   facturas por cobrar, por un total de <strong>$ {TOTAL_SALDO}</strong><br>
+                                                                            Le recordamos que es parte de su gestion el agilizar estas cobranzas.<br>
+                                                                            Las facturas mas antiguas son:<br><br>
+                                                                        </p>
+                                                                    </td>
+                                                                </tr>
+                                                        </tbody>
+                                                    </table>
+                                                    <br />
+                                                    <table class="table table-striped thead-default table-bordered" border="0" cellpadding="0" cellspacing="0" style="width: 100%; max-width: 100%; border: 1px solid #e2e8f0;">
+                                                        <thead>
+                                                            <tr>
+                                                                <th colspan="6" style="line-height: 24px; font-size: 16px; margin: 0; padding: 6px; border-color: #e2e8f0; border-style: solid; border-width: 1px 1px 2px;" align="center" valign="top">FACTURAS MAS DE 60 DÍAS</th>
+                                                            </tr>
+                                                            <tr>
+                                                                <th style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border-color: #e2e8f0; border-style: solid; border-width: 1px 1px 2px;" align="left" valign="top">NRO FACTURA</th>
+                                                                <th style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border-color: #e2e8f0; border-style: solid; border-width: 1px 1px 2px;" align="center" valign="top">FECHA FACTURA</th>
+                                                                <th style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border-color: #e2e8f0; border-style: solid; border-width: 1px 1px 2px;" align="center" valign="top">NRO NOTA VENTA</th>
+                                                                <th style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border-color: #e2e8f0; border-style: solid; border-width: 1px 1px 2px;" align="right" valign="top">CLIENTE</th>
+                                                                <th style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border-color: #e2e8f0; border-style: solid; border-width: 1px 1px 2px;" align="center" valign="top">TOTAL CON IVA</th>
+                                                                <th style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border-color: #e2e8f0; border-style: solid; border-width: 1px 1px 2px;" align="center" valign="top">%</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <!-- startBlock(FA_60_DIAS) -->
+                                                            <tr bgcolor="#f2f2f2">
+                                                                <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="center" valign="top">{NRO_FACTURA}</td>
+                                                                <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="center" valign="top">{FECHA_FACTURA}</td>
+                                                                <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="center" valign="top">{COD_DOC}</td>
+                                                                <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="left" valign="top">{NOM_EMPRESA}</td>
+                                                                <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="right" valign="top">{MONTO}</td>
+                                                                <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="right" valign="top">{PORC}</td>
+                                                            </tr>
+                                                            <!-- endBlock(FA_60_DIAS) -->
+                                                        </tbody>
+                                                    </table>
+                                                    <br />
+                                                    <table class="table table-striped thead-default table-bordered" border="0" cellpadding="0" cellspacing="0" style="width: 100%; max-width: 100%; border: 1px solid #e2e8f0;">
+                                                        <thead>
+                                                            <tr>
+                                                                <th colspan="6" style="line-height: 24px; font-size: 16px; margin: 0; padding: 6px; border-color: #e2e8f0; border-style: solid; border-width: 1px 1px 2px;" align="center" valign="top">FACTURAS MAS DE 30 DÍAS Y MENOS DE 60</th>
+                                                            </tr>
+                                                            <tr>
+                                                                <th style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border-color: #e2e8f0; border-style: solid; border-width: 1px 1px 2px;" align="left" valign="top">NRO FACTURA</th>
+                                                                <th style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border-color: #e2e8f0; border-style: solid; border-width: 1px 1px 2px;" align="center" valign="top">FECHA FACTURA</th>
+                                                                <th style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border-color: #e2e8f0; border-style: solid; border-width: 1px 1px 2px;" align="center" valign="top">NRO NOTA VENTA</th>
+                                                                <th style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border-color: #e2e8f0; border-style: solid; border-width: 1px 1px 2px;" align="right" valign="top">CLIENTE</th>
+                                                                <th style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border-color: #e2e8f0; border-style: solid; border-width: 1px 1px 2px;" align="center" valign="top">TOTAL CON IVA</th>
+                                                                <th style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border-color: #e2e8f0; border-style: solid; border-width: 1px 1px 2px;" align="center" valign="top">%</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <!-- startBlock(FA_30_60_DIAS) -->
+                                                            <tr bgcolor="#f2f2f2">
+                                                                <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="center" valign="top">{NRO_FACTURA}</td>
+                                                                <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="center" valign="top">{FECHA_FACTURA}</td>
+                                                                <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="center" valign="top">{COD_DOC}</td>
+                                                                <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="left" valign="top">{NOM_EMPRESA}</td>
+                                                                <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="right" valign="top">{MONTO}</td>
+                                                                <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="right" valign="top">{PORC}</td>
+                                                            </tr>
+                                                            <!-- endBlock(FA_30_60_DIAS) -->
+                                                        </tbody>
+                                                    </table>
+                                                    <br />
+                                                    <table class="table table-striped thead-default table-bordered" border="0" cellpadding="0" cellspacing="0" style="width: 100%; max-width: 100%; border: 1px solid #e2e8f0;">
+                                                        <thead>
+                                                            <tr>
+                                                                <th colspan="6" style="line-height: 24px; font-size: 16px; margin: 0; padding: 6px; border-color: #e2e8f0; border-style: solid; border-width: 1px 1px 2px;" align="center" valign="top">FACTURAS MENOS DE 30 DÍAS</th>
+                                                            </tr>
+                                                            <tr>
+                                                                <th style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border-color: #e2e8f0; border-style: solid; border-width: 1px 1px 2px;" align="left" valign="top">NRO FACTURA</th>
+                                                                <th style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border-color: #e2e8f0; border-style: solid; border-width: 1px 1px 2px;" align="center" valign="top">FECHA FACTURA</th>
+                                                                <th style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border-color: #e2e8f0; border-style: solid; border-width: 1px 1px 2px;" align="center" valign="top">NRO NOTA VENTA</th>
+                                                                <th style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border-color: #e2e8f0; border-style: solid; border-width: 1px 1px 2px;" align="right" valign="top">CLIENTE</th>
+                                                                <th style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border-color: #e2e8f0; border-style: solid; border-width: 1px 1px 2px;" align="center" valign="top">TOTAL CON IVA</th>
+                                                                <th style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border-color: #e2e8f0; border-style: solid; border-width: 1px 1px 2px;" align="center" valign="top">%</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <!-- startBlock(FA_30_DIAS) -->
+                                                            <tr bgcolor="#f2f2f2">
+                                                                <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="center" valign="top">{NRO_FACTURA}</td>
+                                                                <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="center" valign="top">{FECHA_FACTURA}</td>
+                                                                <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="center" valign="top">{COD_DOC}</td>
+                                                                <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="left" valign="top">{NOM_EMPRESA}</td>
+                                                                <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="right" valign="top">{MONTO}</td>
+                                                                <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="right" valign="top">{PORC}</td>
+                                                            </tr>
+                                                            <!-- endBlock(FA_30_DIAS) -->
+                                                        </tbody>
+                                                    </table>
+                                                    <br />
+                                                    <table class="table table-striped thead-default table-bordered" border="0" cellpadding="0" cellspacing="0" style="width: 100%; max-width: 100%; border: 1px solid #e2e8f0;">
+                                                        <thead>
+                                                            <tr>
+                                                                <th colspan="6" style="line-height: 24px; font-size: 16px; margin: 0; padding: 6px; border-color: #e2e8f0; border-style: solid; border-width: 1px 1px 2px;" align="center" valign="top">TODAS LAS FACTURAS ORDENADAS DESDE LA MAS ANTIGUA A LA MAS NUEVA</th>
+                                                            </tr>
+                                                            <tr>
+                                                                <th style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border-color: #e2e8f0; border-style: solid; border-width: 1px 1px 2px;" align="center" valign="top">NRO FACTURA</th>
+                                                                <th style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border-color: #e2e8f0; border-style: solid; border-width: 1px 1px 2px;" align="center" valign="top">FECHA FACTURA</th>
+                                                                <th style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border-color: #e2e8f0; border-style: solid; border-width: 1px 1px 2px;" align="center" valign="top">NRO NOTA VENTA</th>
+                                                                <th style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border-color: #e2e8f0; border-style: solid; border-width: 1px 1px 2px;" align="center" valign="top">CLIENTE</th>
+                                                                <th style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border-color: #e2e8f0; border-style: solid; border-width: 1px 1px 2px;" align="center" valign="top">TOTAL CON IVA</th>
+                                                                <th style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border-color: #e2e8f0; border-style: solid; border-width: 1px 1px 2px;" align="center" valign="top">%</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <!-- startBlock(FA_ANTIGUA) -->
+                                                            <tr bgcolor="#f2f2f2">
+                                                                <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="center" valign="top">{NRO_FACTURA}</td>
+                                                                <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="center" valign="top">{FECHA_FACTURA}</td>
+                                                                <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="center" valign="top">{COD_DOC}</td>
+                                                                <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="left" valign="top">{NOM_EMPRESA}</td>
+                                                                <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="right" valign="top">{MONTO}</td>
+                                                                <td style="line-height: 24px; font-size: 16px; margin: 0; padding: 12px; border: 1px solid #e2e8f0;" align="right" valign="top">{PORC}</td>
+                                                            </tr>
+                                                            <!-- endBlock(FA_ANTIGUA) -->
+                                                        </tbody>
+                                                    </table>
+
+                                                    <table class="card p-6 p-lg-10 space-y-4" role="presentation" border="0" cellpadding="0" cellspacing="0" style="border-radius: 6px; border-collapse: separate !important; width: 100%; overflow: hidden; border: 1px solid #e2e8f0;" bgcolor="#ffffff">
+                                                        <tbody>
+                                                                <tr>
+                                                                    <td style="line-height: 24px; font-size: 16px; width: 100%; margin: 0; padding: 40px;" align="left" bgcolor="#ffffff">
+                                                                        <p class="" style="line-height: 24px; font-size: 16px; width: 100%; margin: 0;" align="left">
+                                                                            Atte.<br>
+                                                                            Comercial Biggi<br>
+                                                                            Este mensaje ha sido enviado por nuestro servidor de base de datos.
+                                                                        </p>
+                                                                    </td>
+                                                                </tr>
+                                                        </tbody>
+                                                    </table>
+
+                                                    <table class="card p-6 p-lg-10 space-y-4" role="presentation" border="0" cellpadding="0" cellspacing="0" style="border-radius: 6px; border-collapse: separate !important; width: 100%; overflow: hidden; border: 1px solid #e2e8f0;" bgcolor="#ffffff">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td style="line-height: 24px; font-size: 16px; width: 100%; margin: 0; padding: 10px; background-color: #eb1e22;color: white;"" align="left" bgcolor="#ffffff">
+                                                                    
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <!--[if (gte mso 9)|(IE)]>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <![endif]-->
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </body>
 </html>

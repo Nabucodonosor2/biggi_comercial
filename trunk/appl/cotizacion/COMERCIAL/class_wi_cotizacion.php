@@ -617,6 +617,13 @@ class wi_cotizacion extends wi_cotizacion_base {
 							WHEN 40 THEN ''
 							ELSE 'none'
 						END TR_DISPLAY_TXT
+                        ,CASE $this->cod_usuario
+                            WHEN 1 THEN 'S'
+                            WHEN 2 THEN 'S'
+                            WHEN 4 THEN 'S'
+                            WHEN 10 THEN 'S'
+                            ELSE 'N'
+                        END VALIDA_USUARIO_BIGGI
 				from 	COTIZACION C, USUARIO U, EMPRESA E, ESTADO_COTIZACION EC, PERSONA P
 				where	COD_COTIZACION = {KEY1} and
 						U.COD_USUARIO = C.COD_USUARIO AND
@@ -651,6 +658,7 @@ class wi_cotizacion extends wi_cotizacion_base {
         $this->dws['dw_cotizacion']->add_control(new static_num('PORC_IVA_L', 1));
         
         // DATOS GENERALES
+        $this->dws['dw_cotizacion']->add_control(new edit_text_hidden('VALIDA_USUARIO_BIGGI'));
         $this->dws['dw_cotizacion']->add_control($control = new edit_porcentaje('DESCTO_1_AUTORIZADO'));
         $control->set_onChange("valida_descuento_aut(this);");
         $this->dws['dw_cotizacion']->add_control($control = new edit_porcentaje('DESCTO_2_AUTORIZADO'));
@@ -858,6 +866,11 @@ class wi_cotizacion extends wi_cotizacion_base {
         $this->dws['dw_cotizacion']->insert_row();
         $this->dws['dw_cotizacion']->set_item(0, 'FECHA_COTIZACION', $this->current_date());
         $this->dws['dw_cotizacion']->set_item(0, 'COD_USUARIO', $this->cod_usuario);
+
+        if($this->cod_usuario == 1 || $this->cod_usuario == 2 || $this->cod_usuario == 4 || $this->cod_usuario == 10)
+            $this->dws['dw_cotizacion']->set_item(0, 'VALIDA_USUARIO_BIGGI', 'S');
+        else
+            $this->dws['dw_cotizacion']->set_item(0, 'VALIDA_USUARIO_BIGGI', 'N');
         
         $db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
         $sql = "SELECT CONVERT(VARCHAR, PORC_PARTICIPACION) PORC_PARTICIPACION

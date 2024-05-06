@@ -42,6 +42,8 @@ class wo_cotizacion extends wo_cotizacion_base {
 			
      		parent::w_output('cotizacion', $sql, $_REQUEST['cod_item_menu']);
 
+
+
 		$this->dw->add_control(new edit_nro_doc('COD_COTIZACION','COTIZACION'));
 		$this->dw->add_control(new edit_precio('TOTAL_NETO'));
       	$this->dw->add_control(new static_num('RUT'));
@@ -60,7 +62,7 @@ class wo_cotizacion extends wo_cotizacion_base {
 	      
 	    $this->add_header(new header_text('NOM_EMPRESA', 'E.NOM_EMPRESA', 'Razón Social'));
 	    $this->add_header(new header_text('REFERENCIA', 'C.REFERENCIA', 'Referencia'));
-		$this->add_header(new header_vendedor('INI_USUARIO', 'C.COD_USUARIO_VENDEDOR1', 'V.'));
+		$this->add_header(new header_vendedor('INI_USUARIO', 'C.COD_USUARIO_VENDEDOR1', 'V1.'));
 
 	    $this->add_header($header = new header_num('COD_NOTA_VENTA', 'dbo.f_get_cod_nv_from_cot(C.COD_COTIZACION)', 'NV'));
 	    $header->field_bd_order = 'COD_NOTA_VENTA';

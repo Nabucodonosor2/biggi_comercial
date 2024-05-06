@@ -124,3 +124,20 @@ function display_rechazo(){
 		document.getElementById('MOTIVO_RECHAZO').style.display= 'none';
 	}
 }
+
+function select_1_empresa(valores, record) {
+	const cod_empresa			= get_value('COD_EMPRESA_0');
+	const valida_usuario_biggi	= get_value('VALIDA_USUARIO_BIGGI_0');
+
+	if(cod_empresa != 1337){
+		set_values_empresa(valores, record);
+	}else{
+		if(valida_usuario_biggi == 'S'){
+			set_values_empresa(valores, record);
+		}else{
+			const control = document.getElementById('COD_EMPRESA_0');
+			alert('No se puede indicar a "Comercial Biggi Chile" como cliente de la cotización.');
+			set_empresa_vacio(control)
+		}
+	}
+}

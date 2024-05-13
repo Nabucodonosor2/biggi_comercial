@@ -712,17 +712,29 @@ class wi_inf_ventas_por_equipo extends w_input {
 			
 		}
 	}
+	
 	function get_key() {
 		return $this->cod_doc;
 	}
+
 	function get_key_para_ruta_menu() {
-		
 		if ($this->tipo_doc == 'FA')
 			return $this->dws['dw_factura']->get_item(0, 'NRO_FACTURA');
 		else if ($this->tipo_doc == 'NC')
 			return $this->dws['dw_nota_credito']->get_item(0, 'NRO_NOTA_CREDITO_NC');
 	
 		return parent::get_key_para_ruta_menu();
+	}
+
+	function navegacion($temp){
+		parent::navegacion($temp);
+		$key = $this->limpia_key($this->get_key());
+		if ($this->tipo_doc == 'FA')
+			$nom_tabla = 'factura';
+		else if ($this->tipo_doc == 'NC')
+			$nom_tabla = 'nota_credito';
+
+		$temp->setVar("WI_FECHA_MODIF", 'Ultima Modificación: '.$this->last_modif($nom_tabla, $key));
 	}
 }
 ?>

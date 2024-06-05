@@ -158,15 +158,18 @@
 
 		$mail->ClearAddresses();
 		
-        $mail->AddAddress('isra.campos.o@gmail.com', 'PRUEBA');
+        //$mail->AddAddress('isra.campos.o@gmail.com', 'PRUEBA');
         $mail->AddAddress('mherrera@biggi.cl', 'Marcelo Herrera');
+        $mail->AddAddress('fpuebla@biggi.cl', 'Felipe Puebla');
+        //$mail->AddAddress('mherrera@biggi.cl', 'Marcelo Herrera');
 		/*$mail->AddAddress($mail_vendedor, $nom_vendedor);
 		
 		$mail->AddAddress('ascianca@biggi.cl', 'Angel Scianca');
 		$mail->AddAddress('sergio.pechoante@biggi.cl', 'Sergio Pechoante');
 		$mail->AddAddress('jcatalan@biggi.cl', 'José Catalan');
 		
-		$mail->AddBCC('mherrera@biggi.cl', 'Marcelo Herrera');*/	
+		*/
+    	$mail->AddBCC('isra.campos.o@gmail.com', 'PRUEBA');
 		
 		$mail->Body = $html;
 		$mail->AltBody = "";

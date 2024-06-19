@@ -133,29 +133,56 @@ class wo_solicitud_cotizacion extends w_output_biggi {
 			$this->dw->entrable = false;
 			$this->retrieve();		
 		}
+
+		function habilita_boton($temp, $boton, $habilita) {
+			parent::habilita_boton($temp, $boton, $habilita);
+			
+			$ruta_imag = '../../../../commonlib/trunk/images/';
+			if (defined('K_CLIENTE')) {
+				if (file_exists('../../images_appl/'.K_CLIENTE.'/images/b_'.$boton.'.jpg')){
+					$ruta_imag = '../../images_appl/'.K_CLIENTE.'/images/';
+				}
+			}
+
+			if($boton == 'export'){
+				if ($habilita){
+					$temp->setVar("WO_".strtoupper($boton), '<input name="b_'.$boton.'" id="b_'.$boton.'" src="'.$ruta_imag.'b_'.$boton.'.jpg" type="image" '.
+																									'onMouseDown="MM_swapImage(\'b_'.$boton.'\',\'\',\''.$ruta_imag.'b_'.$boton.'_click.jpg\',1)" '.
+																									'onMouseUp="MM_swapImgRestore()" onMouseOut="MM_swapImgRestore()" '.
+																									'onMouseOver="MM_swapImage(\'b_'.$boton.'\',\'\',\''.$ruta_imag.'b_'.$boton.'_over.jpg\',1)" '.
+																									'/>');
+				}else{
+					$temp->setVar("WO_".strtoupper($boton), '');
+				}
+			}	
+		}
+
 		function redraw(&$temp) {
 			parent::redraw($temp);
-			$this->habilita_boton($temp, 'no_save', $this->modify);		
-			$this->habilita_boton($temp, 'save', $this->modify);		
-			$this->habilita_boton($temp, 'modify', !$this->modify);	
-			//$this->habilita_boton($temp, 'anula_ticket', true);
+
+			if($this->cod_usuario == 1){
+				$this->habilita_boton($temp, 'no_save', $this->modify);		
+				$this->habilita_boton($temp, 'save', $this->modify);		
+				$this->habilita_boton($temp, 'modify', !$this->modify);
+				$this->habilita_boton($temp, 'export', true);
+			}else{
+				$this->habilita_boton($temp, 'export', false);
+			}
 		}
+
 		function procesa_event(){
-		if(isset($_POST['b_modify_x'])){
-			$this->modify = true;
-			$this->dw->entrable = true;
-			$this->_redraw();
-		}
-		elseif(isset($_POST['b_no_save_x'])){
-			$this->modify = false;
-			$this->dw->entrable = false;
-			$this->_redraw();
-		}
-		elseif(isset($_POST['b_save_x'])){
-			$this->save();
-		}
-		else
-			parent::procesa_event();
+			if(isset($_POST['b_modify_x'])){
+				$this->modify = true;
+				$this->dw->entrable = true;
+				$this->_redraw();
+			}elseif(isset($_POST['b_no_save_x'])){
+				$this->modify = false;
+				$this->dw->entrable = false;
+				$this->_redraw();
+			}elseif(isset($_POST['b_save_x'])){
+				$this->save();
+			}else
+				parent::procesa_event();
 		}
 }
 ?>

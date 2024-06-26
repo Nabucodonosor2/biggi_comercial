@@ -44,6 +44,7 @@ class wi_solicitud_cotizacion extends w_input{
 						,PORC_IVA 
 						,MONTO_IVA
 						,TOTAL_CON_IVA
+						,MOTIVO_ANULACION
 						,(SELECT NOM_ESTADO_SOLICITUD_COTIZACION FROM ESTADO_SOLICITUD_COTIZACION WHERE COD_ESTADO_SOLICITUD_COTIZACION = S.COD_ESTADO_SOLICITUD_COTIZACION) ESTADO_SOLICITUD_COTIZACION
 						,(SELECT INI_USUARIO FROM USUARIO WHERE COD_USUARIO = S.COD_USUARIO_VENDEDOR1_RESP) NOM_RESPONSABLE
  			from		SOLICITUD_COTIZACION S
@@ -68,6 +69,7 @@ class wi_solicitud_cotizacion extends w_input{
 		$this->dws['dw_solicitud_cotizacion']->add_control(new static_num('TOTAL_CON_IVA'));
 		$this->dws['dw_solicitud_cotizacion']->add_control(new static_text('NOM_RESPONSABLE'));
 		$this->dws['dw_solicitud_cotizacion']->add_control(new static_text('ESTADO_SOLICITUD_COTIZACION'));	
+		$this->dws['dw_solicitud_cotizacion']->add_control(new edit_text_multiline('MOTIVO_ANULACION', 44, 3));
 }
 	function load_record() {
 		$cod_solicitud_cotizacion = $this->get_item_wo($this->current_record, 'COD_SOLICITUD_COTIZACION');

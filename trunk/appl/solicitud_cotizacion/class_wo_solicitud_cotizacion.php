@@ -59,7 +59,8 @@ class wo_solicitud_cotizacion extends w_output_biggi{
 												LEFT OUTER JOIN USUARIO U ON S.COD_USUARIO_VENDEDOR1_RESP = U.COD_USUARIO
 						,CONTACTO_PERSONA CP
 						,CONTACTO C
-			where		C.COD_CONTACTO = S.COD_CONTACTO";
+			where		S.COD_ESTADO_SOLICITUD_COTIZACION <> 7
+			and			C.COD_CONTACTO = S.COD_CONTACTO";
 			
 		$priv = $this->get_privilegio_opcion_usuario('999005', $this->cod_usuario);
 		
@@ -93,8 +94,8 @@ class wo_solicitud_cotizacion extends w_output_biggi{
       	$sql = "select COD_ESTADO_COTIZACION, NOM_ESTADO_COTIZACION from ESTADO_COTIZACION EC where COD_ESTADO_COTIZACION = EC.COD_ESTADO_COTIZACION";
       	$this->add_header(new header_drop_down('NOM_ESTADO_COTIZACION', 'CO.COD_ESTADO_COTIZACION', 'Estado Cotización', $sql));
       	
-      	$h_estado->valor_filtro = 99;
-	    $this->make_filtros();
+      	//$h_estado->valor_filtro = 99;
+	    //$this->make_filtros();
 	}
 		
 	function save(){

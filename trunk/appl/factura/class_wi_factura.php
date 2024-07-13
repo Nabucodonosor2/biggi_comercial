@@ -577,7 +577,14 @@ class wi_factura_base extends w_cot_nv {
         // Marca especial cuando viene desde wo_inf_facturas_por_cobrar
         // debe setearse antes del llamado del parent
         if (session::is_set('DESDE_wo_inf_facturas_por_cobrar')) {
+            //sesion necesario para saber el registro seleccionado
+            $cod_registro = session::get("COD_registro");
+            //al momendo de devolver se cambia la tabla para que haga el line_select
+            session::set('W_OUTPUT_RECNO_'.'inf_facturas_por_cobrar', $cod_registro);	// para indicar el registro donde se clickeo
             session::un_set('DESDE_wo_inf_facturas_por_cobrar');
+            //eliminamos la sesion
+            session::un_set("COD_registro");
+            
             $this->desde_wo_inf_facturas_por_cobrar = true;
         }
         else if (session::is_set('DESDE_wo_inf_facturas_por_mes')) {

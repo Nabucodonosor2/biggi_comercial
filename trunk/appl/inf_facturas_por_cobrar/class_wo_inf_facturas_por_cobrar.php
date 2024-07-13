@@ -92,6 +92,8 @@ class wo_inf_facturas_por_cobrar_base extends w_informe_pantalla {
 	function detalle_record($rec_no) {
 		session::set('DESDE_wo_factura', 'desde output');	// para indicar que viene del output
 		session::set('DESDE_wo_inf_facturas_por_cobrar', 'true');
+		//registro selecionado 
+    	session::set('COD_registro',$rec_no);
 		$ROOT = $this->root_url;
 		$url = $ROOT.'appl/factura';
 		header ('Location:'.$url.'/wi_factura.php?rec_no='.$rec_no.'&cod_item_menu=1535');
@@ -156,7 +158,7 @@ class wo_inf_facturas_por_cobrar_base extends w_informe_pantalla {
 			}
 		}
 	}
-
+ 
 	function procesa_event() {
 		if(isset($_POST['b_print_vendedor_x'])){
 			$this->print_vendedor();

@@ -1,5 +1,6 @@
 <?php
 require_once(dirname(__FILE__)."/../../../../commonlib/trunk/php/auto_load.php");
+require_once(dirname(__FILE__)."/../common_appl/class_header_vendedor.php");
 require_once(dirname(__FILE__)."/../common_appl/class_w_output_biggi.php");
 
 class wo_ingreso_pago extends w_output_biggi {
@@ -26,6 +27,7 @@ class wo_ingreso_pago extends w_output_biggi {
 						,dbo.f_ingreso_pago_get_cant_doc(IP.COD_INGRESO_PAGO) CANT_DOC
 						,IP.NOM_TIPO_ORIGEN_PAGO
                         ,U.INI_USUARIO
+						,IP.COD_USUARIO
 				FROM 	INGRESO_PAGO IP, EMPRESA E, ESTADO_INGRESO_PAGO EIP, USUARIO U
 				WHERE 	IP.COD_EMPRESA = E.COD_EMPRESA AND
 						IP.COD_ESTADO_INGRESO_PAGO = EIP.COD_ESTADO_INGRESO_PAGO AND
@@ -45,6 +47,7 @@ class wo_ingreso_pago extends w_output_biggi {
 						,dbo.f_ingreso_pago_get_cant_doc(IP.COD_INGRESO_PAGO) CANT_DOC
 						,IP.NOM_TIPO_ORIGEN_PAGO
                         ,U.INI_USUARIO
+						,IP.COD_USUARIO
 				FROM 	INGRESO_PAGO IP, EMPRESA E, ESTADO_INGRESO_PAGO EIP, USUARIO U
 				WHERE 	IP.COD_EMPRESA = E.COD_EMPRESA AND
 						IP.COD_ESTADO_INGRESO_PAGO = EIP.COD_ESTADO_INGRESO_PAGO AND
@@ -78,7 +81,8 @@ class wo_ingreso_pago extends w_output_biggi {
 				select 'WEBPAY PLUS' COD_TIPO_ORIGEN_PAGO
 						,'WEBPAY PLUS' NOM_TIPO_ORIGEN_PAGO";
         $this->add_header(new header_drop_down_string('NOM_TIPO_ORIGEN_PAGO', 'IP.NOM_TIPO_ORIGEN_PAGO', 'Tipo IP', $sql));
-        $this->add_header(new header_text('INI_USUARIO', 'INI_USUARIO', 'Emisor'));
+		$this->add_header(new header_vendedor('INI_USUARIO', 'IP.COD_USUARIO', 'Emisor'));
+        //$this->add_header(new header_text('INI_USUARIO', 'INI_USUARIO', 'Emisor'));
         
         // dw checkbox
 		$priv = $this->get_privilegio_opcion_usuario(self::K_AUTORIZA_SUMAR, $this->cod_usuario);
@@ -106,6 +110,13 @@ class wo_ingreso_pago extends w_output_biggi {
 			$temp->setVar("wo_registro.WO_COLOR_CSS", 'red');
 		else
 			$temp->setVar("wo_registro.WO_COLOR_CSS", '');	
+	}
+
+	function make_menu(&$temp){
+		$menu = session::get('menu_appl');
+		$menu->ancho_completa_menu = 286;
+		$menu->draw($temp);
+		$menu->ancho_completa_menu = 209;
 	}
 
 	function redraw(&$temp){

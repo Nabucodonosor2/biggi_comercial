@@ -199,6 +199,17 @@ class wo_solicitud_cotizacion extends w_output_biggi{
 		}
 	}
 
+	function redraw_item(&$temp, $ind, $record){
+		parent::redraw_item($temp, $ind, $record);
+
+		$NOM_ESTADO_SOLICITUD = $this->dw->get_item($record, 'NOM_ESTADO_SOLICITUD');
+
+		if($NOM_ESTADO_SOLICITUD == 'DUPLICADA' || $NOM_ESTADO_SOLICITUD == 'RECHAZADA' || $NOM_ESTADO_SOLICITUD == 'ANULADA' )
+			$temp->setVar("wo_registro.WO_COLOR_CSS", 'red');
+		else
+			$temp->setVar("wo_registro.WO_COLOR_CSS", '');
+	}
+
 	function procesa_event(){
 		if(isset($_POST['b_modify_x'])){
 			$this->modify = true;

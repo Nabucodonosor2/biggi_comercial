@@ -1,54 +1,57 @@
-ALTER PROCEDURE [dbo].[spu_nota_venta]
-			(@ve_operacion varchar(20),
-			@ve_cod_nota_venta numeric,
-			@ve_fecha_nota_venta varchar(10)= null,
-			@ve_cod_usuario numeric = null, 
-			@ve_cod_estado_nota_venta numeric = null, 
-			@ve_nro_orden_compra varchar(40) = null,
-			@ve_fecha_orden_compra_cliente datetime = null,
-			@ve_centro_costo_cliente varchar(20) = null, 
-			@ve_cod_moneda numeric = null, 
-			@ve_valor_tipo_cambio T_PRECIO = null, 
-			@ve_cod_cotizacion numeric = null,
-			@ve_cod_usuario_vendedor1 numeric = null,
-			@ve_porc_vendedor1 T_PORCENTAJE = null,
-			@ve_cod_usuario_vendedor2 numeric = null,
-			@ve_porc_vendedor2 T_PORCENTAJE = null,
-			@ve_cod_cuenta_corriente numeric = null,
-			@ve_cod_origen_venta numeric = null,
-			@ve_referencia varchar(100) = null,
-			@ve_cod_empresa numeric = null,
-			@ve_cod_sucursal_despacho numeric = null,
-			@ve_cod_sucursal_factura numeric = null,
-			@ve_cod_persona numeric = null,
-			@ve_subtotal T_PRECIO = null,
-			@ve_porc_dscto1 T_PORCENTAJE = null,
-			@ve_monto_dscto1 T_PRECIO = null,
-			@ve_porc_dscto2 T_PORCENTAJE = null,
-			@ve_monto_dscto2 T_PRECIO = null,
-			@ve_porc_iva T_PORCENTAJE = null,
-			@ve_monto_iva T_PRECIO = null,
-			@ve_total_con_iva T_PRECIO = null,
-			@ve_fecha_entrega varchar(10) = null,
-			@ve_obs_despacho text = null,
-			@ve_obs text = null,	
-			@ve_cod_forma_pago numeric = null,
-			@ve_motivo_anula varchar(100) = null,
-			@ve_cod_usuario_anula numeric = null,
-			@ve_total_neto T_PRECIO = null,
-			@ve_ingreso_usuario_dscto1 varchar(1) = null,
-			@ve_ingreso_usuario_dscto2 varchar(1) = null,
-			@ve_nom_forma_pago_otro varchar(100) = null,
-			@ve_cantidad_doc_forma_pago_otro numeric = null,
-			@ve_porc_dscto_corporativo T_PORCENTAJE = null,
-			@ve_cod_usuario_cierre numeric = null,
-			@ve_fecha_plazo_cierre varchar(20) = null,
-			@ve_cod_usuario_confirma numeric = null,
-			@ve_motivo_cierre_sin_part text = null ,
-			@ve_cirre_sin_p varchar(1) = null,
-			@ve_creada_en_sv varchar(1) = null)
-				
-
+ALTER PROCEDURE spu_nota_venta (@ve_operacion						varchar(20),
+								@ve_cod_nota_venta					numeric,
+								@ve_fecha_nota_venta				varchar(10)= null,
+								@ve_cod_usuario						numeric = null, 
+								@ve_cod_estado_nota_venta			numeric = null, 
+								@ve_nro_orden_compra				varchar(40) = null,
+								@ve_fecha_orden_compra_cliente		datetime = null,
+								@ve_centro_costo_cliente			varchar(20) = null, 
+								@ve_cod_moneda						numeric = null, 
+								@ve_valor_tipo_cambio				T_PRECIO = null, 
+								@ve_cod_cotizacion					numeric = null,
+								@ve_cod_usuario_vendedor1			numeric = null,
+								@ve_porc_vendedor1					T_PORCENTAJE = null,
+								@ve_cod_usuario_vendedor2			numeric = null,
+								@ve_porc_vendedor2					T_PORCENTAJE = null,
+								@ve_cod_cuenta_corriente			numeric = null,
+								@ve_cod_origen_venta				numeric = null,
+								@ve_referencia						varchar(100) = null,
+								@ve_cod_empresa						numeric = null,
+								@ve_cod_sucursal_despacho			numeric = null,
+								@ve_cod_sucursal_factura			numeric = null,
+								@ve_cod_persona						numeric = null,
+								@ve_subtotal						T_PRECIO = null,
+								@ve_porc_dscto1						T_PORCENTAJE = null,
+								@ve_monto_dscto1					T_PRECIO = null,
+								@ve_porc_dscto2						T_PORCENTAJE = null,
+								@ve_monto_dscto2					T_PRECIO = null,
+								@ve_porc_iva						T_PORCENTAJE = null,
+								@ve_monto_iva						T_PRECIO = null,
+								@ve_total_con_iva					T_PRECIO = null,
+								@ve_fecha_entrega					varchar(10) = null,
+								@ve_obs_despacho					text = null,
+								@ve_obs								text = null,	
+								@ve_cod_forma_pago					numeric = null,
+								@ve_motivo_anula					varchar(100) = null,
+								@ve_cod_usuario_anula				numeric = null,
+								@ve_total_neto						T_PRECIO = null,
+								@ve_ingreso_usuario_dscto1			varchar(1) = null,
+								@ve_ingreso_usuario_dscto2			varchar(1) = null,
+								@ve_nom_forma_pago_otro				varchar(100) = null,
+								@ve_cantidad_doc_forma_pago_otro	numeric = null,
+								@ve_porc_dscto_corporativo			T_PORCENTAJE = null,
+								@ve_cod_usuario_cierre				numeric = null,
+								@ve_fecha_plazo_cierre				varchar(20) = null,
+								@ve_cod_usuario_confirma			numeric = null,
+								@ve_motivo_cierre_sin_part			text = null ,
+								@ve_cirre_sin_p						varchar(1) = null,
+								@ve_creada_en_sv					varchar(1) = null,
+								@ve_rebaja							numeric = null,
+								@ve_autoriza_procesar_venta			varchar(1) = null,
+								@ve_no_tiene_oc						varchar(1) = null,
+								@ve_correo_fa						varchar(500) = null,
+								@ve_notas_internas					text = null,
+								@ve_es_venta_web					T_SI_NO = null)
 AS
 BEGIN
 
@@ -154,7 +157,13 @@ BEGIN
 						nom_forma_pago_otro = @ve_nom_forma_pago_otro,
 						cantidad_doc_forma_pago_otro = @ve_cantidad_doc_forma_pago_otro,
 						porc_dscto_corporativo = @ve_porc_dscto_corporativo,
-						creada_en_sv = @ve_creada_en_sv
+						creada_en_sv = @ve_creada_en_sv,
+						rebaja = @ve_rebaja,
+						autoriza_procesar_venta = @ve_autoriza_procesar_venta,
+						no_tiene_oc = @ve_no_tiene_oc,
+						CORREO_FA = @ve_correo_fa,
+						NOTAS_INTERNAS = @ve_notas_internas,
+						ES_VENTA_WEB = @ve_es_venta_web
 				where 	cod_nota_venta = @ve_cod_nota_venta
 
 				-- update a confirma NV
@@ -173,7 +182,6 @@ BEGIN
 						,cod_usuario_cierre	= @ve_cod_usuario_cierre
 						,cod_estado_nota_venta = @vl_estado_nota_venta_cerrada
 					where  cod_nota_venta = @ve_cod_nota_venta
-					execute dbo.sp_nv_orden_pago @ve_cod_nota_venta, @ve_cod_usuario_cierre 
 					
 					--todas las OC asociadas a la NV las deja en estado cerrada
 					update orden_compra 
@@ -222,6 +230,9 @@ BEGIN
 					where cod_nota_venta = @ve_cod_nota_venta
 				
 			end 
+		else if(@ve_operacion='CREA_PARTICIPACION')BEGIN
+			execute dbo.sp_nv_orden_pago @ve_cod_nota_venta, @ve_cod_usuario
+		END
 		else if (@ve_operacion='INSERT') 
 			begin
 				declare
@@ -232,6 +243,8 @@ BEGIN
 				select @vl_plazo_cierre = valor 
 				from parametro
 				where cod_parametro = 24 
+				
+				SELECT @ve_nro_orden_compra = dbo.f_limpia_string(@ve_nro_orden_compra)
 
 				insert into nota_venta (
 					cod_nota_venta,
@@ -275,7 +288,13 @@ BEGIN
 					nom_forma_pago_otro,
 					cantidad_doc_forma_pago_otro,
 					porc_dscto_corporativo,
-					creada_en_sv)
+					creada_en_sv,
+					rebaja,
+					autoriza_procesar_venta,
+					no_tiene_oc,
+					CORREO_FA,
+					NOTAS_INTERNAS,
+					ES_VENTA_WEB)
 				values (
 					@ve_cod_nota_venta,
 					getdate(),
@@ -318,7 +337,13 @@ BEGIN
 					@ve_nom_forma_pago_otro,
 					@ve_cantidad_doc_forma_pago_otro,
 					dbo.f_get_porc_dscto_corporativo_empresa(@ve_cod_empresa, getdate()),
-					@ve_creada_en_sv)
+					@ve_creada_en_sv,
+					@ve_rebaja,
+					@ve_autoriza_procesar_venta,
+					@ve_no_tiene_oc,
+					@ve_correo_fa,
+					@ve_notas_internas,
+					@ve_es_venta_web)
 					
 				/*Cuando se crea una NV desde una cotización, dicha cotización debe marcarse con cod_estado_cotizacion = concretada, 
 			 	 * y todos sus compromisos debe marcarse como realizados.
@@ -467,4 +492,4 @@ BEGIN
 		where COD_NOTA_VENTA = @ve_cod_nota_venta
 		
 	END 
-END
+END;

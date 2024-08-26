@@ -1578,6 +1578,7 @@ class wi_nota_venta extends w_cot_nv {
                     ,NV.NOTAS_INTERNAS
 					,NULL REGISTRO_LISTA_NC_COMPRA
 					,'' DISPLAY_BTN_LISTA_NC
+					,ES_VENTA_WEB
 				from NOTA_VENTA NV, USUARIO U, EMPRESA E, ESTADO_NOTA_VENTA ENV, CUENTA_CORRIENTE CC, USUARIO V1
 				where COD_NOTA_VENTA = {KEY1} and
 					U.COD_USUARIO = NV.COD_USUARIO and
@@ -1669,7 +1670,7 @@ class wi_nota_venta extends w_cot_nv {
 		$this->dws['dw_nota_venta']->add_control(new edit_text('PORC_DSCTO_MAX',10, 10, 'hidden'));
 		$this->dws['dw_nota_venta']->add_control(new edit_text_hidden('PORC_DESC_PERMITIDO'));
 		
-		$this->dws['dw_nota_venta']->add_control(new edit_text('CORREO_FA',130, 500));
+		$this->dws['dw_nota_venta']->add_control(new edit_text('CORREO_FA',90, 500));
 		
 		$sql_forma_pago	= "	select COD_FORMA_PAGO
 								,NOM_FORMA_PAGO
@@ -1689,6 +1690,7 @@ class wi_nota_venta extends w_cot_nv {
 		$control->set_onClick("consulta_stock();");
 		
 		$this->dws['dw_nota_venta']->add_control(new edit_text_multiline('NOTAS_INTERNAS',54,3));
+		$this->dws['dw_nota_venta']->add_control(new edit_check_box('ES_VENTA_WEB','S','N'));
 
 		// asigna los mandatorys
 		$this->dws['dw_nota_venta']->set_mandatory('COD_ESTADO_NOTA_VENTA', 'Estado');
@@ -1875,6 +1877,7 @@ class wi_nota_venta extends w_cot_nv {
 		
 		$this->add_auditoria('REFERENCIA');
 		$this->add_auditoria('FECHA_ORDEN_COMPRA_CLIENTE');
+		$this->add_auditoria('ES_VENTA_WEB');
 		
         $this->add_auditoria_relacionada('ITEM_NOTA_VENTA', 'COD_PRODUCTO');
 		$this->add_auditoria_relacionada('ITEM_NOTA_VENTA', 'CANTIDAD');
@@ -2103,6 +2106,12 @@ class wi_nota_venta extends w_cot_nv {
 			$this->habilita_boton($temp, 'f_tecnica', true);
 		else
 			$this->habilita_boton($temp, 'f_tecnica', false);
+
+		$priv = $this->get_privilegio_opcion_usuario('991045', $this->cod_usuario);
+		if($priv == 'E')
+			$this->dws['dw_nota_venta']->set_entrable('ES_VENTA_WEB', true);
+		else
+			$this->dws['dw_nota_venta']->set_entrable('ES_VENTA_WEB', false);
 		
 	}
 
@@ -2793,6 +2802,7 @@ class wi_nota_venta extends w_cot_nv {
 		$MONTO_DSCTO2 = $this->dws['dw_nota_venta']->get_item(0, 'MONTO_DSCTO2');
 		$PORC_IVA = $this->dws['dw_nota_venta']->get_item(0, 'PORC_IVA');
 		$AUTORIZA_PROCESAR_VENTA = $this->dws['dw_nota_venta']->get_item(0, 'AUTORIZA_PROCESAR_VENTA');
+		$ES_VENTA_WEB = $this->dws['dw_nota_venta']->get_item(0, 'ES_VENTA_WEB');
 		
 		$MONTO_IVA = $this->dws['dw_nota_venta']->get_item(0, 'MONTO_IVA');
 		$TOTAL_CON_IVA = $this->dws['dw_nota_venta']->get_item(0, 'TOTAL_CON_IVA');
@@ -2864,6 +2874,7 @@ class wi_nota_venta extends w_cot_nv {
 		$PORC_DSCTO_CORPORATIVO = ($PORC_DSCTO_CORPORATIVO == '' ? 0: "$PORC_DSCTO_CORPORATIVO");
 		$REBAJA = ($REBAJA == '' ? 0: "$REBAJA");
 		$AUTORIZA_PROCESAR_VENTA = ($AUTORIZA_PROCESAR_VENTA == '' ? 'N' : "'$AUTORIZA_PROCESAR_VENTA'");
+		$ES_VENTA_WEB = ($ES_VENTA_WEB == '' ? 'N' : "'$ES_VENTA_WEB'");
 		
 		$COD_FORMA_PAGO = $this->dws['dw_nota_venta']->get_item(0, 'COD_FORMA_PAGO');
 		if ($COD_FORMA_PAGO==1){ // forma de pago = OTRO
@@ -2955,7 +2966,8 @@ class wi_nota_venta extends w_cot_nv {
 					,$AUTORIZA_PROCESAR_VENTA
 					,'$NO_TIENE_OC'
                     ,$CORREO_FA
-                    ,$NOTAS_INTERNAS";
+                    ,$NOTAS_INTERNAS
+					,$ES_VENTA_WEB";
 							
 		if ($db->EXECUTE_SP($sp, $param)){
 			if ($this->is_new_record()) {
@@ -3374,6 +3386,7 @@ class wi_nota_venta extends w_cot_nv {
                     ,'' NOTAS_INTERNAS
 					,NULL REGISTRO_LISTA_NC_COMPRA
 					,'none' DISPLAY_BTN_LISTA_NC
+					,'N' ES_VENTA_WEB
 				from COTIZACION C, USUARIO U, EMPRESA E, CUENTA_CORRIENTE CTA, USUARIO V1
 				WHERE C.COD_COTIZACION = ".$cod_cotizacion." and
 					U.COD_USUARIO = ".$this->cod_usuario." and

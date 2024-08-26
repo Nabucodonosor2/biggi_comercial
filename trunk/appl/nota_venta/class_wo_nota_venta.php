@@ -4,27 +4,29 @@ require_once(dirname(__FILE__)."/../common_appl/class_w_output_biggi.php");
 require_once(dirname(__FILE__)."/../common_appl/class_header_vendedor.php");
 
 class wo_nota_venta extends w_output_biggi {
-	const K_ESTADO_EMITIDA 			= 1;	
-	const K_ESTADO_CERRADA			= 2;
-	const K_ESTADO_ANULADA			= 3;
-	const K_ESTADO_CONFIRMADA		= 4;
-	const K_PARAM_NOM_EMPRESA 		= 6;
-	const K_PARAM_DIR_EMPRESA 		= 10;
-	const K_PARAM_TEL_EMPRESA 		= 11;
-	const K_PARAM_FAX_EMPRESA 		= 12;
-	const K_PARAM_MAIL_EMPRESA 		= 13;
-	const K_PARAM_CIUDAD_EMPRESA	= 14;
-	const K_PARAM_PAIS_EMPRESA 		= 15; 
-	const K_PARAM_GTE_VTA 			= 16;
-	const K_PARAM_RUT_EMPRESA 		= 20;
-	const K_PARAM_SITIO_WEB_EMPRESA	= 25;
-	const K_PARAM_PORC_DSCTO_MAX 	= 26;
-	const K_PARAM_RANGO_DOC_NOTA_VENTA = 27;
-	const K_AUTORIZA_CIERRE 		 = '991005';
-	const K_CAMBIA_DSCTO_CORPORATIVO = '991010';
-	//const K_AUTORIZA_EXPORTAR = '991045';
+	const K_ESTADO_EMITIDA 				= 1;	
+	const K_ESTADO_CERRADA				= 2;
+	const K_ESTADO_ANULADA				= 3;
+	const K_ESTADO_CONFIRMADA			= 4;
+	const K_PARAM_NOM_EMPRESA 			= 6;
+	const K_PARAM_DIR_EMPRESA 			= 10;
+	const K_PARAM_TEL_EMPRESA 			= 11;
+	const K_PARAM_FAX_EMPRESA 			= 12;
+	const K_PARAM_MAIL_EMPRESA 			= 13;
+	const K_PARAM_CIUDAD_EMPRESA		= 14;
+	const K_PARAM_PAIS_EMPRESA 			= 15; 
+	const K_PARAM_GTE_VTA 				= 16;
+	const K_PARAM_RUT_EMPRESA 			= 20;
+	const K_PARAM_SITIO_WEB_EMPRESA		= 25;
+	const K_PARAM_PORC_DSCTO_MAX 		= 26;
+	const K_PARAM_RANGO_DOC_NOTA_VENTA	= 27;
+	const K_AUTORIZA_CIERRE 		 	= '991005';
+	const K_CAMBIA_DSCTO_CORPORATIVO	= '991010';
+	const K_AUTORIZA_SUMAR				= '991095';
+	var $checkbox_sumar;
 	
-	function wo_nota_venta() {
+	function wo_nota_venta(){
+		$this->checkbox_sumar = false;
 		
 		// Llama a w_base para que $this->cod_usuario contenga al usuario actual 
 		parent::w_base('nota_venta', $_REQUEST['cod_item_menu']);
@@ -121,6 +123,21 @@ class wo_nota_venta extends w_output_biggi {
 					   'Facturado' NOM_PORC_FACTURADO";
 		$this->add_header($control = new header_drop_down_string('PORC_FACTURADO', 'dbo.f_header_porc_facturado(NV.COD_NOTA_VENTA)', 'Porc Facturado', $sql));
 		
+
+		$priv = $this->get_privilegio_opcion_usuario(self::K_AUTORIZA_SUMAR, $this->cod_usuario);
+		if ($priv=='E')
+			$DISPLAY_SUMAR = '';
+      	else
+			$DISPLAY_SUMAR = 'none';
+
+		$sql = "select '$DISPLAY_SUMAR' DISPLAY_SUMAR
+						,'N' CHECK_SUMAR
+					   ,'N' HIZO_CLICK";
+		$this->dw_check_box = new datawindow($sql);
+		$this->dw_check_box->add_control($control = new edit_check_box('CHECK_SUMAR','S','N'));
+		$control->set_onClick("sumar(); document.getElementById('loader').style.display='';");
+		$this->dw_check_box->add_control(new edit_text_hidden('HIZO_CLICK'));
+		$this->dw_check_box->retrieve();
     }
 	
 	function redraw_item(&$temp, $ind, $record){
@@ -163,11 +180,48 @@ class wo_nota_venta extends w_output_biggi {
 		$this->add();
 	}
 
+	function make_menu(&$temp){
+		$menu = session::get('menu_appl');
+		$menu->ancho_completa_menu = 410;
+		$menu->draw($temp);
+		$menu->ancho_completa_menu = 209;
+	}
+
+	function redraw($temp){
+		parent::redraw($temp);
+		$this->dw_check_box->habilitar($temp, true);
+	}
+
 	function procesa_event() {		
 		if(isset($_POST['b_create_x']))
 			$this->crear_nv_from_cot($_POST['wo_hidden']);
-		else
+		else if ($_POST['HIZO_CLICK_0'] == 'S') {
+			$this->checkbox_sumar = isset($_POST['CHECK_SUMAR_0']);
+			
+			// obtiene los datos del filtro aplicado
+			$valor_filtro = $this->headers['TOTAL_NETO']->valor_filtro;
+			$valor_filtro2 = $this->headers['TOTAL_NETO']->valor_filtro2;
+			
+			if ($this->checkbox_sumar) {
+				$this->dw_check_box->set_item(0, 'CHECK_SUMAR', 'S');
+				$this->add_header(new header_num('TOTAL_NETO', 'TOTAL_NETO', 'Total Neto', 0, true, 'SUM'));
+			}
+			else{
+				$this->dw_check_box->set_item(0, 'CHECK_SUMAR', 'N');
+				$this->add_header(new header_num('TOTAL_NETO', 'TOTAL_NETO', 'Total Neto'));  
+			}
+
+			// vuelve a setear el filtro aplicado
+			$this->headers['TOTAL_NETO']->valor_filtro = $valor_filtro;
+			$this->headers['TOTAL_NETO']->valor_filtro2 = $valor_filtro2;
+			
+			$this->save_SESSION();	
+			$this->make_filtros();
+			$this->retrieve();	
+		}else{
+			$this->checkbox_sumar = 0;
 			parent::procesa_event();
+		}
 	}
 }
 ?>

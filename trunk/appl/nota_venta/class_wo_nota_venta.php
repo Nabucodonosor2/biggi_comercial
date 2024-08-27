@@ -64,6 +64,8 @@ class wo_nota_venta extends w_output_biggi {
 									ROUND(dbo.f_nv_despachado_neto(NV.COD_NOTA_VENTA), 0)
 							END DESPACHADO_NETO_MH
 
+							,dbo.f_nv_tipo_venta_nv(NV.COD_NOTA_VENTA) TIPO_VENTA_NV
+
 							/*FIN_CAMPOS*/
 				from 		NOTA_VENTA NV,
 							EMPRESA E,
@@ -121,7 +123,17 @@ class wo_nota_venta extends w_output_biggi {
 				UNION 
 				SELECT 1 PORC_FACTURADO,
 					   'Facturado' NOM_PORC_FACTURADO";
-		$this->add_header($control = new header_drop_down_string('PORC_FACTURADO', 'dbo.f_header_porc_facturado(NV.COD_NOTA_VENTA)', 'Porc Facturado', $sql));
+		$this->add_header($control = new header_drop_down_string('PORC_FACTURADO', 'dbo.f_header_porc_facturado(NV.COD_NOTA_VENTA)', '% Facturado', $sql));
+		
+		$sql22 = "SELECT  'Normal',
+					  'Venta Normal' NOM_TIPO_VENTA_NV
+					UNION 
+					SELECT 'Sala Venta' TIPO_VENTA_NV,
+					   'Sala Venta' NOM_TIPO_VENTA_NV
+					UNION
+					SELECT 'Venta Web' TIPO_VENTA_NV,
+					   'Venta Web' NOM_TIPO_VENTA_NV";
+		$this->add_header($control = new header_drop_down_string('TIPO_VENTA_NV', 'dbo.f_nv_tipo_venta_nv(NV.COD_NOTA_VENTA)', 'Tipo NV', $sql22));
 		
 
 		$priv = $this->get_privilegio_opcion_usuario(self::K_AUTORIZA_SUMAR, $this->cod_usuario);
@@ -144,11 +156,15 @@ class wo_nota_venta extends w_output_biggi {
 		parent::redraw_item($temp, $ind, $record);
 
 		$COD_ESTADO_NOTA_VENTA = $this->dw->get_item($record, 'COD_ESTADO_NOTA_VENTA');
+		$TIPO_VENTA_NV = $this->dw->get_item($record, 'TIPO_VENTA_NV');
 
 		if($COD_ESTADO_NOTA_VENTA == 3)//Anulada
 			$temp->setVar("wo_registro.WO_COLOR_CSS", 'red');
 		else
-			$temp->setVar("wo_registro.WO_COLOR_CSS", '');	
+			if($TIPO_VENTA_NV == 'Venta Web')
+				$temp->setVar("wo_registro.WO_COLOR_CSS", '#044bf4');
+			else
+				$temp->setVar("wo_registro.WO_COLOR_CSS", '');
 	}
 
 	function crear_nv_from_cot($vl_result) {

@@ -766,82 +766,138 @@ class wi_guia_recepcion extends wi_guia_recepcion_base {
  		return 0;
    	}
 	
-	function print_record() {
-	
-		$cod_guia_recepcion = $this->get_key();
-		$COD_ESTADO_GUIA_RECEPCION = $this->dws['dw_guia_recepcion']->get_item(0, 'COD_ESTADO_GUIA_RECEPCION');
-		$db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
-		$db->BEGIN_TRANSACTION();
-		$sp = 'spu_guia_recepcion';
-		$param = "'PRINT', $cod_guia_recepcion, $this->cod_usuario";
-	
-		if ($db->EXECUTE_SP($sp, $param)) {		// aqui dentro del sp se cambia el estado y se graba todo lo relacionado
-			$db->COMMIT_TRANSACTION();
-				
+	function print_record($tipo_impresion) {
+		if($tipo_impresion == 'S'){
+			$cod_guia_recepcion = $this->get_key();
+			$COD_ESTADO_GUIA_RECEPCION = $this->dws['dw_guia_recepcion']->get_item(0, 'COD_ESTADO_GUIA_RECEPCION');
+			$db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
+			$db->BEGIN_TRANSACTION();
+			$sp = 'spu_guia_recepcion';
+			$param = "'PRINT', $cod_guia_recepcion, $this->cod_usuario";
+		
+			if ($db->EXECUTE_SP($sp, $param)){	// aqui dentro del sp se cambia el estado y se graba todo lo relacionado
+				$db->COMMIT_TRANSACTION();
+					
 				$estado_gr_impresa = self::K_ESTADO_GR_IMPRESA; 
 				$cod_estado_guia_recepcion = $this->dws['dw_guia_recepcion']->get_item(0, 'COD_ESTADO_GUIA_RECEPCION');
 				if ($cod_estado_guia_recepcion != $estado_gr_impresa){//es la 1era vez que se imprime la Guia de Despacho
 					$this->envia_mail($db, $cod_guia_recepcion);
 					$this->f_envia_mail('IMPRESO');
 				}
+				$sql= "SELECT	GR.COD_GUIA_RECEPCION 
+								,dbo.f_format_date(GR.FECHA_GUIA_RECEPCION,3)FECHA_GUIA_RECEPCION
+								,GR.COD_TIPO_GUIA_RECEPCION
+								,CASE GR.TIPO_DOC 
+									WHEN 'GUIA_DESPACHO' THEN 'GUIA DESPACHO' 
+									WHEN 'FACTURA' THEN 'FACTURA'
+									WHEN 'ARRIENDO' THEN 'CONTRATO ARRIENDO'
+									ELSE NULL
+								END TIPO_DOC
+								,GR.NRO_DOC
+								,OBS
+								,E.NOM_EMPRESA
+								,E.RUT
+								,E.DIG_VERIF
+								,U.NOM_USUARIO
+								,dbo.f_get_emisor_doc(".$cod_guia_recepcion.",GR.COD_TIPO_GUIA_RECEPCION,GR.TIPO_DOC) INI_USUARIO
+								,P.NOM_PERSONA
+								,TGR.NOM_TIPO_GUIA_RECEPCION
+								,S.DIRECCION
+								,S.TELEFONO
+								,S.FAX
+								,IGR.COD_PRODUCTO
+								,IGR.NOM_PRODUCTO
+								,IGR.CANTIDAD
+								,COM.NOM_COMUNA
+								,CIU.NOM_CIUDAD
+								,CASE
+									WHEN GR.TIPO_DOC = 'FACTURA' THEN (SELECT CONVERT(VARCHAR,COD_DOC)
+																	FROM FACTURA
+																	WHERE COD_FACTURA = GR.COD_DOC)
+									WHEN GR.TIPO_DOC = 'GUIA_DESPACHO' THEN (SELECT CONVERT(VARCHAR,COD_DOC)
+																			FROM GUIA_DESPACHO
+																			WHERE COD_GUIA_DESPACHO = GR.COD_DOC)
+									WHEN GR.TIPO_DOC = 'NOTA_VENTA' THEN NRO_DOC
+								END COD_NOTA_VENTA
+						FROM	GUIA_RECEPCION GR,
+								SUCURSAL S left outer join COMUNA COM on S.COD_COMUNA = COM.COD_COMUNA, 
+								ITEM_GUIA_RECEPCION IGR, EMPRESA E, USUARIO U, PERSONA P,
+								TIPO_GUIA_RECEPCION TGR, CIUDAD CIU
+						WHERE	GR.COD_GUIA_RECEPCION = ".$cod_guia_recepcion." AND
+								IGR.COD_GUIA_RECEPCION = GR.COD_GUIA_RECEPCION AND
+								E.COD_EMPRESA = GR.COD_EMPRESA AND
+								U.COD_USUARIO = GR.COD_USUARIO AND
+								P.COD_PERSONA = GR.COD_PERSONA AND
+								TGR.COD_TIPO_GUIA_RECEPCION = GR.COD_TIPO_GUIA_RECEPCION AND
+								S.COD_SUCURSAL = GR.COD_SUCURSAL AND
+								S.COD_CIUDAD = CIU.COD_CIUDAD";
+				//// reporte
+				$labels = array();
+				$labels['strCOD_GUIA_RECEPCION'] = $cod_guia_recepcion;
+				$rpt = new print_guia_recepcion($sql, $this->root_dir.'appl/guia_recepcion/guia_recepcion.xml', $labels, "Guia de Recepcion ".$cod_guia_recepcion.".pdf", 1);
+				$this->_load_record();
+				return true;
+			}else{
+				$db->ROLLBACK_TRANSACTION();
+				return false;
+			}
+		}else{
+			
 			$sql= "SELECT	GR.COD_GUIA_RECEPCION 
-							,dbo.f_format_date(GR.FECHA_GUIA_RECEPCION,3)FECHA_GUIA_RECEPCION
-							,GR.COD_TIPO_GUIA_RECEPCION
-							,CASE GR.TIPO_DOC 
-								WHEN 'GUIA_DESPACHO' THEN 'GUIA DESPACHO' 
-								WHEN 'FACTURA' THEN 'FACTURA'
-								WHEN 'ARRIENDO' THEN 'CONTRATO ARRIENDO'
-								ELSE NULL
-							END TIPO_DOC
-							,GR.NRO_DOC
-							,OBS
-							,E.NOM_EMPRESA
-							,E.RUT
-							,E.DIG_VERIF
-							,U.NOM_USUARIO
-							,dbo.f_get_emisor_doc(".$cod_guia_recepcion.",GR.COD_TIPO_GUIA_RECEPCION,GR.TIPO_DOC) INI_USUARIO
-							,P.NOM_PERSONA
-							,TGR.NOM_TIPO_GUIA_RECEPCION
-							,S.DIRECCION
-							,S.TELEFONO
-							,S.FAX
-							,IGR.COD_PRODUCTO
-							,IGR.NOM_PRODUCTO
-							,IGR.CANTIDAD
-							,COM.NOM_COMUNA
-							,CIU.NOM_CIUDAD
-							,CASE
-								WHEN GR.TIPO_DOC = 'FACTURA' THEN (SELECT CONVERT(VARCHAR,COD_DOC)
-																   FROM FACTURA
-																   WHERE COD_FACTURA = GR.COD_DOC)
-								WHEN GR.TIPO_DOC = 'GUIA_DESPACHO' THEN (SELECT CONVERT(VARCHAR,COD_DOC)
-																		 FROM GUIA_DESPACHO
-																		 WHERE COD_GUIA_DESPACHO = GR.COD_DOC)
-								WHEN GR.TIPO_DOC = 'NOTA_VENTA' THEN NRO_DOC
-						  	END COD_NOTA_VENTA
-					FROM	GUIA_RECEPCION GR,
-							SUCURSAL S left outer join COMUNA COM on S.COD_COMUNA = COM.COD_COMUNA, 
-							ITEM_GUIA_RECEPCION IGR, EMPRESA E, USUARIO U, PERSONA P,
-							TIPO_GUIA_RECEPCION TGR, CIUDAD CIU
-					WHERE	GR.COD_GUIA_RECEPCION = ".$cod_guia_recepcion." AND
-							IGR.COD_GUIA_RECEPCION = GR.COD_GUIA_RECEPCION AND
-							E.COD_EMPRESA = GR.COD_EMPRESA AND
-							U.COD_USUARIO = GR.COD_USUARIO AND
-							P.COD_PERSONA = GR.COD_PERSONA AND
-							TGR.COD_TIPO_GUIA_RECEPCION = GR.COD_TIPO_GUIA_RECEPCION AND
-							S.COD_SUCURSAL = GR.COD_SUCURSAL AND
-							S.COD_CIUDAD = CIU.COD_CIUDAD";
+								,dbo.f_format_date(GR.FECHA_GUIA_RECEPCION,3)FECHA_GUIA_RECEPCION
+								,GR.COD_TIPO_GUIA_RECEPCION
+								,CASE GR.TIPO_DOC 
+									WHEN 'GUIA_DESPACHO' THEN 'GUIA DESPACHO' 
+									WHEN 'FACTURA' THEN 'FACTURA'
+									WHEN 'ARRIENDO' THEN 'CONTRATO ARRIENDO'
+									ELSE NULL
+								END TIPO_DOC
+								,GR.NRO_DOC
+								,OBS
+								,E.NOM_EMPRESA
+								,E.RUT
+								,E.DIG_VERIF
+								,U.NOM_USUARIO
+								,dbo.f_get_emisor_doc(".$cod_guia_recepcion.",GR.COD_TIPO_GUIA_RECEPCION,GR.TIPO_DOC) INI_USUARIO
+								,P.NOM_PERSONA
+								,TGR.NOM_TIPO_GUIA_RECEPCION
+								,S.DIRECCION
+								,S.TELEFONO
+								,S.FAX
+								,IGR.COD_PRODUCTO
+								,IGR.NOM_PRODUCTO
+								,IGR.CANTIDAD
+								,COM.NOM_COMUNA
+								,CIU.NOM_CIUDAD
+								,CASE
+									WHEN GR.TIPO_DOC = 'FACTURA' THEN (SELECT CONVERT(VARCHAR,COD_DOC)
+																	FROM FACTURA
+																	WHERE COD_FACTURA = GR.COD_DOC)
+									WHEN GR.TIPO_DOC = 'GUIA_DESPACHO' THEN (SELECT CONVERT(VARCHAR,COD_DOC)
+																			FROM GUIA_DESPACHO
+																			WHERE COD_GUIA_DESPACHO = GR.COD_DOC)
+									WHEN GR.TIPO_DOC = 'NOTA_VENTA' THEN NRO_DOC
+								END COD_NOTA_VENTA
+						FROM	GUIA_RECEPCION GR,
+								SUCURSAL S left outer join COMUNA COM on S.COD_COMUNA = COM.COD_COMUNA, 
+								ITEM_GUIA_RECEPCION IGR, EMPRESA E, USUARIO U, PERSONA P,
+								TIPO_GUIA_RECEPCION TGR, CIUDAD CIU
+						WHERE	GR.COD_GUIA_RECEPCION = ".$cod_guia_recepcion." AND
+								IGR.COD_GUIA_RECEPCION = GR.COD_GUIA_RECEPCION AND
+								E.COD_EMPRESA = GR.COD_EMPRESA AND
+								U.COD_USUARIO = GR.COD_USUARIO AND
+								P.COD_PERSONA = GR.COD_PERSONA AND
+								TGR.COD_TIPO_GUIA_RECEPCION = GR.COD_TIPO_GUIA_RECEPCION AND
+								S.COD_SUCURSAL = GR.COD_SUCURSAL AND
+								S.COD_CIUDAD = CIU.COD_CIUDAD";
+			
 			//// reporte
 			$labels = array();
 			$labels['strCOD_GUIA_RECEPCION'] = $cod_guia_recepcion;
-			$rpt = new print_guia_recepcion($sql, $this->root_dir.'appl/guia_recepcion/guia_recepcion.xml', $labels, "Guia de Recepcion ".$cod_guia_recepcion.".pdf", 1);
+			$rpt = new print_guia_recepcion_secundario($sql, $this->root_dir.'appl/guia_recepcion/guia_recepcion_secundario.xml', $labels, "Guia de Recepcion ".$cod_guia_recepcion.".pdf", 1);
 			$this->_load_record();
 			return true;
-			}
-		else {
-			$db->ROLLBACK_TRANSACTION();
-			return false;
-		}			
+		}		
 	}
 }
 
@@ -896,6 +952,21 @@ class print_guia_recepcion extends print_guia_recepcion_base {
 			$pdf->SetXY(385,$y_ini+65);
 			$pdf->Cell(200,25, $conforme, 'TRB', '','C');
 			
+	}
+}
+
+class print_guia_recepcion_secundario extends print_guia_recepcion_base {	
+	function print_guia_recepcion_secundario($sql, $xml, $labels=array(), $titulo, $con_logo, $vuelve_a_presentacion=false) {
+		parent::reporte($sql, $xml, $labels, $titulo, $con_logo, $vuelve_a_presentacion);			
+	}
+	
+	function modifica_pdf(&$pdf) {
+			//$db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
+			//$result = $db->build_results($this->sql);
+			
+			$pdf->SetFont('Arial','',8.5);
+			$pdf->SetXY(30, 100);
+			$pdf->Cell(30, 15, 'Hola Mundo', '0', '','L');
 	}
 }
 ?>

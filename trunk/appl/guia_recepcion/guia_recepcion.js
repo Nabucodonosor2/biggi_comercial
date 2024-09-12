@@ -86,7 +86,31 @@ function dlg_print(){
 			return false;
 		}
 	}
-	return true;
+
+	const url = "dlg_tipo_impresion_gr.php";
+	$.showModalDialog({
+		url: url,
+		dialogArguments: '',
+		height: 240,
+		width: 360,
+		scrollable: false,
+		onClose: function(){ 
+			const returnVal = this.returnValue;
+			if (returnVal == null)	
+				return false;
+			else{
+				const input = document.createElement("input");
+				input.setAttribute("type", "hidden");
+				input.setAttribute("name", "b_print_x");
+				input.setAttribute("id", "b_print_x");
+				document.getElementById("input").appendChild(input);
+								
+				document.getElementById('wi_hidden').value = returnVal;
+				document.input.submit();
+				return false;
+			}
+		}
+	});
 }
 
 function recepcionar_todo(){

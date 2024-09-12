@@ -436,7 +436,33 @@ class wi_guia_recepcion_base extends w_input {
 	function get_key() {
 		return $this->dws['dw_guia_recepcion']->get_item(0, 'COD_GUIA_RECEPCION');
 	}	
-		
+	
+	function habilita_boton($temp, $boton, $habilita){
+		parent::habilita_boton($temp, $boton, $habilita);
+
+		$ruta_imag = '../../../../commonlib/trunk/images/';
+		if (defined('K_CLIENTE')) {
+			if (file_exists('../../images_appl/'.K_CLIENTE.'/images/b_'.$boton.'.jpg')){
+				$ruta_imag = '../../images_appl/'.K_CLIENTE.'/images/';
+			}
+		}
+
+		if($boton == 'print'){
+			if($habilita){
+				$ruta_over = "'../../../../commonlib/trunk/images/b_print_over.jpg'";
+            	$ruta_out = "'../../../../commonlib/trunk/images/b_print.jpg'";
+            	$ruta_click = "'../../../../commonlib/trunk/images/b_print_click.jpg'";
+
+				$control = '<input name="b_'.$boton.'" id="b_'.$boton.'" type="button" onmouseover="entrada(this, '.$ruta_over.')" onmouseout="salida(this, '.$ruta_out.')" onmousedown="down(this, '.$ruta_click.')"'.
+                		   'style="cursor:pointer;height:68px;width:66px;border: 0;background-image:url(../../../../commonlib/trunk/images/b_print.jpg);background-repeat:no-repeat;background-position:center;border-radius: 15px;"'.
+                		   'onClick="var vl_tab = document.getElementById(\'wi_current_tab_page\'); if (TabbedPanels1 && vl_tab) vl_tab.value =TabbedPanels1.getCurrentTabIndex(); dlg_print();" />';
+
+				$temp->setVar("WI_".strtoupper($boton), $control);
+			}else{
+				$temp->setVar("WI_".strtoupper($boton), '<img src="'.$ruta_imag.'b_'.$boton.'_d.jpg"/>');
+			}
+		}
+	}
 	
 	function save_record($db) {
 		$COD_GUIA_RECEPCION			= $this->get_key();
@@ -556,6 +582,13 @@ class wi_guia_recepcion_base extends w_input {
  		return 0;
    	}
 	
+	function procesa_event() {		
+		if(isset($_POST['b_print_x']))
+			$this->print_record($_POST['wi_hidden']);
+		else
+			parent::procesa_event();
+	}
+
 	function print_record() {
 		$cod_guia_recepcion = $this->get_key();
 		$COD_ESTADO_GUIA_RECEPCION = $this->dws['dw_guia_recepcion']->get_item(0, 'COD_ESTADO_GUIA_RECEPCION');

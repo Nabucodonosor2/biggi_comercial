@@ -1218,7 +1218,7 @@ class wi_cotizacion extends wi_cotizacion_base {
     }
     
     function habilitar(&$temp, $habilita) {
-        parent::habilitar(&$temp, $habilita);
+        parent::habilitar($temp, $habilita);
         
         $priv = $this->get_privilegio_opcion_usuario(self::K_AUTORIZA_MOD_COTIZACION, $this->cod_usuario);
         

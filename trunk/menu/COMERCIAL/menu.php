@@ -92,7 +92,7 @@ $bodega = array( new item_menu('Entrada', '3015', "../../../commonlib/trunk/php/
 				,new item_menu('Inventario', '3025', "../../../commonlib/trunk/php/informe.php?informe=inf_bodega_inventario&cod_item_menu=3025")
 				,new item_menu('Inventario Valorizado', '3030', "../../../commonlib/trunk/php/informe.php?informe=inf_bodega_stock&cod_item_menu=3030"));
 
-$informes = array(	new item_menu('Ventas por Mes', '4005', "../appl/inf_ventas_por_mes/inf_ventas_por_mes.php")
+$informes =    array(new item_menu('Ventas por Mes', '4005', "../appl/inf_ventas_por_mes/inf_ventas_por_mes.php")
 				 	,new item_menu('Facturas por Cobrar', '4035', "../../../commonlib/trunk/php/mantenedor.php?modulo=inf_facturas_por_cobrar&cod_item_menu=4035")
 				 	,new item_menu('Por cobrar Transbank', '4030', "../../../commonlib/trunk/php/mantenedor.php?modulo=inf_por_cobrar_tbk&cod_item_menu=4030")
 				 	,new item_menu('Informe Cheque a fecha', '4098', "../../../commonlib/trunk/php/mantenedor.php?modulo=inf_cheque_fecha&cod_item_menu=4098")
@@ -109,7 +109,8 @@ $informes = array(	new item_menu('Ventas por Mes', '4005', "../appl/inf_ventas_p
 				 	,new item_menu('Informe Backcharge', '4075', "../appl/inf_backcharge/inf_backcharge.php")
 				 	,new item_menu('-')
 				 	,new item_menu('Informe Pre-IVA', '4099', "../appl/inf_pre_iva/inf_pre_iva.php")
-				);
+					,new item_menu('Ventas por mes (FACTURAS)', '4010', "../appl/inf_ventas_por_mes_fa/inf_ventas_por_mes_fa.php")
+					);
 				
 $gestion	= array(new item_menu('Reporte x Vendedores', '5005', "../appl/inf_reporte_vendedores/inf_reporte_vendedores.php")
 					);

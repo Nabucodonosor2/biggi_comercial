@@ -1,3 +1,39 @@
+function verifica_compuesto(ve_control){
+	const vl_record					= get_num_rec_field(ve_control.id);
+	const vl_item					= get_value('ITEM_'+vl_record);
+	const vl_cod_producto			= get_value('COD_PRODUCTO_'+vl_record);
+	const vl_cod_tipo_electricidad	= get_value('COD_TIPO_ELECTRICIDAD_'+vl_record);
+
+	if(vl_cod_producto == 'MAS-80E' || vl_cod_producto == 'MAS-60E'){
+		const aTR = get_TR('PRE_ORDEN_COMPRA');
+	
+		for(i=0 ; i < aTR.length ; i++){
+			let vl_rec_it			= get_num_rec_field(aTR[i].id);
+			let vl_cc_it			= get_value('CC_ITEM_'+vl_rec_it);
+			
+			if(vl_item == vl_cc_it){
+				let vl_cc_cod_producto	= get_value('CC_COD_PRODUCTO_'+vl_rec_it);
+
+				if(vl_cc_cod_producto == 'MAS-80E' || vl_cc_cod_producto == 'MAS-60E'){
+					
+					if(vl_cod_tipo_electricidad == 3)
+						document.getElementById('CC_GENERA_COMPRA_'+vl_rec_it).checked = true;
+					else
+						document.getElementById('CC_GENERA_COMPRA_'+vl_rec_it).checked = false;
+					
+				}else if(vl_cc_cod_producto == 'MAS-80EM' || vl_cc_cod_producto == 'MAS-60EM'){
+					
+					if(vl_cod_tipo_electricidad == 3)
+						document.getElementById('CC_GENERA_COMPRA_'+vl_rec_it).checked = false;
+					else
+						document.getElementById('CC_GENERA_COMPRA_'+vl_rec_it).checked = true;
+
+				}
+			}
+		}
+	}
+}
+
 function f_valida_oc(){
 	var vl_no_tiene_OC = document.getElementById('NO_TIENE_OC_0');
 		

@@ -479,7 +479,8 @@ class dw_item_nota_venta extends dw_item {
 		$sql = "select COD_TIPO_ELECTRICIDAD, NOM_TIPO_ELECTRICIDAD
 				from TIPO_ELECTRICIDAD
 				order by ORDEN";
-		$this->add_control(new drop_down_dw('COD_TIPO_ELECTRICIDAD', $sql, 80));					
+		$this->add_control(new drop_down_dw('COD_TIPO_ELECTRICIDAD', $sql, 80));
+		$this->controls['COD_TIPO_ELECTRICIDAD']->set_onChange('verifica_compuesto(this);');					
 		$this->add_control(new edit_text('MOTIVO_AUTORIZA_TE', 20, 100, 'hidden'));	
 		$this->add_control(new edit_text('FECHA_AUTORIZA_TE', 10, 10, 'hidden'));	
 		$this->add_control(new edit_text('NOM_USUARIO_AUTORIZA_TE', 10, 10, 'hidden'));

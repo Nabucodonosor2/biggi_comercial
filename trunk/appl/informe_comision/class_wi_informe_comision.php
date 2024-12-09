@@ -152,6 +152,10 @@ class wi_informe_comision extends w_input{
                     ,0 T_COMISION_FA
                     ,0 T_NETO_NC
                     ,0 T_COMISION_NC
+                    ,'none' DISPLAY_FA
+                    ,'none' DISPLAY_NC
+                    ,0 FIN_FA
+                    ,0 FIN_NC
                 FROM INFORME_COMISION IC
                     ,USUARIO U
                     ,EMPRESA E
@@ -183,6 +187,8 @@ class wi_informe_comision extends w_input{
         $this->dws['dw_informe_comision']->set_item(0, 'FECHA_REGISTRO', $this->current_date());
 		$this->dws['dw_informe_comision']->set_item(0, 'COD_USUARIO', $this->cod_usuario);
 		$this->dws['dw_informe_comision']->set_item(0, 'NOM_USUARIO', $this->nom_usuario);
+        $this->dws['dw_informe_comision']->set_item(0, 'DISPLAY_FA', '');
+        $this->dws['dw_informe_comision']->set_item(0, 'DISPLAY_NC', '');
 
 		$db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
 		
@@ -225,6 +231,7 @@ class wi_informe_comision extends w_input{
         
         $porc_comision = $this->get_parametro('87');
         $cod_factura_list = "";
+        $this->dws['dw_informe_comision']->set_item(0, 'FIN_FA', count($result));
 
         for($i=0; $i < count($result); $i++){
             $cod_factura_list .= $result[$i]['COD_FACTURA'].',';
@@ -261,6 +268,7 @@ class wi_informe_comision extends w_input{
                 ORDER BY NRO_NOTA_CREDITO ASC";
 
 		$result = $db->build_results($sql);
+        $this->dws['dw_informe_comision']->set_item(0, 'FIN_NC', count($result));
 
         for($i=0; $i < count($result); $i++){
             $this->dws['dw_item_informe_comision_nc']->insert_row();

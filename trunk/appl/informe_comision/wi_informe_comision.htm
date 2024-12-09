@@ -92,79 +92,79 @@
 																<td>Razón social:</td>
 																<td colspan="3" class="claro" align="left">{RUT}-{DIG_VERIF} / {NOM_EMPRESA}</td>
 																<td>Total Comisión:</td>
-																<td class="claro" align="left" colspan="3">{TOTAL_COMISION}</td>
+																<td class="claro" align="left" colspan="3" style="font-weight: bold;">{TOTAL_COMISION}</td>
 															</tr>
 														</table>
 														<p />
 														<table width="1000" rules="none" border="1" align="center" class="claro">
 															<tr class="titulo_tabla">
-																<td colspan="6">FACTURAS</td>
+																<td colspan="5">FACTURAS</td>
+																<td align="right" style="display:{DISPLAY_FA}">SELECCIONADAS <label id="INICIO_FA">0</label> de {FIN_FA}</td>
 															</tr>
 															<tr class="encabezado_center">
+																<th width="16%">Seleccionar</th>
 																<th width="16%">Nro Factura</th>
 																<th width="17%">Fecha Factura</th>
 																<th width="17%">Nota Venta</th>
 																<th width="17%">Total Neto</th>
 																<th width="17%">Monto Comisión</th>
-																<th width="16%">Seleccionar</th>
 															</tr>
 														</table>
 														<div style="overflow-x:hidden; overflow-y:auto; height:110px; margin-top:-1em;">
 															<table width="1000" rules="none" border="1" align="center" class="claro" id="ITEM_INFORME_COMISION_FA">
 																<!-- startBlock(ITEM_INFORME_COMISION_FA) -->
 																<tr class="{DW_TR_CSS}" id="{DW_TR_ID}">
+																	<td width="16%" align="center">{SELECCIONAR}</td>
 																	<td width="16%" align="center">{NRO_FACTURA_FA}</td>
 																	<td width="17%" align="center">{FECHA_FACTURA}</td>
 																	<td width="17%" align="center">{COD_NOTA_VENTA}</td>
 																	<td width="17%" align="right">{TOTAL_NETO}</td>
-																	<td width="17%" align="right">{MONTO_COMISION}</td>
-																	<td width="16%" align="center">{SELECCIONAR}</td>													
+																	<td width="17%" align="right"><div style="padding-right:20px;">{MONTO_COMISION}</div></td>										
 																</tr>
 																<!-- endBlock(ITEM_INFORME_COMISION_FA) -->
 															</table>
 														</div>
 														<table width="1000" border="0" align="center" class="claro">
 															<tr class="oscuro">
-																<td colspan="3" align="right" width="50%">TOTALES</td>
-																<td align="right" width="17%">{T_NETO_FA}</td>
-																<td align="right" width="17%">{T_COMISION_FA}</td>
-																<td align="right" width="16%"></td>
+																<td colspan="4" align="right" width="66%" style="font-weight: bold;">TOTALES</td>
+																<td align="right" width="17%" style="font-weight: bold;">{T_NETO_FA}</td>
+																<td align="right" width="17%" style="font-weight: bold;"><div style="padding-right:20px;">{T_COMISION_FA}</div></td>
 															</tr>
 														</table>
 														<p />
 														<table width="1000" rules="none" border="1" align="center" class="claro">
 															<tr class="titulo_tabla">
-																<td colspan="6">NOTAS DE CREDITO</td>
+																<td colspan="5">NOTAS DE CREDITO</td>
+																<td align="right" style="display:{DISPLAY_NC}">SELECCIONADAS <label id="INICIO_NC">0</label> de {FIN_NC}</td>
 															</tr>
 															<tr class="encabezado_center">
+																<th width="16%">Seleccionar</th>
 																<th width="16%">Nro Nota Credito</th>
 																<th width="17%">Fecha Nota Credito</th>
 																<th width="17%">Nro Factura</th>
 																<th width="17%">Total Neto</th>
 																<th width="17%">Monto Comisión</th>
-																<th width="16%">Seleccionar</th>
 															</tr>
 														</table>
 														<div style="overflow-x:hidden; overflow-y:auto; height:110px; margin-top:-1em;">
 															<table width="1000" rules="none" border="1" align="center" class="claro" id="ITEM_INFORME_COMISION_NC">
 																<!-- startBlock(ITEM_INFORME_COMISION_NC) -->
 																<tr class="{DW_TR_CSS}" id="{DW_TR_ID}">
+																	<td width="16%" align="center">{SELECCIONAR_NC}{SELECCIONAR_NC_H}</td>	
 																	<td width="16%" align="center">{NRO_NOTA_CREDITO}</td>
 																	<td width="17%" align="center">{FECHA_NOTA_CREDITO}</td>
 																	<td width="17%" align="center">{NRO_FACTURA_NC}</td>
 																	<td width="17%" align="right">{TOTAL_NETO_NC}</td>
-																	<td width="17%" align="right">{MONTO_COMISION_NC}</td>
-																	<td width="16%" align="center">{SELECCIONAR_NC}{SELECCIONAR_NC_H}</td>													
+																	<td width="17%" align="right"><div style="padding-right:20px;">{MONTO_COMISION_NC}</div></td>																													
 																</tr>
 																<!-- endBlock(ITEM_INFORME_COMISION_NC) -->
 															</table>
 														</div>
 														<table width="1000" border="0" align="center" class="claro">
 															<tr class="oscuro">
-																<td colspan="3" align="right" width="50%">TOTALES</td>
-																<td align="right" width="17%">{T_NETO_NC}</td>
-																<td align="right" width="17%">{T_COMISION_NC}</td>
-																<td align="right" width="16%"></td>
+																<td colspan="4" align="right" width="66%" style="font-weight: bold;">TOTALES</td>
+																<td align="right" width="17%" style="font-weight: bold;">{T_NETO_NC}</td>
+																<td align="right" width="17%" style="font-weight: bold;"><div style="padding-right:20px;">{T_COMISION_NC}</div></td>
 															</tr>
 														</table>
 													</div>

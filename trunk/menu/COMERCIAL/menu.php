@@ -79,7 +79,8 @@ $administracion = array(new item_menu('Ingreso Pago', '2505', "../../../commonli
 						new item_menu('Gasto Fijo', '2550', "../../../commonlib/trunk/php/mantenedor.php?modulo=gasto_fijo&cod_item_menu=2550"),
 						new item_menu('Documentos ADM', '2560', "../appl/cheque_renta/cheque_renta.php"),
 						new item_menu('-'),
-						new item_menu('Facturas Rechazadas', '2590', "../../../commonlib/trunk/php/mantenedor.php?modulo=factura_rechazada&cod_item_menu=2590"));
+						new item_menu('Facturas Rechazadas', '2590', "../../../commonlib/trunk/php/mantenedor.php?modulo=factura_rechazada&cod_item_menu=2590"),
+						new item_menu('Informe Comisión', '2595', "../../../commonlib/trunk/php/mantenedor.php?modulo=informe_comision&cod_item_menu=2595"));
 						//new item_menu('Cheque Rental', '2560', "../appl/cheque_renta/cheque_renta.php"));
 																				
 $bodega = array( new item_menu('Entrada', '3015', "../../../commonlib/trunk/php/mantenedor.php?modulo=entrada_bodega&cod_item_menu=3015")

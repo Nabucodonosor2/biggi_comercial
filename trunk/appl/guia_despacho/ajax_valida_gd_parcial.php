@@ -42,15 +42,19 @@ if($autoriza_procesar_venta <> 'S'){
 	$result_val2 = $db->build_results($sql_val2);
 	
 	if($result_val2[0]['COUNT'] == 0){*/
-	if($cod_forma_pago <> 30 && $cod_forma_pago <> 31 && $cod_forma_pago <> 32 && $cod_forma_pago <> 10 && $cod_forma_pago <> 7){
+
+	// MH 10-12-2024 SE COMENTA EL SIGUIENTE IF PUES NO TIENE SENTIDO VALIDAR POR FORMA DE PAGO SI EXISTE LA AUTORIACION VIA ADM		
+	//if($cod_forma_pago <> 30 && $cod_forma_pago <> 31 && $cod_forma_pago <> 32 && $cod_forma_pago <> 10 && $cod_forma_pago <> 7){
 		
-		$sql_val3 = "SELECT COUNT(*) COUNT
-					 FROM FORMA_PAGO
-					 WHERE COD_FORMA_PAGO = $cod_forma_pago
-					 AND CRITERIO_DESPACHO_FACTURA = 1";
-		$result_val3 = $db->build_results($sql_val3);
+
+		// MH 10-12-2024 SE COMENTA EL SIGUIENTE BLOQUE PUES NO TIENE SENTIDO VALIDAR POR FORMA DE PAGO SI EXISTE LA AUTORIACION VIA ADM	
+		//$sql_val3 = "SELECT COUNT(*) COUNT
+		//			 FROM FORMA_PAGO
+		//			 WHERE COD_FORMA_PAGO = $cod_forma_pago
+		//			 AND CRITERIO_DESPACHO_FACTURA = 1";
+		//$result_val3 = $db->build_results($sql_val3);
 		
-		if($result_val3[0]['COUNT'] == 0){
+		//if($result_val3[0]['COUNT'] == 0){
 			
 			$sql_val4 = "SELECT COUNT(*) COUNT
 						 FROM EMPRESA
@@ -60,13 +64,13 @@ if($autoriza_procesar_venta <> 'S'){
 			
 			if($result_val4[0]['COUNT'] == 0)
 				$exito = false;
-		}
-	}
+		//}
+	//}
 	//}	
 }
 
 if(!$exito){
-	print "ERROR|La Nota de Venta N° '.$cod_nota_venta.' NO se encuentra autorizada para procesar.\nSolicitar autorizacion con Administracion BIGGI.";
+	print "ERROR|La Nota de Venta N° ".$cod_nota_venta." NO se encuentra autorizada para procesar despacho.\n\nFavor solicitar autorizacion con Administracion BIGGI.";
 	return;
 }
 

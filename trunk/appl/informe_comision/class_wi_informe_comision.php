@@ -85,6 +85,7 @@ class dw_item_informe_comision_nc extends datawindow{
                     ,NOTA_CREDITO NC
                 WHERE COD_INFORME_COMISION = {KEY1}
                 AND TIPO_DOCUMENTO = 'NOTA_CREDITO'
+                AND COD_INFORME_COMISION_ANTERIOR IS NULL
                 AND IIC.COD_DOC_DOCUMENTO = NC.COD_NOTA_CREDITO";
 
 		parent::datawindow($sql, 'ITEM_INFORME_COMISION_NC');
@@ -133,13 +134,84 @@ class dw_item_informe_comision_nc extends datawindow{
 	}
 }
 
+class dw_item_informe_nc_anterior extends datawindow{
+	function dw_item_informe_nc_anterior(){
+		$sql = "SELECT COD_ITEM_INFORME_COMISION	                COD_ITEM_INF_COM_ANTERIOR
+                    ,COD_INFORME_COMISION	                        COD_INFORME_COMISION_INF_NC
+                    ,TIPO_DOCUMENTO	                                TIPO_DOCUMENTO_INF_NC
+                    ,COD_DOC_DOCUMENTO                              COD_DOC_DOCUMENTO_INF_NC
+                    ,NC.NRO_NOTA_CREDITO                            NRO_NOTA_CREDITO_INF
+                    ,IIC.TOTAL_NETO                                 TOTAL_NETO_INF_NC
+                    ,IIC.COD_DOC                                    COD_DOC_INF_NC
+                    ,MONTO_COMISION                                 MONTO_COMISION_INF_NC
+                    ,CONVERT(VARCHAR, NC.FECHA_NOTA_CREDITO, 103)   FECHA_NOTA_CREDITO_INF
+                    ,(SELECT NRO_FACTURA 
+                      FROM FACTURA WHERE COD_FACTURA = NC.COD_DOC)  NRO_FACTURA_NC_INF
+                    ,'S'                                            SELECCIONAR_NC_INF
+                    ,'S'                                            SELECCIONAR_NC_H_INF
+                    ,COD_INFORME_COMISION_ANTERIOR
+                FROM ITEM_INFORME_COMISION IIC
+                    ,NOTA_CREDITO NC
+                WHERE COD_INFORME_COMISION = {KEY1}
+                AND TIPO_DOCUMENTO = 'NOTA_CREDITO'
+                AND COD_INFORME_COMISION_ANTERIOR IS NOT NULL
+                AND IIC.COD_DOC_DOCUMENTO = NC.COD_NOTA_CREDITO";
+
+		parent::datawindow($sql, 'ITEM_INFORME_NC_ANTERIOR');
+
+        $this->add_control(new edit_text('COD_ITEM_INF_COM_ANTERIOR',10, 10, 'hidden'));
+		$this->add_control(new static_text('NRO_FACTURA_NC_INF'));
+		$this->add_control(new static_num('TOTAL_NETO_INF_NC'));
+		$this->add_control(new static_num('MONTO_COMISION_INF_NC'));
+        $this->add_control(new edit_check_box('SELECCIONAR_NC_INF', 'S', 'N'));
+        $this->set_entrable('SELECCIONAR_NC_INF', false);
+        $this->add_control(new edit_text('SELECCIONAR_NC_H_INF',10, 10, 'hidden'));
+	}
+
+	function update($db){
+        $sp = 'spu_item_informe_comision';
+		
+		for ($i = 0; $i < $this->row_count(); $i++){
+			$SELECCIONAR = $this->get_item($i, 'SELECCIONAR_NC_H_INF');
+			if($SELECCIONAR == 'N')
+				continue;
+
+			$COD_ITEM_INFORME_COMISION 	    = $this->get_item($i, 'COD_ITEM_INF_COM_ANTERIOR');
+			$COD_INFORME_COMISION 		    = $this->get_item($i, 'COD_INFORME_COMISION_INF_NC');
+			$TIPO_DOCUMENTO 			    = $this->get_item($i, 'TIPO_DOCUMENTO_INF_NC');
+			$COD_DOC_DOCUMENTO 			    = $this->get_item($i, 'COD_DOC_DOCUMENTO_INF_NC');
+			$TOTAL_NETO 				    = $this->get_item($i, 'TOTAL_NETO_INF_NC');
+			$COD_DOC 				    	= $this->get_item($i, 'COD_DOC_INF_NC');
+			$MONTO_COMISION 			    = $this->get_item($i, 'MONTO_COMISION_INF_NC');
+            $COD_INFORME_COMISION_ANTERIOR 	= $this->get_item($i, 'COD_INFORME_COMISION_ANTERIOR');
+
+			$COD_ITEM_INFORME_COMISION	= ($COD_ITEM_INFORME_COMISION =='') ? "null" : $COD_ITEM_INFORME_COMISION;
+					
+			$param = "'INSERT'
+					 ,$COD_ITEM_INFORME_COMISION
+					 ,$COD_INFORME_COMISION
+					 ,$TIPO_DOCUMENTO
+					 ,$COD_DOC_DOCUMENTO
+					 ,$TOTAL_NETO
+					 ,$COD_DOC
+					 ,$MONTO_COMISION
+                     ,$COD_INFORME_COMISION_ANTERIOR";
+			
+			if (!$db->EXECUTE_SP($sp, $param))
+				return false;		
+		}
+	
+		return true;
+	}
+}
+
 class wi_informe_comision extends w_input{
 	function wi_informe_comision($cod_item_menu){		
 		parent::w_input('informe_comision', $cod_item_menu);
 
         $sql = "SELECT COD_INFORME_COMISION
                     ,CONVERT(VARCHAR, FECHA_REGISTRO, 103) FECHA_REGISTRO
-                    ,COD_ESTADO_INFORME_COMISION
+                    ,IC.COD_ESTADO_INFORME_COMISION
                     ,U.COD_USUARIO
                     ,U.NOM_USUARIO
                     ,REFERENCIA
@@ -152,20 +224,36 @@ class wi_informe_comision extends w_input{
                     ,0 T_COMISION_FA
                     ,0 T_NETO_NC
                     ,0 T_COMISION_NC
+                    ,0 T_NETO_NC_INF
+                    ,0 T_COMISION_NC_INF
                     ,'none' DISPLAY_FA
                     ,'none' DISPLAY_NC
                     ,0 FIN_FA
                     ,0 FIN_NC
+                    --Replicas en tab NC anterior
+                    ,COD_INFORME_COMISION COD_INFORME_COMISION_L
+                    ,CONVERT(VARCHAR, FECHA_REGISTRO, 103) FECHA_REGISTRO_L
+                    ,U.NOM_USUARIO NOM_USUARIO_L
+                    ,NOM_ESTADO_INFORME_COMISION
+                    ,REFERENCIA REFERENCIA_L
+                    ,dbo.number_format(E.RUT, 0, ',', '.') RUT_L
+                    ,E.DIG_VERIF DIG_VERIF_L
+                    ,E.NOM_EMPRESA NOM_EMPRESA_L
+                    ,0 TOTAL_COMISION_L
+                    -----------------------------
                 FROM INFORME_COMISION IC
                     ,USUARIO U
                     ,EMPRESA E
+                    ,ESTADO_INFORME_COMISION EIC
                 WHERE COD_INFORME_COMISION = {KEY1}
                 AND U.COD_USUARIO = IC.COD_USUARIO
+                AND EIC.COD_ESTADO_INFORME_COMISION = IC.COD_ESTADO_INFORME_COMISION
                 AND E.COD_EMPRESA = IC.COD_EMPRESA";
 
         $this->dws['dw_informe_comision'] = new datawindow($sql);
         $this->dws['dw_item_informe_comision_fa'] = new dw_item_informe_comision_fa();
         $this->dws['dw_item_informe_comision_nc'] = new dw_item_informe_comision_nc();
+        $this->dws['dw_item_informe_nc_anterior'] = new dw_item_informe_nc_anterior();
 
         $sql = "SELECT COD_ESTADO_INFORME_COMISION
                       ,NOM_ESTADO_INFORME_COMISION
@@ -176,7 +264,10 @@ class wi_informe_comision extends w_input{
         $this->dws['dw_informe_comision']->add_control(new static_num('T_COMISION_FA'));
         $this->dws['dw_informe_comision']->add_control(new static_num('T_NETO_NC'));
         $this->dws['dw_informe_comision']->add_control(new static_num('T_COMISION_NC'));
+        $this->dws['dw_informe_comision']->add_control(new static_num('T_NETO_NC_INF'));
+        $this->dws['dw_informe_comision']->add_control(new static_num('T_COMISION_NC_INF'));
         $this->dws['dw_informe_comision']->add_control(new static_num('TOTAL_COMISION'));
+        $this->dws['dw_informe_comision']->add_control(new static_num('TOTAL_COMISION_L'));
 	}
 
 	function new_record(){
@@ -189,6 +280,9 @@ class wi_informe_comision extends w_input{
 		$this->dws['dw_informe_comision']->set_item(0, 'NOM_USUARIO', $this->nom_usuario);
         $this->dws['dw_informe_comision']->set_item(0, 'DISPLAY_FA', '');
         $this->dws['dw_informe_comision']->set_item(0, 'DISPLAY_NC', '');
+
+        $this->dws['dw_informe_comision']->set_item(0, 'FECHA_REGISTRO_L', $this->current_date());
+		$this->dws['dw_informe_comision']->set_item(0, 'NOM_USUARIO_L', $this->nom_usuario);
 
 		$db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
 		
@@ -208,8 +302,13 @@ class wi_informe_comision extends w_input{
         $this->dws['dw_informe_comision']->set_item(0, 'T_COMISION_FA', 0);
         $this->dws['dw_informe_comision']->set_item(0, 'T_NETO_NC', 0);
         $this->dws['dw_informe_comision']->set_item(0, 'T_COMISION_NC', 0);
-        $this->dws['dw_informe_comision']->set_item(0, 'TOTAL_COMISION', 0);
 
+        $this->dws['dw_informe_comision']->set_item(0, 'NOM_EMPRESA_L', $result[0]['NOM_EMPRESA']);
+		$this->dws['dw_informe_comision']->set_item(0, 'DIG_VERIF_L', $result[0]['DIG_VERIF']);
+        $this->dws['dw_informe_comision']->set_item(0, 'RUT_L', $result[0]['RUT']);
+        $this->dws['dw_informe_comision']->set_item(0, 'NOM_ESTADO_INFORME_COMISION', 'EMITIDA');
+
+        //////////////////////////////////////DW FACTURA///////////////////////////////////////
         $sql = "SELECT NRO_FACTURA
                       ,CONVERT(VARCHAR, FECHA_FACTURA, 103) FECHA_FACTURA
                       ,COD_DOC
@@ -248,6 +347,9 @@ class wi_informe_comision extends w_input{
             $this->dws['dw_item_informe_comision_fa']->set_item($i, 'MONTO_COMISION', $monto_comision);
             $this->dws['dw_item_informe_comision_fa']->set_item($i, 'SELECCIONAR', 'N');
         }
+
+        //////////////////////////////////////DW NOTA CREDITO///////////////////////////////////////
+
         $cod_factura_list	= trim($cod_factura_list, ",");
         $cod_factura_list	= ($cod_factura_list =='') ? "null" : $cod_factura_list;
         
@@ -258,7 +360,7 @@ class wi_informe_comision extends w_input{
                       FROM FACTURA WHERE COD_FACTURA = N.COD_DOC)  NRO_FACTURA_NC
                       ,N.TOTAL_NETO
                       ,COD_NOTA_CREDITO
-                      ,F.COD_DOC COD_NOTA_VENTA
+                      ,N.COD_DOC COD_FACTURA_NC
                 FROM NOTA_CREDITO N
 					,FACTURA F
                 WHERE N.COD_DOC in ($cod_factura_list)
@@ -277,7 +379,7 @@ class wi_informe_comision extends w_input{
             $this->dws['dw_item_informe_comision_nc']->set_item($i, 'NRO_NOTA_CREDITO', $result[$i]['NRO_NOTA_CREDITO']);
             $this->dws['dw_item_informe_comision_nc']->set_item($i, 'COD_DOC_DOCUMENTO_NC', $result[$i]['COD_NOTA_CREDITO']);
 			$this->dws['dw_item_informe_comision_nc']->set_item($i, 'TIPO_DOCUMENTO_NC', 'NOTA_CREDITO');
-			$this->dws['dw_item_informe_comision_nc']->set_item($i, 'COD_DOC_NC', $result[$i]['COD_NOTA_VENTA']);
+			$this->dws['dw_item_informe_comision_nc']->set_item($i, 'COD_DOC_NC', $result[$i]['COD_FACTURA_NC']);
             $this->dws['dw_item_informe_comision_nc']->set_item($i, 'FECHA_NOTA_CREDITO', $result[$i]['FECHA_NOTA_CREDITO']);
             $this->dws['dw_item_informe_comision_nc']->set_item($i, 'NRO_FACTURA_NC', $result[$i]['NRO_FACTURA_NC']);
             $this->dws['dw_item_informe_comision_nc']->set_item($i, 'TOTAL_NETO_NC', $result[$i]['TOTAL_NETO']);
@@ -285,6 +387,39 @@ class wi_informe_comision extends w_input{
             $this->dws['dw_item_informe_comision_nc']->set_item($i, 'SELECCIONAR_NC', 'N');
             $this->dws['dw_item_informe_comision_nc']->set_item($i, 'SELECCIONAR_NC_H', 'N');
         }
+
+        //////////////////////////////////////DW NOTA CREDITO ANTERIORES///////////////////////////////////////
+        $sql = "EXEC spx_informe_comision_nc_anterior $cod_empresa_sox";
+		$result = $db->build_results($sql);
+
+        $T_NETO_NC_INF = 0;
+        $T_COMISION_NC_INF = 0;
+
+        for($i=0; $i < count($result); $i++){
+            $this->dws['dw_item_informe_nc_anterior']->insert_row();
+
+            $monto_comision = $result[$i]['TOTAL_NETO'] * ($porc_comision/100);
+            $this->dws['dw_item_informe_nc_anterior']->set_item($i, 'NRO_NOTA_CREDITO_INF', $result[$i]['NRO_NOTA_CREDITO']);
+            $this->dws['dw_item_informe_nc_anterior']->set_item($i, 'COD_DOC_DOCUMENTO_INF_NC', $result[$i]['COD_NOTA_CREDITO']);
+			$this->dws['dw_item_informe_nc_anterior']->set_item($i, 'TIPO_DOCUMENTO_INF_NC', 'NOTA_CREDITO');
+			$this->dws['dw_item_informe_nc_anterior']->set_item($i, 'COD_DOC_INF_NC', $result[$i]['COD_FACTURA_NC']);
+            $this->dws['dw_item_informe_nc_anterior']->set_item($i, 'FECHA_NOTA_CREDITO_INF', $result[$i]['FECHA_NOTA_CREDITO']);
+            $this->dws['dw_item_informe_nc_anterior']->set_item($i, 'NRO_FACTURA_NC_INF', $result[$i]['NRO_FACTURA_NC']);
+            $this->dws['dw_item_informe_nc_anterior']->set_item($i, 'TOTAL_NETO_INF_NC', $result[$i]['TOTAL_NETO']);
+            $this->dws['dw_item_informe_nc_anterior']->set_item($i, 'MONTO_COMISION_INF_NC', $monto_comision);
+            $this->dws['dw_item_informe_nc_anterior']->set_item($i, 'SELECCIONAR_NC_INF', 'S');
+            $this->dws['dw_item_informe_nc_anterior']->set_item($i, 'SELECCIONAR_NC_H_INF', 'S');
+            $this->dws['dw_item_informe_nc_anterior']->set_item($i, 'COD_INFORME_COMISION_ANTERIOR', $result[$i]['COD_INFORME_COMISION']);
+
+            $T_NETO_NC_INF += $result[$i]['TOTAL_NETO'];
+            $T_COMISION_NC_INF += $monto_comision;
+        }
+
+        $this->dws['dw_informe_comision']->set_item(0, 'T_NETO_NC_INF', $T_NETO_NC_INF);
+        $this->dws['dw_informe_comision']->set_item(0, 'T_COMISION_NC_INF', $T_COMISION_NC_INF);
+
+        $this->dws['dw_informe_comision']->set_item(0, 'TOTAL_COMISION', 0 - $T_COMISION_NC_INF);
+        $this->dws['dw_informe_comision']->set_item(0, 'TOTAL_COMISION_L', 0 - $T_COMISION_NC_INF);
 	}
 
 	function load_record(){
@@ -292,6 +427,7 @@ class wi_informe_comision extends w_input{
 		$this->dws['dw_informe_comision']->retrieve($cod_informe_comision);
 		$this->dws['dw_item_informe_comision_fa']->retrieve($cod_informe_comision);
         $this->dws['dw_item_informe_comision_nc']->retrieve($cod_informe_comision);
+        $this->dws['dw_item_informe_nc_anterior']->retrieve($cod_informe_comision);
         $this->dws['dw_item_informe_comision_fa']->set_entrable('SELECCIONAR', false);
 
         //tab factura
@@ -322,9 +458,24 @@ class wi_informe_comision extends w_input{
         $this->dws['dw_informe_comision']->set_item(0, 'T_NETO_NC', $T_NETO_NC);
         $this->dws['dw_informe_comision']->set_item(0, 'T_COMISION_NC', $T_COMISION_NC);
 
+        //tab nota credito anterior
+        $T_NETO_NC_ant      = 0;
+        $T_COMISION_NC_ant  = 0;
+        for ($i=0; $i < $this->dws['dw_item_informe_nc_anterior']->row_count() ; $i++) { 
+            $total_neto     = $this->dws['dw_item_informe_nc_anterior']->get_item($i, 'TOTAL_NETO_INF_NC');
+            $monto_comision = $this->dws['dw_item_informe_nc_anterior']->get_item($i, 'MONTO_COMISION_INF_NC');
 
-        $total_comision = $T_COMISION_FA - $T_COMISION_NC;
+            $T_NETO_NC_ant += $total_neto;
+            $T_COMISION_NC_ant += $monto_comision;
+        }
+
+        $this->dws['dw_informe_comision']->set_item(0, 'T_NETO_NC_INF', $T_NETO_NC_ant);
+        $this->dws['dw_informe_comision']->set_item(0, 'T_COMISION_NC_INF', $T_COMISION_NC_ant);
+
+
+        $total_comision = $T_COMISION_FA - $T_COMISION_NC - $T_COMISION_NC_ant;
         $this->dws['dw_informe_comision']->set_item(0, 'TOTAL_COMISION', $total_comision);
+        $this->dws['dw_informe_comision']->set_item(0, 'TOTAL_COMISION_L', $total_comision);
 
         $cod_estado_ic = $this->dws['dw_informe_comision']->get_item(0, 'COD_ESTADO_INFORME_COMISION');
 
@@ -382,6 +533,12 @@ class wi_informe_comision extends w_input{
                     $this->dws['dw_item_informe_comision_nc']->set_item($i, 'COD_INFORME_COMISION_NC', $cod_informe_comision);
 
                 if (!$this->dws['dw_item_informe_comision_nc']->update($db))
+                    return false;
+
+                for ($i=0; $i<$this->dws['dw_item_informe_nc_anterior']->row_count(); $i++)
+                    $this->dws['dw_item_informe_nc_anterior']->set_item($i, 'COD_INFORME_COMISION_INF_NC', $cod_informe_comision);
+
+                if (!$this->dws['dw_item_informe_nc_anterior']->update($db))
                     return false;
 			}
 

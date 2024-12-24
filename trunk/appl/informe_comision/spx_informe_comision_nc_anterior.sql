@@ -1,0 +1,72 @@
+CREATE PROCEDURE spx_informe_comision_nc_anterior(@ve_cod_empresa	numeric(10))
+AS
+BEGIN
+	DECLARE @TEMPO TABLE 	 
+		    (NRO_NOTA_CREDITO			numeric(10)  
+			,FECHA_NOTA_CREDITO			datetime
+			,COD_DOC					numeric(10)
+			,NRO_FACTURA_NC				numeric(10)
+			,TOTAL_NETO					numeric(10)
+			,COD_NOTA_CREDITO			numeric(10)
+			,COD_FACTURA_NC				numeric(10)
+			,COD_INFORME_COMISION		numeric(10))
+
+	DECLARE
+		@vc_cod_doc_documento		numeric(10),
+		@vc_cod_informe_comision	numeric(10)
+
+	DECLARE C_FACTURAS CURSOR FOR 
+	SELECT COD_DOC_DOCUMENTO
+		  ,IIC.COD_INFORME_COMISION
+	FROM ITEM_INFORME_COMISION IIC
+		,INFORME_COMISION IC
+	WHERE TIPO_DOCUMENTO = 'FACTURA'
+	AND IC.COD_EMPRESA = @ve_cod_empresa
+	AND IIC.COD_INFORME_COMISION = IC.COD_INFORME_COMISION
+	AND COD_DOC_DOCUMENTO NOT IN (SELECT COD_DOC
+								  FROM ITEM_INFORME_COMISION
+								  WHERE TIPO_DOCUMENTO = 'NOTA_CREDITO')
+	OPEN C_FACTURAS
+	FETCH C_FACTURAS INTO @vc_cod_doc_documento, @vc_cod_informe_comision
+	WHILE @@FETCH_STATUS = 0 BEGIN
+		
+		INSERT INTO @TEMPO  (NRO_NOTA_CREDITO  
+							,FECHA_NOTA_CREDITO
+							,COD_DOC
+							,NRO_FACTURA_NC
+							,TOTAL_NETO
+							,COD_NOTA_CREDITO
+							,COD_FACTURA_NC
+							,COD_INFORME_COMISION)
+		SELECT NRO_NOTA_CREDITO
+                ,FECHA_NOTA_CREDITO
+                ,N.COD_DOC
+                ,(SELECT NRO_FACTURA 
+                FROM FACTURA WHERE COD_FACTURA = N.COD_DOC)
+                ,N.TOTAL_NETO
+                ,COD_NOTA_CREDITO
+                ,N.COD_DOC
+				,@vc_cod_informe_comision
+        FROM NOTA_CREDITO N
+			,FACTURA F
+        WHERE N.COD_DOC = @vc_cod_doc_documento
+        AND YEAR(FECHA_NOTA_CREDITO) >= 2024
+        AND N.COD_ESTADO_DOC_SII = 3 --ENVIADA AL SII
+		AND N.COD_DOC = F.COD_FACTURA
+
+		FETCH C_FACTURAS INTO @vc_cod_doc_documento, @vc_cod_informe_comision
+	END
+	CLOSE C_FACTURAS
+	DEALLOCATE C_FACTURAS
+
+	SELECT NRO_NOTA_CREDITO
+		 ,CONVERT(VARCHAR, FECHA_NOTA_CREDITO, 103) FECHA_NOTA_CREDITO
+		 ,COD_DOC
+		 ,NRO_FACTURA_NC
+		 ,TOTAL_NETO
+		 ,COD_NOTA_CREDITO
+		 ,COD_FACTURA_NC
+		 ,COD_INFORME_COMISION
+	FROM @TEMPO
+	ORDER BY NRO_FACTURA_NC ASC
+END

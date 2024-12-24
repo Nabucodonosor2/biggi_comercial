@@ -66,6 +66,7 @@
 											<div id="TabbedPanels1" class="TabbedPanels">
 												<ul class="TabbedPanelsTabGroup">
 													<li class="TabbedPanelsTab" tabindex="0" style="display:">Informe Comisión</li>
+													<li class="TabbedPanelsTab" tabindex="0">NC Anterior</li>
 												</ul>
 												<div class="TabbedPanelsContentGroup">
 													<!--INI INF COMISION-->
@@ -168,7 +169,71 @@
 															</tr>
 														</table>
 													</div>
-													<!--INI INF COMISION-->
+													<!--FIN INF COMISION-->
+													<!--INI NC ANTERIOR-->
+													<div class="TabbedPanelsContent" style="height: 486px;">
+														<table width="1000" rules="none" border="1" align="center">
+															<tr class="titulo_tabla">
+																<td colspan="6">DATOS GENERALES</td>
+															</tr>
+															<tr class="encabezado_right">
+																<td width="166">Código:</td>
+																<td width="166" class="claro" align="left">{COD_INFORME_COMISION_L}</td>
+																<td width="166">Fecha:</td>
+																<td width="170" class="claro" align="left">{FECHA_REGISTRO_L}</td>
+																<td width="159">Emisor:</td>
+																<td width="169" class="claro" align="left">{NOM_USUARIO_L}</td>
+															</tr>
+															<tr class="encabezado_right">
+																<td width="166">Estado:</td>
+																<td width="166" class="oscuro" align="left">{NOM_ESTADO_INFORME_COMISION}</td>
+																<td width="166">Referencia:</td>
+																<td width="166" class="oscuro" align="left" colspan="3">{REFERENCIA_L}</td>
+															</tr>
+															<tr class="encabezado_right">
+																<td>Razón social:</td>
+																<td colspan="3" class="claro" align="left">{RUT_L}-{DIG_VERIF_L} / {NOM_EMPRESA_L}</td>
+																<td>Total Comisión:</td>
+																<td class="claro" align="left" colspan="3" style="font-weight: bold;">{TOTAL_COMISION_L}</td>
+															</tr>
+														</table>
+														<p />
+														<table width="1000" rules="none" border="1" align="center" class="claro">
+															<tr class="titulo_tabla">
+																<td colspan="6">NOTA CREDITO ANTERIORES</td>
+															</tr>
+															<tr class="encabezado_center">
+																<th width="16%">Seleccionar</th>
+																<th width="16%">Nro Nota Credito</th>
+																<th width="17%">Fecha Nota Credito</th>
+																<th width="17%">Nro Factura</th>
+																<th width="17%">Total Neto</th>
+																<th width="17%">Monto Comisión</th>
+															</tr>
+														</table>
+														<div style="overflow-x:hidden; overflow-y:auto; height:306px; margin-top:-1em;">
+															<table width="1000" rules="none" border="1" align="center" class="claro" id="ITEM_INFORME_NC_ANTERIOR">
+																<!-- startBlock(ITEM_INFORME_NC_ANTERIOR) -->
+																<tr class="{DW_TR_CSS}" id="{DW_TR_ID}">
+																	<td width="16%" align="center">{SELECCIONAR_NC_INF}{SELECCIONAR_NC_H_INF}</td>	
+																	<td width="16%" align="center">{NRO_NOTA_CREDITO_INF}</td>
+																	<td width="17%" align="center">{FECHA_NOTA_CREDITO_INF}</td>
+																	<td width="17%" align="center">{NRO_FACTURA_NC_INF}</td>
+																	<td width="17%" align="right">{TOTAL_NETO_INF_NC}</td>
+																	<td width="17%" align="right"><div style="padding-right:20px;">{MONTO_COMISION_INF_NC}</div></td>																												
+																</tr>
+																<!-- endBlock(ITEM_INFORME_NC_ANTERIOR) -->
+															</table>
+														</div>
+														<table width="1000" border="0" align="center" class="claro">
+															<tr class="oscuro">
+																<td colspan="4" align="right" width="66%" style="font-weight: bold;">TOTALES</td>
+																<td align="right" width="17%" style="font-weight: bold;">{T_NETO_NC_INF}</td>
+																<td align="right" width="17%" style="font-weight: bold;"><div style="padding-right:20px;">{T_COMISION_NC_INF}</div></td>
+															</tr>
+														</table>
+													</div>
+													<!--INI NC ANTERIOR-->
 												</div>
 												<!--FIN TabbedPanelsContentGroup-->
 											</div>

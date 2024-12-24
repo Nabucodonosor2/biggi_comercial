@@ -87,7 +87,18 @@ function calcula_totales(){
 	set_value('T_COMISION_NC_0', number_format(vl_T_COMISION_NC, 0, ',', '.'), number_format(vl_T_COMISION_NC, 0, ',', '.'));
 	set_value('INICIO_NC', count_nc, count_nc);
 
-	const total_comision = vl_T_COMISION_FA - vl_T_COMISION_NC;
+	//Tabla Nota Credito Anterior
+	const aTR_NC_ant = get_TR('ITEM_INFORME_NC_ANTERIOR');
+
+	let vl_T_COMISION_NC_ant = 0;
+	for(let k = 0; k < aTR_NC_ant.length; k++){
+		let record = get_num_rec_field(aTR_NC_ant[k].id);
+		
+		if(document.getElementById('SELECCIONAR_NC_INF_'+record).checked)
+			vl_T_COMISION_NC_ant	= parseInt(vl_T_COMISION_NC_ant) + parseInt(get_value('MONTO_COMISION_INF_NC_'+record).replaceAll('.', ''));
+	}
+
+	const total_comision = vl_T_COMISION_FA - vl_T_COMISION_NC - vl_T_COMISION_NC_ant;
 	set_value('TOTAL_COMISION_0', number_format(total_comision, 0, ',', '.'), number_format(total_comision, 0, ',', '.'));
 }
 

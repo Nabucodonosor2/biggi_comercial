@@ -15,38 +15,41 @@ function validate() {
 		}
 	}
 
-	var tipo_doc_pago_efectivo = 1;
-	var tipo_doc_pago_anticipo = 9;
-	var tipo_doc_pago_nc = 7;
-	var tipo_doc_pago_tarjeta_credito = 6;
-	var tipo_doc_pago_tarjeta_debito = 5;
-	var tipo_doc_deposito_cta_cte = 4;
-	var tipo_doc_transferencia_bancaria = 10;
-	var tipo_doc_factura_compra = 11;
-	var tipo_doc_deuda_castigada = 13;
+	const tipo_doc_pago_efectivo = 1;
+	const tipo_doc_pago_anticipo = 9;
+	const tipo_doc_pago_nc = 7;
+	const tipo_doc_pago_tarjeta_credito = 6;
+	const tipo_doc_pago_tarjeta_debito = 5;
+	const tipo_doc_deposito_cta_cte = 4;
+	const tipo_doc_transferencia_bancaria = 10;
+	const tipo_doc_factura_compra = 11;
+	const tipo_doc_deuda_castigada = 13;
 
 	var aTR = get_TR('DOC_INGRESO_PAGO');
-	for (var k = 0; k < aTR.length; k++) {
+	for (var k = 0; k < aTR.length; k++){
+		let record = get_num_rec_field(aTR[k].id);
+		let cod_tipo_doc_pago = document.getElementById('COD_TIPO_DOC_PAGO_'+ record).value;
 
-		var record = get_num_rec_field(aTR[k].id);
-		var cod_tipo_doc_pago = document.getElementById('COD_TIPO_DOC_PAGO_'+ record).value;
-		if(cod_tipo_doc_pago == tipo_doc_pago_efectivo
-				|| cod_tipo_doc_pago == tipo_doc_pago_tarjeta_credito
-				|| cod_tipo_doc_pago == tipo_doc_pago_tarjeta_debito){
+		if(cod_tipo_doc_pago == tipo_doc_pago_efectivo && aTR.length > 1){
+			alert('No puede mezclar otros tipos de pago con Efectivo.');
+			return false;
+		}
 
-					for (var z = 0; z < aTR.length; z++) {
-						var record_z = get_num_rec_field(aTR[z].id);
-						var cod_tipo_doc_pago_z = document.getElementById('COD_TIPO_DOC_PAGO_'+ record_z).value;
-					if(cod_tipo_doc_pago_z != tipo_doc_pago_efectivo){
-						if (cod_tipo_doc_pago_z != tipo_doc_pago_tarjeta_credito){
-							if(cod_tipo_doc_pago_z != tipo_doc_pago_tarjeta_debito){
-								alert('No puede utilizar documentos de pago "Efectivo", "Tarjeta de Crédito" y "Tarjeta de Débito" mezclados con otros tipos de documentos.\n Si debe utilizar documentos de pago de otro tipo, debe hacer en ingresos de pago por separado.');
-								return false;
-							}
-						}
-					}
+		if(cod_tipo_doc_pago == tipo_doc_pago_tarjeta_credito
+			|| cod_tipo_doc_pago == tipo_doc_pago_tarjeta_debito){
+			
+			for (var z = 0; z < aTR.length; z++){
+				let record_z = get_num_rec_field(aTR[z].id);
+				let cod_tipo_doc_pago_z = document.getElementById('COD_TIPO_DOC_PAGO_'+ record_z).value;
+
+				if (cod_tipo_doc_pago_z != tipo_doc_pago_tarjeta_credito 
+					&& cod_tipo_doc_pago_z != tipo_doc_pago_tarjeta_debito){
+
+					alert('No puede mezclar otros tipos de pagos con Tarjeta de débito, y/o Tarjeta de Crédito.');
+					return false;
 				}
 			}
+		}
 	}
 
 	for (var i = 0; i < aTR.length; i++) {

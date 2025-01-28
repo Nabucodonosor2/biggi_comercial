@@ -1353,7 +1353,7 @@ class wi_nota_venta extends w_cot_nv {
 					NRO_ORDEN_COMPRA,
 					--CIERRE_SINPART,
 					CENTRO_COSTO_CLIENTE,
-					COD_COTIZACION,
+					COD_COTIZACION,            
 					NV.COD_ESTADO_NOTA_VENTA,
 					NV.COD_ESTADO_NOTA_VENTA COD_ESTADO_NOTA_VENTA_H,
 					ENV.NOM_ESTADO_NOTA_VENTA, 
@@ -1526,6 +1526,7 @@ class wi_nota_venta extends w_cot_nv {
 					COD_USUARIO_CONFIRMA COD_USUARIO_CONFIRMA_H,
 					FECHA_CONFIRMA,
 					case NV.COD_ESTADO_NOTA_VENTA
+						when ".self::K_ESTADO_EMITIDA." then 'EMITIDA'
 						when ".self::K_ESTADO_CERRADA." then 'CERRADA'
 						when ".self::K_ESTADO_ANULADA." then 'ANULADA'
 						when ".self::K_ESTADO_CONFIRMADA." then 'CONFIRMADA'
@@ -1580,6 +1581,7 @@ class wi_nota_venta extends w_cot_nv {
 					,NULL REGISTRO_LISTA_NC_COMPRA
 					,'' DISPLAY_BTN_LISTA_NC
 					,ES_VENTA_WEB
+          ,convert(varchar, FECHA_REGISTRO, 103) +' '+convert(varchar(5), FECHA_REGISTRO, 108) FECHA_REGISTRO_INPUT
 				from NOTA_VENTA NV, USUARIO U, EMPRESA E, ESTADO_NOTA_VENTA ENV, CUENTA_CORRIENTE CC, USUARIO V1
 				where COD_NOTA_VENTA = {KEY1} and
 					U.COD_USUARIO = NV.COD_USUARIO and
@@ -1616,7 +1618,9 @@ class wi_nota_venta extends w_cot_nv {
 		$control->set_onChange("f_valida_oc();");
 		
 		$this->dws['dw_nota_venta']->add_control(new edit_text_upper('CENTRO_COSTO_CLIENTE', 25, 30));	
-		$this->dws['dw_nota_venta']->add_control(new edit_nro_doc('COD_COTIZACION', 'COTIZACION'));	
+		//$this->dws['dw_nota_venta']->add_control(new edit_nro_doc('COD_COTIZACION', 'COTIZACION'));	
+   
+    $this->dws['dw_nota_venta']->add_control(new static_link('COD_COTIZACION', '../../../../commonlib/trunk/php/link_wi.php?modulo_origen=nota_venta&modulo_destino=cotizacion&cod_modulo_destino=[COD_COTIZACION_AUX]&cod_item_menu=1505'));
 		
 		$this->add_controls_cot_nv();
 		$this->dws['dw_nota_venta']->set_computed('STATIC_TOTAL_NETO', '[TOTAL_NETO]');	
@@ -3163,6 +3167,7 @@ class wi_nota_venta extends w_cot_nv {
 		$db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
 		
 		$sql_crea_desde = "select null COD_NOTA_VENTA
+          --,COD_COTIZACION COD_COTIZACION_AUX
 					,null CREADA_EN_SV
 					,NULL PORC_DESC_PERMITIDO
 					,convert(nvarchar, getdate(), 103) FECHA_NOTA_VENTA
@@ -4057,8 +4062,12 @@ class wi_nota_venta extends w_cot_nv {
 			$this->actualiza_webpay($cod_nota_venta,$print_nv[2]);
 			$link_pago = $this->inicia_pago($cod_nota_venta);
 
+			//MH 01-12-2024 los nombres de personas que tienen el caracter " ' " hacen que falle el insert del spu_envio_mail
+			$print_nv[3] = str_replace("'", "", $print_nv[3]);
+
 			$this->envia_mail_pago($link_pago,$cod_nota_venta,$print_nv[1], $print_nv[3]);
 			$this->log_cambio($cod_nota_venta);
+
 
 		}else if($_POST['b_no_suma_nv_informe']){
 			$this->suma_nv_informe();
@@ -4496,10 +4505,10 @@ class wi_nota_venta extends w_cot_nv {
 		
 		$lista_mail_to		= "'$email'";
 		$lista_mail_to_name	= "'$nombre_correo'";
+
 		$lista_mail_cc		= "NULL";
 		$lista_mail_cc_name	= "NULL";
-		//$lista_mail_bcc		= "'rescudero@biggi.cl;evergara@integrasystem.cl;mherrera@biggi.cl;$email_vendedor'";
-		$lista_mail_bcc		= "'evergara@integrasystem.cl;mherrera@biggi.cl;$email_vendedor'";
+		$lista_mail_bcc		= "'mherrera@biggi.cl;$email_vendedor'";
 		$lista_mail_bcc_name= "NULL";
 		
 		$sp = "spu_envio_mail";
@@ -4527,6 +4536,7 @@ class wi_nota_venta extends w_cot_nv {
 		    $this->alert('El Mail ha sido enviado.');
 		else
 		    $this->alert('Error al enviar mail.');
+
 		
 	}
 

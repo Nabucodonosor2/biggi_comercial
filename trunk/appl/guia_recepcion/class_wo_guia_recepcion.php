@@ -39,6 +39,7 @@ class wo_guia_recepcion extends w_output_biggi{
 						,dbo.f_get_modelo_gr(GR.COD_GUIA_RECEPCION) MODELO_GR
 						,CASE
 							WHEN GR_RESUELTA = 'S' THEN 'Resuelta'
+							WHEN EGR.COD_ESTADO_GUIA_RECEPCION = 3 THEN 'Resuelta'
 							ELSE 'No Resuelta'
 						END GR_RESUELTA
 				FROM	GUIA_RECEPCION GR LEFT OUTER JOIN USUARIO U ON GR.COD_USUARIO_RESPONSABLE = U.COD_USUARIO
@@ -77,7 +78,7 @@ class wo_guia_recepcion extends w_output_biggi{
 				UNION
 				SELECT 'N' GR_RESUELTA
 						,'No Resuelta' NOM_GR_RESUELTA";
-		$this->add_header(new header_drop_down_string('GR_RESUELTA', "GR_RESUELTA", 'ESTADO GR', $sql));
+		$this->add_header(new header_drop_down_string('GR_RESUELTA', "GR_RESUELTA", 'Estado Interno', $sql));
    	}
    	
    	function make_menu(&$temp) {

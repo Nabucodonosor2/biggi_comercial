@@ -241,7 +241,7 @@
 													<!--FIN ITEMS-->
 													<!--INI RESOLUCION GR-->
 													<div class="TabbedPanelsContent">
-														<table width="1000" rules="none" border="1" align="center">
+														<!--<table width="1000" rules="none" border="1" align="center">
 															<tr class="titulo_tabla">
 																<td colspan="6">DATOS GENERALES</td>
 															</tr>
@@ -254,11 +254,11 @@
 																<td width="166" class="claro" align="left">{NOM_USUARIO}</td>
 															</tr>
 														</table>
-														<P />
+														<P />-->
 														<table width="1000" rules="none" border="1" align="center">
-															<tr class="titulo_tabla">
+															<!--<tr class="titulo_tabla">
 																<td colspan="6">DATOS GENERALES</td>
-															</tr>
+															</tr>-->
 															<tr class="encabezado_right">
 																<td width="166">Resuelta:</td>
 																<td width="166" class="oscuro" align="left">{GR_RESUELTA}</td>
@@ -269,8 +269,43 @@
 															</tr>
 															<tr class="encabezado_right">
 																<td width="166">OBS:</td>
-																<td width="166" class="claro" align="left" colspan="5">{GR_RESUELTA_OBS}</td>
+																<td width="166" class="claro" align="left" colspan="3">{GR_RESUELTA_OBS}</td>
+                                								<td width="166">Fecha resuelta:</td>
+																<td width="166" class="claro" align="left">{FECHA_RESUELTA}</td>
 															</tr>
+                           								</table>
+                               							<P />
+   												      <table width="1000" rules="none" border="1" align="center" class="claro">
+        													<tr class="titulo_tabla">
+        														<td colspan="11">ÍTEMS</td>
+        													</tr>
+        													<tr class="encabezado_center">
+        														<th width="5%">Sec</th>
+        														<th width="14%">Fecha</th>
+        														<th width="20%">Usuario</th>
+        														<th width="50%">Glosa</th>
+        													</tr>
+        												</table>
+        												<div style="overflow-x:hidden; overflow-y:auto; height:280; margin-top:-1em;">
+        												<table width="1000" rules="none" border="1" align="center" class="claro" id="BITACORA_GUIA_RECEPCION">
+        													<!-- startBlock(BITACORA_GUIA_RECEPCION) -->
+        													<tr class="{DW_TR_CSS}" id="{DW_TR_ID}">
+        														<td width="5%" align="center">{ORDEN}{COD_BITACORA_GUIA_RECEPCION}</td>
+        														<td width="14%" align="center">{FECHA_BITACORA_GUIA_RECEPCION}</td>
+        														<td width="20%" align="center">{COD_USUARIO}</td>
+        														<td width="50%" align="left">{GLOSA}</td>
+        														<!--<td width="6%" align="center">{ELIMINAR_BITACORA_GUIA_RECEPCION}</td>-->													
+        													</tr>
+        													<!-- endBlock(BITACORA_GUIA_RECEPCION) -->
+        												</table>
+        												</div>
+        												<table width="1000" border="0" align="center" class="claro">
+                                                          <tr class="claro">
+                                                            <td colspan="9" align="left">{AGREGAR_BITACORA_GUIA_RECEPCION}</td>
+                                                          </tr>
+                                                        </table>
+        												<table width="1000" rules="none" border="1" align="center">                                                                                                <P />                                                                          
+        													
 														</table>
 													</div>
 													<!--FIN RESOLUCION GR-->

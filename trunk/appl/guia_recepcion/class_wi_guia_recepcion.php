@@ -1,6 +1,221 @@
 <?php
+//ini_set('display_errors', 'On');
 require_once(dirname(__FILE__)."/../../../../commonlib/trunk/php/auto_load.php");
 require_once(dirname(__FILE__)."/../empresa/class_dw_help_empresa.php");
+
+class dw_bitacora_guia_recepcion extends datawindow {
+	function dw_bitacora_guia_recepcion() {
+		$sql = "select COD_BITACORA_GUIA_RECEPCION 
+                	,COD_USUARIO 
+                	,COD_GUIA_RECEPCION 
+                	,convert(varchar(20), FECHA_BITACORA_GUIA_RECEPCION, 103)+'  '+ convert(varchar(20), FECHA_BITACORA_GUIA_RECEPCION, 8) FECHA_BITACORA_GUIA_RECEPCION 
+                	,GLOSA 
+                  ,ORDEN
+                from BITACORA_GUIA_RECEPCION 
+                where COD_GUIA_RECEPCION = {KEY1}
+                ORDER BY ORDEN asc";
+ 
+		parent::datawindow($sql, 'BITACORA_GUIA_RECEPCION',true, true);
+    $this->add_control(new edit_text_upper('COD_BITACORA_GUIA_RECEPCION',10, 10, 'hidden'));
+    
+    $this->add_control(new static_text('FECHA_BITACORA_GUIA_RECEPCION',10,10));
+		
+    $sql_usuario = "select 	COD_USUARIO
+						,NOM_USUARIO
+				from USUARIO";
+						
+		$this->add_control(new drop_down_dw('COD_USUARIO',$sql_usuario,150));	
+		$this->set_entrable('COD_USUARIO', false);
+    $this->add_control(new edit_text_upper('GLOSA',90,100));
+    $this->add_control(new static_text('ORDEN'));
+    
+    $this->set_mandatory('GLOSA', 'Glosa');
+  }
+  function insert_row($row = -1) {
+		$row = parent::insert_row($row);
+    $this->set_item($row, 'ORDEN', $this->row_count() * 1);
+		$this->set_item($row, 'COD_USUARIO', $this->cod_usuario);
+		//$this->set_item($row, 'NOM_USUARIO', $this->nom_usuario);
+		$db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
+		$this->set_item($row, 'FECHA_BITACORA_GUIA_RECEPCION', $db->current_date());
+		return $row;
+	}
+  function update($db, $COD_GUIA_RECEPCION) {
+    for ($i = 0; $i < $this->row_count(); $i++){
+				
+			$statuts = $this->get_status_row($i);
+      
+      if ($statuts == K_ROW_NOT_MODIFIED || $statuts == K_ROW_NEW)
+				continue;
+      
+      if ($statuts == K_ROW_NEW_MODIFIED)
+				$operacion = 'INSERT';
+			elseif ($statuts == K_ROW_MODIFIED)
+				$operacion = 'UPDATE';
+         
+  			$COD_BITACORA_GUIA_RECEPCION = $this->get_item($i, 'COD_BITACORA_GUIA_RECEPCION');
+  			$COD_USUARIO = session::get("COD_USUARIO");
+  			$GLOSA = $this->get_item($i, 'GLOSA');
+  			$ORDEN = $this->get_item($i, 'ORDEN');
+        
+        $COD_BITACORA_GUIA_RECEPCION 	= ($COD_BITACORA_GUIA_RECEPCION=='') ? "null" : $COD_BITACORA_GUIA_RECEPCION;
+        
+        if (!$db->EXECUTE_SP('spu_bitacora_guia_recepcion', "'$operacion', $COD_BITACORA_GUIA_RECEPCION, $COD_USUARIO, $COD_GUIA_RECEPCION, '$GLOSA',$ORDEN"))
+  				return false;
+		    
+		  $this-> envia_mail_bitacora($db, $COD_GUIA_RECEPCION);
+	    
+    }
+    /*for ($i = 0; $i < $this->row_count('delete'); $i++) {
+		$statuts = $this->get_status_row($i, 'delete');
+		if ($statuts == K_ROW_NEW || $statuts == K_ROW_NEW_MODIFIED)
+			continue;
+		
+    $COD_BITACORA_GUIA_RECEPCION = $this->get_item($i, 'COD_BITACORA_GUIA_RECEPCION');	
+		//$COD_PRE_ORDEN_COMPRA = $this->get_item($i, 'COD_PRE_ORDEN_COMPRA', 'delete');
+		$param = "'DELETE', $COD_BITACORA_GUIA_RECEPCION";			
+		if (!$db->EXECUTE_SP('spu_bitacora_guia_recepcion', $param))
+			return false;
+
+	  }*/		
+    
+    return true;
+	}
+  function envia_mail_bitacora ($db, $COD_GUIA_RECEPCION){
+		$temp = new Template_appl('mail_bitacora.htm');
+		
+		$sql = "SELECT COD_GUIA_RECEPCION
+					  ,(SELECT NOM_USUARIO 
+						FROM USUARIO US
+						WHERE US.COD_USUARIO = GR.COD_USUARIO) NOM_USUARIO
+					  ,(SELECT MAIL 
+						FROM USUARIO US
+						WHERE US.COD_USUARIO = GR.COD_USUARIO) MAIL_EMISOR	
+					  ,NOM_USUARIO	NOM_USUARIO_RESPONSABLE
+					  ,MAIL
+					  ,CONVERT(VARCHAR, FECHA_GUIA_RECEPCION, 103) FECHA_GUIA_RECEPCION
+					  ,(dbo.number_format(CONVERT(VARCHAR, RUT), 0, ',', '.')  +'-'+ DIG_VERIF) RUT
+					  ,NOM_EMPRESA
+					  ,COD_DOC
+					  ,CASE
+						WHEN GR.TIPO_DOC = 'FACTURA' THEN (SELECT CONVERT(VARCHAR,COD_DOC)
+														   FROM FACTURA
+														   WHERE COD_FACTURA = GR.COD_DOC)
+						WHEN GR.TIPO_DOC = 'GUIA_DESPACHO' THEN (SELECT CONVERT(VARCHAR,COD_DOC)
+																 FROM GUIA_DESPACHO
+																 WHERE COD_GUIA_DESPACHO = GR.COD_DOC)
+						ELSE 'No indicada'
+					  END COD_NOTA_VENTA											 
+					  ,CASE TIPO_RECEPCION	
+						WHEN 1 THEN 'Devolución de Equipos'
+						WHEN 2 THEN 'Cambio en garantía'
+						WHEN 3 THEN 'Solicita Presupuesto'
+						WHEN 4 THEN 'Recepción equipo en Demostración'
+					   END TIPO_INGRESO
+					  ,OBS_POST_VENTA
+            ,(select TOP 1 ORDEN    FROM BITACORA_GUIA_RECEPCION WHERE COD_GUIA_RECEPCION = $COD_GUIA_RECEPCION  ORDER BY COD_BITACORA_GUIA_RECEPCION DESC) ORDEN_BITACORA
+				FROM GUIA_RECEPCION GR
+					,EMPRESA E
+					,USUARIO U
+				WHERE COD_GUIA_RECEPCION = $COD_GUIA_RECEPCION
+				AND E.COD_EMPRESA = GR.COD_EMPRESA
+				AND U.COD_USUARIO = COD_USUARIO_RESPONSABLE";
+		
+		$result = $db->build_results($sql);
+		$dw = new datawindow($sql);
+		$dw->retrieve();
+		$dw->habilitar($temp, false);
+		
+		////////////////////////////////
+		
+		$sql = "SELECT COD_PRODUCTO
+					  ,NOM_PRODUCTO
+					  ,CANTIDAD
+				FROM ITEM_GUIA_RECEPCION
+				WHERE COD_GUIA_RECEPCION = $COD_GUIA_RECEPCION";
+		
+		$dw_item = new datawindow($sql, 'ITEM_GUIA_RECEPCION');
+		$dw_item->retrieve();
+		$dw_item->habilitar($temp, false);
+   
+   
+   $sql_bitacora = "select COD_BITACORA_GUIA_RECEPCION 
+                	,ORDEN
+                  ,convert(varchar(20), FECHA_BITACORA_GUIA_RECEPCION, 103)+'  '+ convert(varchar(20), FECHA_BITACORA_GUIA_RECEPCION, 8) FECHA_BITACORA_GUIA_RECEPCION
+                  ,(select NOM_USUARIO from usuario where  B.COD_USUARIO = cod_usuario ) NOM_USUARIO
+                	,GLOSA 
+                from BITACORA_GUIA_RECEPCION B 
+                where COD_GUIA_RECEPCION = $COD_GUIA_RECEPCION
+                ORDER BY ORDEN desc";
+		
+		$dw_bitacora = new datawindow($sql_bitacora, 'ITEM_BITACORA_RECEPCION');
+		$dw_bitacora->retrieve();
+		$dw_bitacora->habilitar($temp, false);
+   
+
+		
+		$subject = "Aviso Guia Recepcion Nº ".$result[0]['COD_GUIA_RECEPCION']." asignada a: ".$result[0]['NOM_USUARIO_RESPONSABLE']." / Bitacora ".$result[0]['ORDEN_BITACORA'];
+		$html = $temp->toString();
+		
+		$mailto = $result[0]['MAIL'];
+		$mailtoname = $result[0]['NOM_USUARIO_RESPONSABLE'];
+    //$mailcc = array('hirvingomezgamboa@gmail.com');
+    //$mailccname = array('Hirvin Gomez');
+		$mailcc = array('ascianca@biggi.cl', 'sergio.pechoante@biggi.cl','fpuebla@biggi.cl', 'jcatalan@biggi.cl', 'psilva@biggi.cl', 'mscianca@todoinox.cl', 'lsun@todoinox.cl', 'rsanchez@todoinox.cl', 'lwu@todoinox.cl');
+		$mailccname = array('ANGEL SCIANCA','SERGIO PECHOANTE','FELIPE PUEBLA','JOSE CATALAN', 'PIERO SILVA', 'Margarita Scianca', 'Lifen Sun', 'Ricardo Sanchez', 'Loreto Wu');
+			
+		if($result[0]['NOM_USUARIO'] <> $mailtoname){
+			$mailcc[]		= $result[0]['MAIL_EMISOR'];
+			$mailccname[]	= $result[0]['NOM_USUARIO'];
+		}
+		
+		for($i=0 ; $i < count($mailcc) ; $i++){
+			if($mailto <> $mailcc[$i]){
+				$str_mailcc		.= $mailcc[$i].";";
+				$str_mailccname .= $mailccname[$i].";";
+			}
+		}
+		
+		$str_mailcc		= trim($str_mailcc,';');
+		$str_mailccname	= trim($str_mailccname,';');
+		
+		$mailbcc = array('mherrera@biggi.cl');
+		$mailbccname = array('MARCELO HERRERA');
+			
+		for($i=0 ; $i < count($mailbcc) ; $i++){
+			if($mailto <> $mailbcc[$i]){
+				$str_mailbcc		.= $mailbcc[$i].";";
+				$str_mailbccname	.= $mailbccname[$i].";";
+			}
+		}
+		
+		$str_mailbcc		= trim($str_mailbcc,';');
+		$str_mailbccname	= trim($str_mailbccname,';');
+
+		$sp = "spu_envio_mail";
+	
+		$param = "'INSERT'							--@ve_operacion
+				,null								--@ve_cod_envio_mail
+				,1									--@ve_cod_estado_envio_mail
+				,null								--@ve_fecha_envio
+			 	,'soporte@biggi.cl'					--@ve_mail_from
+			 	,'Comercial Biggi S.A.'				--@ve_mail_from_name
+			 	,'$str_mailcc'						--@ve_mail_cc
+			 	,'$str_mailccname'					--@ve_mail_cc_name
+			 	,'$str_mailbcc'						--@ve_mail_bcc
+			 	,'$str_mailbccname'					--@ve_mail_bcc_name
+			 	,'$mailto'							--@ve_mail_to
+			 	,'$mailtoname'						--@ve_mail_to_name
+			 	,'$subject'							--@ve_mail_subject
+			 	,'".str_replace("'","''",$html)."'	--@ve_mail_body
+			 	,null								--@ve_mail_altbody
+			 	,'GUIA_RECEPCION'					--@ve_tipo_doc
+			 	,$COD_GUIA_RECEPCION";				//@ve_cod_doc
+		
+		$db->EXECUTE_SP($sp, $param);
+    return 0;
+	}
+}
 
 class dw_item_guia_recepcion_base extends datawindow {
 	
@@ -301,6 +516,8 @@ class wi_guia_recepcion_base extends w_input {
 		// DATAWINDOWS ITEMS GUIA_RECEPCION
 		$this->dws['dw_item_guia_recepcion'] = new dw_item_guia_recepcion();
 		
+   $this->dws['dw_bitacora_guia_recepcion'] = new dw_bitacora_guia_recepcion();
+   
 		//auditoria Solicitado por IS.
 		$this->add_auditoria('COD_TIPO_GUIA_RECEPCION');
 		$this->add_auditoria('COD_ESTADO_GUIA_RECEPCION');
@@ -334,7 +551,7 @@ class wi_guia_recepcion_base extends w_input {
 		$cod_empresa = $this->dws['dw_guia_recepcion']->get_item(0, 'COD_EMPRESA');
 		$this->dws['dw_guia_recepcion']->controls['COD_SUCURSAL_FACTURA']->retrieve($cod_empresa);
 		$this->dws['dw_guia_recepcion']->controls['COD_PERSONA']->retrieve($cod_empresa);
-		
+   	
 		$COD_ESTADO_GUIA_RECEPCION = $this->dws['dw_guia_recepcion']->get_item(0, 'COD_ESTADO_GUIA_RECEPCION');
 		
 		$this->b_no_save_visible = true;
@@ -424,6 +641,8 @@ class wi_guia_recepcion_base extends w_input {
 		}
 		
 		$this->dws['dw_item_guia_recepcion']->retrieve($cod_guia_recepcion);
+    
+    $this->dws['dw_bitacora_guia_recepcion']->retrieve($cod_guia_recepcion);
 		
 		$k_autoriza_no_bodega = 999605; 
 		$priv = $this->get_privilegio_opcion_usuario($k_autoriza_no_bodega, $this->cod_usuario); 
@@ -530,9 +749,10 @@ class wi_guia_recepcion_base extends w_input {
 				$this->dws['dw_item_guia_recepcion']->set_item($i, 'COD_GUIA_RECEPCION', $COD_GUIA_RECEPCION);
 				$this->dws['dw_item_guia_recepcion']->set_item($i, 'TIPO_DOC_GR', $TIPO_DOC);
 			}
+
 			if (!$this->dws['dw_item_guia_recepcion']->update($db, $COD_GUIA_RECEPCION)) return false;	
 			return true;
-		}
+    }
 		return false;
 	}
 	
@@ -554,8 +774,8 @@ class wi_guia_recepcion_base extends w_input {
         $mail_remitente = $result_remitente[0]['MAIL'];
 		
  		// Mail destinatarios
-        $para_admin1 = 'bpinochet@integrasystem.cl';
-        $para_admin2 = 'bpinochet@integrasystem.cl';
+        //$para_admin1 = 'bpinochet@integrasystem.cl';
+        //$para_admin2 = 'bpinochet@integrasystem.cl';
         /*
         $para_admin1 = 'mherrera@integrasystem.cl';
         $para_admin2 = 'imeza@integrasystem.cl';

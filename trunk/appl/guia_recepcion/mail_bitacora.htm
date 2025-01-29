@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+		<title>Sistema Grupo de Empresas Biggi</title>
+		<style type="text/css">
+		<!--
+		body {
+			background-color: #FFFFFF;
+		}
+		-->
+		</style>
+	</head>
+	<body>
+   
+    <p>Bitacora Guía Recepcion.</p>
+ <br>
+		<table width="80%" rules="none" border="1" align="center" class="claro" id="ITEM_BITACORA_RECEPCION">
+			<tr>
+				<td>
+					<table border="1" width="100%">
+						<tbody>
+							<tr class="encabezado_right">
+								<td width="15%">
+									<div align="center"><strong>IT</strong></div>
+								</td>
+								<td width="15%">
+									<div align="center"><strong>Fecha</strong></div>
+								</td>
+								<td width="15%">
+									<div align="center"><strong>Usuario</strong></div>
+								</td>
+                <td width="65%">
+									<div align="center"><strong>Glosa</strong></div>
+								</td>
+							</tr>
+							 <!-- startBlock(ITEM_BITACORA_RECEPCION) -->
+							<tr class="{DW_TR_CSS}" id="{DW_TR_ID}">
+								<td>
+									<div align="center">{ORDEN}</div>
+								</td>
+								<td>
+									<div align="left">{FECHA_BITACORA_GUIA_RECEPCION}</div>
+								</td>
+								<td>
+									<div align="right">{NOM_USUARIO}</div>
+								</td>
+                <td>
+									<div align="right">{GLOSA}</div>
+								</td>
+							</tr>
+							<!-- endBlock(ITEM_BITACORA_RECEPCION) -->
+						</tbody>
+					</table>
+				</td>	
+			</tr>
+		</table>
+		<p />
+		<br>
+		<p>Estimado {NOM_USUARIO_RESPONSABLE}.</p>
+		<p>Le informamos que se ha generado la Guía de Recepción Nº {COD_GUIA_RECEPCION} en la cual se indicó a usted como responsable.</p>
+		<p>Detalle de la GR:</p>
+		<table width="93%" align="center">
+			<tr>
+				<td>
+					<p>Fecha: {FECHA_GUIA_RECEPCION}</p>
+					<p>Cliente: {RUT} {NOM_EMPRESA}</p>
+					<p>Nota de Venta: {COD_NOTA_VENTA}</p>
+					<p>Emisor: {NOM_USUARIO}</p>
+					<p><b>Tipo recepción: {TIPO_INGRESO}</b></p>
+					<p>Observaciones: {OBS_POST_VENTA}</p>
+				</td>
+			</tr>
+		</table>
+		<br>
+		<br>
+		<table width="80%" rules="none" border="1" align="center" class="claro" id="ITEM_GUIA_RECEPCION">
+			<tr>
+				<td>
+					<table border="1" width="100%">
+						<tbody>
+							<tr class="encabezado_right">
+								<td width="15%">
+									<div align="center"><strong>Modelo</strong></div>
+								</td>
+								<td width="70%">
+									<div align="center"><strong>Descripción</strong></div>
+								</td>
+								<td width="15%">
+									<div align="center"><strong>Cantidad</strong></div>
+								</td>
+							</tr>
+							 <!-- startBlock(ITEM_GUIA_RECEPCION) -->
+							<tr class="{DW_TR_CSS}" id="{DW_TR_ID}">
+								<td>
+									<div align="center">{COD_PRODUCTO}</div>
+								</td>
+								<td>
+									<div align="left">{NOM_PRODUCTO}</div>
+								</td>
+								<td>
+									<div align="right">{CANTIDAD}</div>
+								</td>
+							</tr>
+							<!-- endBlock(ITEM_GUIA_RECEPCION) -->
+						</tbody>
+					</table>
+				</td>	
+			</tr>
+		</table>
+		<p />
+		<br>
+		<br>
+		<table width="100%">
+			<tr>
+				<td>
+					<p>Atte.</p>
+					<p>Comercial Biggi</p>
+					<p>Este mensaje ha sido enviado por nuestro servidor de base de datos.</p>
+					<p><br>
+				</td>
+			</tr>
+		</table>
+		<p /><p />
+	</body>
+</html>

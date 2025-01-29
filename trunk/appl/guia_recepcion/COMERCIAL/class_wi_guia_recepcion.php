@@ -86,13 +86,14 @@ class dw_item_guia_recepcion extends dw_item_guia_recepcion_base {
 			$COD_ITEM = '';		// debe ser == '' para que se agregue el boton "+"
 		else
 			$COD_ITEM = $this->get_item(0, 'COD_ITEM_DOC');
+
 		if ($COD_ITEM != ''){ 
 			$agregar = '<img src="../../../../commonlib/trunk/images/b_add_line.jpg" onClick="add_line_item(\''.$this->label_record.'\', \''.$this->nom_tabla.'\');" style="display:none">';
 			$temp->setVar("AGREGAR_".strtoupper($this->label_record), $agregar);
 		}
 	}
 	
-	function update($db, $COD_GUIA_RECEPCION)	{
+	function update($db, $COD_GUIA_RECEPCION){
 		$sp = 'spu_item_guia_recepcion';
 		$operacion = 'DELETE_ALL';
 		$param = "'$operacion',null, $COD_GUIA_RECEPCION";			
@@ -106,9 +107,12 @@ class dw_item_guia_recepcion extends dw_item_guia_recepcion_base {
 			if ($statuts == K_ROW_NOT_MODIFIED || $statuts == K_ROW_NEW){
 				continue;
 			}
+
 			$CANTIDAD = $this->get_item($i, 'CANTIDAD');
+
 			if ($CANTIDAD == 0)
 				continue;
+
 			$COD_ITEM_GUIA_RECEPCION	= $this->get_item($i, 'COD_ITEM_GUIA_RECEPCION');
 			$COD_GUIA_RECEPCION			= $this->get_item($i, 'COD_GUIA_RECEPCION');
 			$COD_PRODUCTO	 			= $this->get_item($i, 'COD_PRODUCTO');
@@ -133,11 +137,10 @@ class dw_item_guia_recepcion extends dw_item_guia_recepcion_base {
 			
 			$operacion = 'INSERT';
 			$param = "'$operacion', $COD_ITEM_GUIA_RECEPCION, $COD_GUIA_RECEPCION, '$COD_PRODUCTO', '$NOM_PRODUCTO', $CANTIDAD, $COD_ITEM, $TIPO_DOC";
-			if (!$db->EXECUTE_SP($sp, $param))
-				
+			if (!$db->EXECUTE_SP($sp, $param))	
 				return false;
-			}	
-		return true;
+		}
+    	return true;
 	}
 }	
 	
@@ -208,6 +211,11 @@ class dw_guia_recepcion extends dw_guia_recepcion_base{
 						,COD_DOC_GR_RESUELTA
 						,COD_DOC_RESUELTA
 						,GR_RESUELTA_OBS
+            ,convert(varchar(20), GR.FECHA_RESUELTA, 103) FECHA_RESUELTA
+            ,case GR.COD_ESTADO_GUIA_RECEPCION
+							when 1 then 'none' 
+							else ''
+						end TAB_153010
 				FROM	GUIA_RECEPCION GR, EMPRESA E,ESTADO_GUIA_RECEPCION EGR,
 						TIPO_GUIA_RECEPCION TGR, USUARIO U
 				WHERE	GR.COD_GUIA_RECEPCION = {KEY1} AND
@@ -305,28 +313,26 @@ class dw_guia_recepcion extends dw_guia_recepcion_base{
 		$this->set_mandatory('OBS', 'Observaciones');
 		
 	}
-	function fill_record(&$temp, $record) {	
-		
+	function fill_record(&$temp, $record){
 		parent::fill_record($temp, $record);
 		
-			$COD_DOC = $this->get_item(0, 'COD_DOC');
-			$COD_ESTADO_GUIA_RECEPCION = $this->get_item(0, 'COD_ESTADO_GUIA_RECEPCION');
-			
-			if (($COD_DOC != '') or ($COD_ESTADO_GUIA_RECEPCION >= 1))  //la GD viene desde NV, o estado <> emitida
-				$temp->setVar('DISABLE_BUTTON', 'style="display:none"');
-			else{	
-					if ($this->entrable)
-						$temp->setVar('DISABLE_BUTTON', '');
-					else
-						$temp->setVar('DISABLE_BUTTON', 'disabled="disabled"');
-			}				
+		$COD_DOC = $this->get_item(0, 'COD_DOC');
+		$COD_ESTADO_GUIA_RECEPCION = $this->get_item(0, 'COD_ESTADO_GUIA_RECEPCION');
+		
+		if (($COD_DOC != '') or ($COD_ESTADO_GUIA_RECEPCION >= 1))  //la GD viene desde NV, o estado <> emitida
+			$temp->setVar('DISABLE_BUTTON', 'style="display:none"');
+		else{	
+				if ($this->entrable)
+					$temp->setVar('DISABLE_BUTTON', '');
+				else
+					$temp->setVar('DISABLE_BUTTON', 'disabled="disabled"');
+		}				
 	}
 	
 }
 
 
 class wi_guia_recepcion extends wi_guia_recepcion_base {
-	
 	const K_ESTADO_GR_EMITIDA	 	= 1;
 	const K_ESTADO_GR_IMPRESA	 	= 2;
 	const K_ESTADO_GR_ANULADA	 	= 3;
@@ -346,16 +352,30 @@ class wi_guia_recepcion extends wi_guia_recepcion_base {
 	const K_PARAM_SMTP 				 =17;
 	const K_PARAM_SITIO_WEB_EMPRESA  =25;
 		
-	function wi_guia_recepcion($cod_item_menu) {		
+	function wi_guia_recepcion($cod_item_menu){		
 		parent::w_input('guia_recepcion', $cod_item_menu);
 
 		// tab guia_recepcion
 		// DATAWINDOWS GUIA_RECEPCION
 		$this->dws['dw_guia_recepcion'] = new dw_guia_recepcion();
+		$this->dws['dw_guia_recepcion']->set_entrable('GR_RESUELTA', false);
+		$this->dws['dw_guia_recepcion']->set_entrable('COD_DOC_GR_RESUELTA', false);
+		$this->dws['dw_guia_recepcion']->set_entrable('COD_DOC_RESUELTA', false);
+		$this->dws['dw_guia_recepcion']->set_entrable('GR_RESUELTA_OBS', false);
+		
+		if(($this->cod_usuario ==1) or ($this->cod_usuario == 4) or ($this->cod_usuario == 71) or ($this->cod_usuario == 46)){
+			$this->dws['dw_guia_recepcion']->set_entrable('GR_RESUELTA', true);
+			$this->dws['dw_guia_recepcion']->set_entrable('COD_DOC_GR_RESUELTA', true);
+			$this->dws['dw_guia_recepcion']->set_entrable('COD_DOC_RESUELTA', true);
+			$this->dws['dw_guia_recepcion']->set_entrable('GR_RESUELTA_OBS', true);
+		}
 		
 		// tab items
 		// DATAWINDOWS ITEMS GUIA_RECEPCION
 		$this->dws['dw_item_guia_recepcion'] = new dw_item_guia_recepcion();
+   
+		// DATAWINDOWS BITACORA_GUIA_RECEPCION
+		$this->dws['dw_bitacora_guia_recepcion'] = new dw_bitacora_guia_recepcion();
 		
 		//auditoria Solicitado por IS.
 		$this->add_auditoria('COD_TIPO_GUIA_RECEPCION');
@@ -364,7 +384,7 @@ class wi_guia_recepcion extends wi_guia_recepcion_base {
 		$this->add_auditoria('COD_PERSONA');
 	}
 
-	function new_record() {
+	function new_record(){
 		$this->dws['dw_guia_recepcion']->insert_row();
 		$this->dws['dw_guia_recepcion']->set_item(0, 'TR_DISPLAY', 'none');
 		$this->dws['dw_guia_recepcion']->set_item(0, 'TR_DISPLAY_TIPO_DOC', 'none');
@@ -374,6 +394,7 @@ class wi_guia_recepcion extends wi_guia_recepcion_base {
 		$this->dws['dw_guia_recepcion']->set_item(0, 'COD_ESTADO_GUIA_RECEPCION', self::K_ESTADO_GR_EMITIDA);
 		$this->dws['dw_guia_recepcion']->set_item(0, 'NOM_ESTADO_GUIA_RECEPCION', 'EMITIDA');
 		$this->dws['dw_guia_recepcion']->set_item(0, 'VISIBLE_TAB', 'none');
+    	$this->dws['dw_guia_recepcion']->set_item(0, 'TAB_153010', 'none');
 		$this->dws['dw_guia_recepcion']->controls['RUT']->readonly 	 			 = true;
 		$this->dws['dw_guia_recepcion']->controls['ALIAS']->readonly 			 = true;
 		$this->dws['dw_guia_recepcion']->controls['COD_EMPRESA']->readonly 		 = true;
@@ -381,7 +402,7 @@ class wi_guia_recepcion extends wi_guia_recepcion_base {
 		$this->dws['dw_guia_recepcion']->set_item(0, 'COD_TIPO_GUIA_RECEPCION', 3);//otro
 		$this->dws['dw_guia_recepcion']->set_item(0, 'NO_BODEGA', 'S');
 		
-		$k_autoriza_no_bodega = 999605; 
+		$k_autoriza_no_bodega = 999605;
 		$priv = $this->get_privilegio_opcion_usuario($k_autoriza_no_bodega, $this->cod_usuario); 
 		
 		if($priv =! 'E'){
@@ -389,13 +410,15 @@ class wi_guia_recepcion extends wi_guia_recepcion_base {
 		}
 	}
 	
-	function load_record() {
+	function load_record(){
 		$cod_guia_recepcion = $this->get_item_wo($this->current_record, 'COD_GUIA_RECEPCION');
 		$this->dws['dw_guia_recepcion']->retrieve($cod_guia_recepcion);
 		$this->dws['dw_item_guia_recepcion']->retrieve($cod_guia_recepcion);
+    	$this->dws['dw_bitacora_guia_recepcion']->retrieve($cod_guia_recepcion);
 		$cod_empresa = $this->dws['dw_guia_recepcion']->get_item(0, 'COD_EMPRESA');
 		$this->dws['dw_guia_recepcion']->controls['COD_SUCURSAL_FACTURA']->retrieve($cod_empresa);
 		$this->dws['dw_guia_recepcion']->controls['COD_PERSONA']->retrieve($cod_empresa);
+		$this->dws['dw_bitacora_guia_recepcion']->set_entrable_dw(true);
 		
 		$COD_ESTADO_GUIA_RECEPCION = $this->dws['dw_guia_recepcion']->get_item(0, 'COD_ESTADO_GUIA_RECEPCION');
 		
@@ -423,9 +446,7 @@ class wi_guia_recepcion extends wi_guia_recepcion_base {
 		$this->dws['dw_guia_recepcion']->set_item(0, 'DISPLAY_RECEP_TODO', 'none');
 		$this->dws['dw_guia_recepcion']->set_item(0, 'TD_DISPLAY_POR_RECEP', 'none');
 		
-        
-		
-		if ($COD_ESTADO_GUIA_RECEPCION == self::K_ESTADO_GR_EMITIDA) {
+		if ($COD_ESTADO_GUIA_RECEPCION == self::K_ESTADO_GR_EMITIDA){
 			if($this->modify == true)
 				$this->b_print_visible	 = false;
 			else	
@@ -450,9 +471,8 @@ class wi_guia_recepcion extends wi_guia_recepcion_base {
 			else if($COD_TIPO_GUIA_RECEPCION  == self::K_TIPO_GR_DEVOLUCION ||$COD_TIPO_GUIA_RECEPCION  == self::K_TIPO_GR_GARANTIA){
 				$this->dws['dw_guia_recepcion']->set_entrable('COD_TIPO_GUIA_RECEPCION'	, false);					
 			}
-		}
-		
-		else if ($COD_ESTADO_GUIA_RECEPCION == self::K_ESTADO_GR_IMPRESA) {
+
+		}else if ($COD_ESTADO_GUIA_RECEPCION == self::K_ESTADO_GR_IMPRESA){
 			$sql = "select 	COD_ESTADO_GUIA_RECEPCION
 							,NOM_ESTADO_GUIA_RECEPCION
 					from 	ESTADO_GUIA_RECEPCION
@@ -486,38 +506,47 @@ class wi_guia_recepcion extends wi_guia_recepcion_base {
 			// aqui se dejan no modificables los datos del tab items
 			$this->dws['dw_item_guia_recepcion']->set_entrable_dw(false);
 				
-		}
-		else if ($COD_ESTADO_GUIA_RECEPCION == self::K_ESTADO_GR_ANULADA) {
+		}else if ($COD_ESTADO_GUIA_RECEPCION == self::K_ESTADO_GR_ANULADA) {
 			$this->b_print_visible 	 = false;
 			$this->b_no_save_visible = false;
 			$this->b_save_visible 	 = false;
 			$this->b_modify_visible  = false;
 		}
 		
-
-		
 		$k_autoriza_no_bodega = 999605; 
 		$priv = $this->get_privilegio_opcion_usuario($k_autoriza_no_bodega, $this->cod_usuario); 
 		
 		if($priv =! 'E'){
 			$this->dws['dw_orden_compra']->set_entrable('NO_BODEGA', false);
-		} 
+		}
+		
+		if($this->dws['dw_guia_recepcion']->get_item(0, 'GR_RESUELTA') == 'S'){
+			$this->dws['dw_guia_recepcion']->set_entrable('GR_RESUELTA', false);
+			$this->dws['dw_guia_recepcion']->set_entrable('COD_DOC_GR_RESUELTA', false);
+			$this->dws['dw_guia_recepcion']->set_entrable('COD_DOC_RESUELTA', false);
+			$this->dws['dw_guia_recepcion']->set_entrable('GR_RESUELTA_OBS', false);
+			$this->dws['dw_bitacora_guia_recepcion']->set_entrable_dw(false);
+		}else{
+			if(($this->cod_usuario ==1) or ($this->cod_usuario == 4) or ($this->cod_usuario == 71) or ($this->cod_usuario == 46)){
+				$this->dws['dw_guia_recepcion']->set_entrable('GR_RESUELTA', true);
+				$this->dws['dw_guia_recepcion']->set_entrable('COD_DOC_GR_RESUELTA', true);
+				$this->dws['dw_guia_recepcion']->set_entrable('COD_DOC_RESUELTA', true);
+				$this->dws['dw_guia_recepcion']->set_entrable('GR_RESUELTA_OBS', true);
+			}
+		}
 	}
-	
+
 	function get_key() {
 		return $this->dws['dw_guia_recepcion']->get_item(0, 'COD_GUIA_RECEPCION');
 	}	
 		
-	
-	function save_record($db) {
+	function save_record($db){
 		$COD_GUIA_RECEPCION			= $this->get_key();
 		$COD_USUARIO				= $this->dws['dw_guia_recepcion']->get_item(0, 'COD_USUARIO');
 		$COD_EMPRESA 				= $this->dws['dw_guia_recepcion']->get_item(0, 'COD_EMPRESA');
 		$COD_SUCURSAL	 			= $this->dws['dw_guia_recepcion']->get_item(0, 'COD_SUCURSAL_FACTURA');
 		$COD_PERSONA				= $this->dws['dw_guia_recepcion']->get_item(0, 'COD_PERSONA');	
 		$COD_ESTADO_GUIA_RECEPCION 	= $this->dws['dw_guia_recepcion']->get_item(0, 'COD_ESTADO_GUIA_RECEPCION');
-
-		
 		$COD_TIPO_GUIA_RECEPCION	= $this->dws['dw_guia_recepcion']->get_item(0, 'COD_TIPO_GUIA_RECEPCION');	
 		$TIPO_DOC					= $this->dws['dw_guia_recepcion']->get_item(0, 'TIPO_DOC');	
 		$NRO_DOC					= $this->dws['dw_guia_recepcion']->get_item(0, 'NRO_DOC');	
@@ -532,6 +561,11 @@ class wi_guia_recepcion extends wi_guia_recepcion_base {
 		$OBS_POST_VENTA				= $this->dws['dw_guia_recepcion']->get_item(0, 'OBS_POST_VENTA');
 		$NO_BODEGA                  = $this->dws['dw_guia_recepcion']->get_item(0, 'NO_BODEGA');
 		$GR_RESUELTA				= $this->dws['dw_guia_recepcion']->get_item(0, 'GR_RESUELTA');
+     
+		if($GR_RESUELTA == 'S'){
+			$COD_USUARIO		= $this->cod_usuario;
+		}
+
 		$COD_DOC_GR_RESUELTA		= $this->dws['dw_guia_recepcion']->get_item(0, 'COD_DOC_GR_RESUELTA');
 		$COD_DOC_RESUELTA			= $this->dws['dw_guia_recepcion']->get_item(0, 'COD_DOC_RESUELTA');
 		$GR_RESUELTA_OBS            = $this->dws['dw_guia_recepcion']->get_item(0, 'GR_RESUELTA_OBS');
@@ -579,29 +613,172 @@ class wi_guia_recepcion extends wi_guia_recepcion_base {
 					,$TIPO_RECEPCION
 					,$COD_USUARIO_RESPONSABLE
 					,$OBS_POST_VENTA
-                    ,$NO_BODEGA
+          			,$NO_BODEGA
 					,$GR_RESUELTA
 					,$COD_DOC_GR_RESUELTA
 					,$COD_DOC_RESUELTA
 					,$GR_RESUELTA_OBS";
-
+  
 		if ($db->EXECUTE_SP($sp, $param)){
-			if ($this->is_new_record()) {
+			if ($this->is_new_record()){
 				$COD_GUIA_RECEPCION = $db->GET_IDENTITY();
 				$this->dws['dw_guia_recepcion']->set_item(0, 'COD_GUIA_RECEPCION', $COD_GUIA_RECEPCION);
 			}
-			if (($MOTIVO_ANULA != 'null') && ($COD_USUARIO_ANULA != 'null')){ // se anula 
+
+			if (($MOTIVO_ANULA != 'null') && ($COD_USUARIO_ANULA != 'null')) // se anula 
 				$this->f_envia_mail('ANULADA');
-			}
+
 			for ($i=0; $i<$this->dws['dw_item_guia_recepcion']->row_count(); $i++){ 
 				$this->dws['dw_item_guia_recepcion']->set_item($i, 'COD_GUIA_RECEPCION', $COD_GUIA_RECEPCION);
 				$this->dws['dw_item_guia_recepcion']->set_item($i, 'TIPO_DOC_GR', $TIPO_DOC);
 			}
+      
 			if (!$this->dws['dw_item_guia_recepcion']->update($db, $COD_GUIA_RECEPCION)) return false;
 			
-			return true;
+			if (!$this->dws['dw_bitacora_guia_recepcion']->update($db, $COD_GUIA_RECEPCION)) return false;
+			
+			if ($GR_RESUELTA != 'N')// se da por resuelto
+				$this->envia_mail_resuelta($db, $COD_GUIA_RECEPCION);
+      
+      		return true;
 		}
 		return false;
+	}
+   
+ 	function envia_mail_resuelta ($db, $COD_GUIA_RECEPCION){
+		$temp = new Template_appl('mail_resuelta.htm');
+		
+		$sql = "SELECT COD_GUIA_RECEPCION
+					  ,(SELECT NOM_USUARIO 
+						FROM USUARIO US
+						WHERE US.COD_USUARIO = GR.COD_USUARIO) NOM_USUARIO
+					  ,(SELECT MAIL 
+						FROM USUARIO US
+						WHERE US.COD_USUARIO = GR.COD_USUARIO) MAIL_EMISOR	
+					  ,NOM_USUARIO	NOM_USUARIO_RESPONSABLE
+					  ,MAIL
+					  ,CONVERT(VARCHAR, FECHA_GUIA_RECEPCION, 103) FECHA_GUIA_RECEPCION
+					  ,(dbo.number_format(CONVERT(VARCHAR, RUT), 0, ',', '.')  +'-'+ DIG_VERIF) RUT
+					  ,NOM_EMPRESA
+					  ,COD_DOC
+					  ,CASE
+						WHEN GR.TIPO_DOC = 'FACTURA' THEN (SELECT CONVERT(VARCHAR,COD_DOC)
+														   FROM FACTURA
+														   WHERE COD_FACTURA = GR.COD_DOC)
+						WHEN GR.TIPO_DOC = 'GUIA_DESPACHO' THEN (SELECT CONVERT(VARCHAR,COD_DOC)
+																 FROM GUIA_DESPACHO
+																 WHERE COD_GUIA_DESPACHO = GR.COD_DOC)
+						ELSE 'No indicada'
+					  END COD_NOTA_VENTA											 
+					  ,CASE TIPO_RECEPCION	
+						WHEN 1 THEN 'Devolución de Equipos'
+						WHEN 2 THEN 'Cambio en garantía'
+						WHEN 3 THEN 'Solicita Presupuesto'
+						WHEN 4 THEN 'Recepción equipo en Demostración'
+					   END TIPO_INGRESO
+					  ,OBS_POST_VENTA
+            ,(select TOP 1 ORDEN    FROM BITACORA_GUIA_RECEPCION WHERE COD_GUIA_RECEPCION = $COD_GUIA_RECEPCION  ORDER BY COD_BITACORA_GUIA_RECEPCION DESC) ORDEN_BITACORA
+            ,GR_RESUELTA
+						,GR_RESUELTA_OBS
+            ,(SELECT NOM_USUARIO FROM USUARIO US WHERE US.COD_USUARIO = GR.COD_USUARIO_RESUELTA) NOM_USUARIO_RESUELTA
+            ,(SELECT NOM_DOC_GR_RESUELTA FROM DOC_GR_RESUELTA WHERE COD_DOC_GR_RESUELTA = GR.COD_DOC_GR_RESUELTA) NOM_DOC_GR_RESUELTA
+				FROM GUIA_RECEPCION GR
+					,EMPRESA E
+					,USUARIO U
+				WHERE COD_GUIA_RECEPCION = $COD_GUIA_RECEPCION
+				AND E.COD_EMPRESA = GR.COD_EMPRESA
+				AND U.COD_USUARIO = COD_USUARIO_RESPONSABLE";
+		
+		$result = $db->build_results($sql);
+		$dw = new datawindow($sql);
+		$dw->retrieve();
+		$dw->habilitar($temp, false);
+		
+		////////////////////////////////
+		
+		$sql = "SELECT COD_PRODUCTO
+					  ,NOM_PRODUCTO
+					  ,CANTIDAD
+				FROM ITEM_GUIA_RECEPCION
+				WHERE COD_GUIA_RECEPCION = $COD_GUIA_RECEPCION";
+		
+		$dw_item = new datawindow($sql, 'ITEM_GUIA_RECEPCION');
+		$dw_item->retrieve();
+		$dw_item->habilitar($temp, false);
+   		$sql_bitacora = "select COD_BITACORA_GUIA_RECEPCION 
+                	,ORDEN
+                  ,convert(varchar(20), FECHA_BITACORA_GUIA_RECEPCION, 103)+'  '+ convert(varchar(20), FECHA_BITACORA_GUIA_RECEPCION, 8) FECHA_BITACORA_GUIA_RECEPCION
+                  ,(select NOM_USUARIO from usuario where  B.COD_USUARIO = cod_usuario ) NOM_USUARIO
+                	,GLOSA 
+                from BITACORA_GUIA_RECEPCION B 
+                where COD_GUIA_RECEPCION = $COD_GUIA_RECEPCION
+                ORDER BY ORDEN desc";
+		
+		$dw_bitacora = new datawindow($sql_bitacora, 'ITEM_BITACORA_RECEPCION');
+		$dw_bitacora->retrieve();
+		$dw_bitacora->habilitar($temp, false);
+   
+
+		
+		$subject = "Aviso Guia Recepcion Nº ".$result[0]['COD_GUIA_RECEPCION']." asignada a: ".$result[0]['NOM_USUARIO_RESPONSABLE']." / [GR RESUELTA]";
+		$html = $temp->toString();
+		
+		$mailto = $result[0]['MAIL'];
+		$mailtoname = $result[0]['NOM_USUARIO_RESPONSABLE'];
+    //$mailcc = array('hirvingomezgamboa@gmail.com');
+    //$mailccname = array('Hirvin Gomez');
+		$mailcc = array('ascianca@biggi.cl', 'sergio.pechoante@biggi.cl','fpuebla@biggi.cl', 'jcatalan@biggi.cl', 'psilva@biggi.cl', 'mscianca@todoinox.cl', 'lsun@todoinox.cl', 'rsanchez@todoinox.cl', 'lwu@todoinox.cl');
+		$mailccname = array('ANGEL SCIANCA','SERGIO PECHOANTE','FELIPE PUEBLA','JOSE CATALAN', 'PIERO SILVA', 'Margarita Scianca', 'Lifen Sun', 'Ricardo Sanchez', 'Loreto Wu');
+			
+		if($result[0]['NOM_USUARIO'] <> $mailtoname){
+			$mailcc[]		= $result[0]['MAIL_EMISOR'];
+			$mailccname[]	= $result[0]['NOM_USUARIO'];
+		}
+		
+		for($i=0 ; $i < count($mailcc) ; $i++){
+			if($mailto <> $mailcc[$i]){
+				$str_mailcc		.= $mailcc[$i].";";
+				$str_mailccname .= $mailccname[$i].";";
+			}
+		}
+		
+		$str_mailcc		= trim($str_mailcc,';');
+		$str_mailccname	= trim($str_mailccname,';');
+		
+		$mailbcc = array('mherrera@biggi.cl');
+		$mailbccname = array('MARCELO HERRERA');
+			
+		for($i=0 ; $i < count($mailbcc) ; $i++){
+			if($mailto <> $mailbcc[$i]){
+				$str_mailbcc		.= $mailbcc[$i].";";
+				$str_mailbccname	.= $mailbccname[$i].";";
+			}
+		}
+		
+		$str_mailbcc		= trim($str_mailbcc,';');
+		$str_mailbccname	= trim($str_mailbccname,';');
+
+		$sp = "spu_envio_mail";
+	
+		$param = "'INSERT'							--@ve_operacion
+				,null								--@ve_cod_envio_mail
+				,1									--@ve_cod_estado_envio_mail
+				,null								--@ve_fecha_envio
+			 	,'soporte@biggi.cl'					--@ve_mail_from
+			 	,'Comercial Biggi S.A.'				--@ve_mail_from_name
+			 	,'$str_mailcc'						--@ve_mail_cc
+			 	,'$str_mailccname'					--@ve_mail_cc_name
+			 	,'$str_mailbcc'						--@ve_mail_bcc
+			 	,'$str_mailbccname'					--@ve_mail_bcc_name
+			 	,'$mailto'							--@ve_mail_to
+			 	,'$mailtoname'						--@ve_mail_to_name
+			 	,'$subject'							--@ve_mail_subject
+			 	,'".str_replace("'","''",$html)."'	--@ve_mail_body
+			 	,null								--@ve_mail_altbody
+			 	,'GUIA_RECEPCION'					--@ve_tipo_doc
+			 	,$COD_GUIA_RECEPCION";				//@ve_cod_doc
+		
+		$db->EXECUTE_SP($sp, $param);
 	}
 	
 	function envia_mail($db, $COD_GUIA_RECEPCION){
@@ -684,8 +861,8 @@ class wi_guia_recepcion extends wi_guia_recepcion_base {
 		$str_mailcc		= trim($str_mailcc,';');
 		$str_mailccname	= trim($str_mailccname,';');
 		
-		$mailbcc = array('mherrera@biggi.cl', 'ecastillo@biggi.cl');
-		$mailbccname = array('MARCELO HERRERA','EDUARDO CASTILLO');
+		$mailbcc = array('mherrera@biggi.cl');
+		$mailbccname = array('MARCELO HERRERA');
 			
 		for($i=0 ; $i < count($mailbcc) ; $i++){
 			if($mailto <> $mailbcc[$i]){
@@ -738,8 +915,7 @@ class wi_guia_recepcion extends wi_guia_recepcion_base {
         $mail_remitente = $result_remitente[0]['MAIL'];
 		
  		// Mail destinatarios
-        $para_admin1 = 'mulloa@integrasystem.cl';
-        $para_admin2 = 'mulloa@integrasystem.cl';
+        
         /*
         $para_admin1 = 'mherrera@integrasystem.cl';
         $para_admin2 = 'imeza@integrasystem.cl';
@@ -964,9 +1140,48 @@ class print_guia_recepcion_secundario extends print_guia_recepcion_base {
 			//$db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
 			//$result = $db->build_results($this->sql);
 			
-			$pdf->SetFont('Arial','',8.5);
-			$pdf->SetXY(30, 100);
-			$pdf->Cell(30, 15, 'Hola Mundo', '0', '','L');
+			//$pdf->SetFont('Arial','',8.5);
+			//$pdf->SetXY(30, 100);
+			//$pdf->Cell(30, 15, 'Hola Mundo', '0', '','L');
+
+
+			$y=0;
+			$pdf->SetTextColor(0,0,10);//TEXTOS azul
+			$pdf->SetFont('Arial','B',14);
+			$pdf->SetXY(30, $y+65+20);
+			$pdf->Cell(550, 17, 'Términos y Condiciones.', 0, 0, 'C');
+
+			$pdf->SetTextColor(0,0,10);//TEXTOS azul
+			$pdf->SetFont('Arial','B',9);
+			$pdf->SetXY(30, $y+96);
+			$pdf->Cell(70, 15, 'Garantía.', 0, 0, 'L');
+			$pdf->Line(33,108,75,108);
+
+			$pdf->SetFont('Arial','',9);
+			$pdf->SetXY(30, $y+112);
+			$pdf->MultiCell(550, 14, "Los productos comercializados por BIGGI, poseen una garantía de 06 (SEIS) MESES a contar de su fecha de adquisición (fecha de facturación), contra defectos de materiales y/o fabricación, siempre y cuando, se cumpla con el uso para el cual fue diseñado (USO EXCLUSIVO EN COCINA INDUSTRIAL), y se realicen las mantenciones preventivas y/o correctivas conforme al manual de usuario proporcionado con el equipo.\nSe deja expresa constancia que la garantía no cubre un uso distinto al señalado, ni desperfectos originados por el mal uso, instalación inadecuada (los equipos comercializados están diseñado para uso dentro de un bien inmueble, no así para el uso en vehículos u otros medios de transporte), uso inadecuado, mal trato, daños por actos maliciosos, daños por actos terroristas, daños por actos vandálicos, uso indebido por personal carente de capacitación (PRODUCTO DE USO INDUSTRIAL), malos manejos durante el bodegaje o traslado, daños causados por la naturaleza (sismos, lluvias, inundaciones, etc.), daños ocasionados por fallas en las redes de alimentación (electricidad, gas y/o agua), productos intervenidos o adulterados por terceras personas, como tampoco los producidos por caso fortuito y/o fuerza mayor.\nLa garantía de los equipos es efectiva en fábrica, ubicada en Portugal N° 1726, comuna de Santiago, ciudad de Santiago. Los gastos de fletes de equipos en garantía correrán por parte del Cliente.\nLos productos “hechos con materiales usados o reciclados”, de “segunda selección” u otras equivalentes, conforme a la ley, no tienen garantía legal. A su vez, éstos no tendrán derecho a cambio o devolución, si al momento de realizar la compra se informa de dicha condición.\nLos plazos de garantía legal o voluntaria se cuentan desde la fecha de compra del equipo. En caso de ser reparados o reemplazados, se mantendrá el plazo de garantía original a partir de la fecha de compra. El plazo de garantía legal, se suspenderán durante el tiempo en que el bien esté siendo reparado en ejercicio de la garantía.\nAntes de proceder con la devolución, cambio ó reparación de un producto, este deberá ser revisado por el servicio técnico de BIGGI, con la finalidad de establecer que la falla esté cubierta por la garantía antes mencionada.", 0, 'J', false);
+
+			$pdf->SetFont('Arial','B',9);
+			$pdf->SetXY(30, $y+407);
+			$pdf->MultiCell(550, 14, 'Derecho a retracto en compras online y telefónicas.', 0, 'J', false);
+			$pdf->Line(33,418,255,418);
+			$pdf->SetFont('Arial','',9);
+
+			$pdf->SetXY(30, $y+421);
+			$pdf->MultiCell(550, 14, 'Según la ley vigente, el COMPRADOR puede arrepentirse de una compra realizada online (por Internet) o por teléfono, por un periodo de 10 (DIEZ) DÍAS DESDE QUE RECIBIÓ EL PRODUCTO. Siempre y cuando, el producto haya sido adquirido por INTERNET o POR TELÉFONO, y antes de HABER SIDO UTILIZADO. El costo del flete correrá por parte del cliente.', 0, 'J', false);
+
+			$pdf->SetFont('Arial','B',9);
+			$pdf->SetXY(30, $y+468);
+			$pdf->MultiCell(550, 14, 'Servicio Técnico.', 0, 'J', false);
+			$pdf->Line(33,480,109,480);
+			$pdf->SetFont('Arial','',9);
+
+			$pdf->SetXY(30, $y+482);
+			$pdf->MultiCell(550, 14,
+				"BIGGI se reserva el derecho a decidir autónomamente sobre si aceptar en reparación un equipo o artículo fuera de garantía legal, después de un análisis de antecedentes relevante tales como: la antigüedad de este, la disponibilidad de los repuestos correspondiente, la factibilidad de la reparación, entre otros.\nTodos los diagnósticos realizados por el servicio técnico de BIGGI, los cuales no estén cubiertos por la póliza de garantía, tienen un costo asociado equivalente a 2 (DOS) U.F., el cual deberá ser pagado al momento del ingreso del producto al servicio técnico.\nEl resultado de la evaluación, plazos de reparación y costo de esta, serán informados al cliente mediante una cotización formal, dentro de un plazo no superior a 5 (CINCO) DÍAS HÁBILES. En el caso de hacerse efectiva la reparación, el valor abonado será descontado del total a pagar.\nSolo se recibirán productos que hayan sido comprados a COMERCIAL BIGGI (CHILE) S.A. y que vengan acompañados de su respectivo comprobante de compra (Factura).\nPara hacer el retiro del o los productos ingresados al servicio técnico, se debe presentar única y exclusivamente el comprobante de ingreso, el cual acredita al portador para el retiro del o los bienes reparados. BIGGI no se responsabiliza por el extravío del comprobante de ingreso a servicio técnico.\nUna vez transcurrido 15 (QUINCE) DÍAS HÁBILES desde que se haya notificado que el o los productos están disponibles para su retiro, BIGGI estará facultada para cobrar por concepto de bodegaje el equivalente a 1% (UNO POR CIENTO) DIARIO DEL VALOR DEL PRODUCTO.\nBIGGI no se hará responsable por las especies entregadas en reparación, cuando éstas no sean retiradas en el plazo de 6 (SEIS) MESES A CONTAR DE LA FECHA DE RECEPCIÓN."
+			, 0, 'J', false);
+
+
 	}
 }
 ?>

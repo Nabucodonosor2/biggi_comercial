@@ -31,6 +31,7 @@ class wo_factura extends wo_factura_base {
 						,F.TOTAL_CON_IVA
 						,U.INI_USUARIO
 						,dbo.f_tipo_fa(EDS.NOM_ESTADO_DOC_SII) TIPO_FA
+            			,dbo.f_get_nc_from_fa(f.COD_FACTURA) NC_FROM_FA                                              
 						,F.COD_USUARIO_VENDEDOR1
 						,EDS.COD_ESTADO_DOC_SII
 				 from	FACTURA F, ESTADO_DOC_SII EDS, USUARIO U
@@ -62,10 +63,12 @@ class wo_factura extends wo_factura_base {
 		$this->add_header(new header_text('NOM_EMPRESA', 'NOM_EMPRESA', 'Razón Social'));
 		$sql_estado_doc_sii = "select COD_ESTADO_DOC_SII ,NOM_ESTADO_DOC_SII from ESTADO_DOC_SII order by	COD_ESTADO_DOC_SII";
 		$this->add_header(new header_drop_down('NOM_ESTADO_DOC_SII', 'EDS.COD_ESTADO_DOC_SII', 'Estado', $sql_estado_doc_sii));
-		$this->add_header(new header_num('TOTAL_CON_IVA', 'TOTAL_CON_IVA', 'Total c/IVA'));
-		$this->add_header(new header_text('COD_DOC', 'COD_DOC', 'N° NV'));
+		$this->add_header(new header_num('TOTAL_CON_IVA', 'TOTAL_CON_IVA', 'TOT C/IVA'));
+		$this->add_header(new header_text('COD_DOC', 'COD_DOC', 'NV'));
 		$this->add_header(new header_vendedor('INI_USUARIO', 'F.COD_USUARIO_VENDEDOR1', 'V1'));
-		
+   
+		$this->add_header(new header_num('NC_FROM_FA', 'dbo.f_get_nc_from_fa(f.COD_FACTURA)', 'Nro NC'));
+   
 		$sql = "SELECT 'Sin tipo' ES_TIPO, 'Sin tipo' TIPO_FA 
 				UNION 
 				SELECT 'Papel' ES_TIPO , 'Papel' TIPO_FA

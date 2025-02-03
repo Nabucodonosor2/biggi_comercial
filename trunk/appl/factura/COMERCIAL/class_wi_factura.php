@@ -972,6 +972,7 @@ class wi_factura extends wi_factura_base {
 		$count_802_ccu = 0;
 		$count_migo = 0;
 		$count_ref = 0;
+		$count_802_MOP = 0;
 		$tipo = "";
 		
 		for($i=0 ; $i < $this->dws['dw_referencias']->row_count() ; $i++){
@@ -999,6 +1000,9 @@ class wi_factura extends wi_factura_base {
 
 			if($COD_TIPO_REFERENCIA == 10)//HEP LIDER 76.134.941-4
 				$count_ref_heplider++;
+
+			if($COD_TIPO_REFERENCIA == 11)//802 MOP 61.202.000-0
+				$count_802_MOP++;
 		}
 		/*
 		 * DW de Referencia y de solo contacto
@@ -1381,6 +1385,30 @@ class wi_factura extends wi_factura_base {
 			}
 		}
 		
+		if($count_802_MOP > 0){
+			$sql = "SELECT REPLACE(CONVERT(varchar,FECHA_REFERENCIA,102),'.','-') FECHA_REFERENCIA
+						  ,DOC_REFERENCIA
+					FROM REFERENCIA
+					WHERE COD_FACTURA = $cod_factura
+					AND COD_TIPO_REFERENCIA = 11";
+			$result = $db->build_results($sql);
+			
+			for($h=0;$h<count($result);$h++){
+			
+				$FolioRef	= $result[$h]['DOC_REFERENCIA'];
+				$FchRef		= $result[$h]['FECHA_REFERENCIA'];
+				
+				$c['Referencia'][$i]['NroLinRef']	= $i+1;
+				$c['Referencia'][$i]['TpoDocRef']	= "802";
+				$c['Referencia'][$i]['FolioRef']	= substr($FolioRef, 0, 18);
+				$c['Referencia'][$i]['FchRef']		= substr($FchRef, 0, 10);
+				$c['Referencia'][$i]['RazonRef']	= "UNIDAD DE PAGO NIVEL_CENTRAL SUBSECRETARIA"; // MH 16/12/2024 ESTO SE DEBE PASAR A VARIBLE EN EL INPUT
+				$i++;
+				
+				$tiene_Folio = 'S';	
+			}
+		}
+
 		///////////////////////////////////////////////////
 		
 		$tiene_descuento = 'N';

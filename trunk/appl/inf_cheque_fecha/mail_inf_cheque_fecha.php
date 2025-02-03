@@ -296,8 +296,8 @@ $mail->Port         = "$Port";
 $mail->SMTPSecure   = 'ssl';
 $mail->From         = "modulo_alertas@biggi.cl";		
 $mail->FromName     = "Módulo Alertas Grupo BIGGI";
-$mail->Timeout      = 30;
-$mail->Subject      = "Informe cheques en cartera al $fecha_actual";
+$mail->Timeout      = 150;  // MH 24-10-2023 VALOR ESTABA EN 30 PERO NO SE ENVIAN CORREOS, SE CAMBIA A 150 Y FUNCIONA BIEN
+$mail->Subject      = "INFORME CHEQUES EN CARTERA AL $fecha_actual";
 $mail->ClearAddresses();
 
 $mail->AddAddress('sergio.pechoante@biggi.cl', 'Sergio Pechoante');

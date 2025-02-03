@@ -48,12 +48,10 @@ class wo_factura extends wo_factura_base {
 		$this->dw->add_control(new edit_precio('TOTAL_CON_IVA'));
 
 	   	$priv = $this->get_privilegio_opcion_usuario(self::K_AUTORIZA_SOLO_BITACORA, $this->cod_usuario);	// acceso bitacora
-		if ($priv=='E') {
+		if ($priv=='E')
 			$this->b_add_visible = false;
-      	}
-      	else {
+      	else
 			$this->b_add_visible = true;
-      	}
 	   	
 		// headers
 		$this->add_header($control = new header_date('FECHA_FACTURA', 'FECHA_FACTURA', 'Fecha'));
@@ -66,8 +64,8 @@ class wo_factura extends wo_factura_base {
 		$this->add_header(new header_num('TOTAL_CON_IVA', 'TOTAL_CON_IVA', 'TOT C/IVA'));
 		$this->add_header(new header_text('COD_DOC', 'COD_DOC', 'NV'));
 		$this->add_header(new header_vendedor('INI_USUARIO', 'F.COD_USUARIO_VENDEDOR1', 'V1'));
-   
-		$this->add_header(new header_num('NC_FROM_FA', 'dbo.f_get_nc_from_fa(f.COD_FACTURA)', 'Nro NC'));
+		$this->add_header($header = new header_num('NC_FROM_FA', 'dbo.f_get_nc_from_fa(f.COD_FACTURA)', 'Nro NC'));
+	    $header->field_bd_order = 'NC_FROM_FA';
    
 		$sql = "SELECT 'Sin tipo' ES_TIPO, 'Sin tipo' TIPO_FA 
 				UNION 

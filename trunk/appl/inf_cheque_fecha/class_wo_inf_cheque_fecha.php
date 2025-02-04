@@ -41,6 +41,7 @@ class wo_inf_cheque_fecha extends w_informe_pantalla{
 						,B.NOM_BANCO
 						,UPPER(ORIGEN_CHEQUE) ORIGEN_CHEQUE
 						,UPPER(I.NOM_TIPO_DOC) NOM_TIPO_DOC
+						,UPPER(I.NOM_TIPO_DOC) NOM_TIPO_DOC_H
 				FROM INF_CHEQUE_FECHA I
 					,BANCO B
 				WHERE COD_USUARIO = $cod_usuario
@@ -52,6 +53,7 @@ class wo_inf_cheque_fecha extends w_informe_pantalla{
      
 		$this->dw->add_control(new edit_text_hidden('COD_NOTA_VENTA_H'));
 		$this->dw->add_control(new edit_text_hidden('COD_ITEM_DOC'));
+		$this->dw->add_control(new edit_text_hidden('NOM_TIPO_DOC_H'));
 		$this->dw->entrable = true;
 		$this->dw->add_control(new edit_check_box('SELECCION', 'S', 'N'));
 
@@ -62,16 +64,16 @@ class wo_inf_cheque_fecha extends w_informe_pantalla{
 				SELECT 'RENTAL' ORIGEN_CHEQUE
 						,'RENTAL' NOM_ORIGEN_CHEQUE";
 
-    $this->add_header($compromiso = new header_drop_down_string('ORIGEN_CHEQUE', 'UPPER(ORIGEN_CHEQUE)', 'ORIGEN', $sql));
+    	$this->add_header($compromiso = new header_drop_down_string('ORIGEN_CHEQUE', 'UPPER(ORIGEN_CHEQUE)', 'ORIGEN', $sql));
 		$this->add_header(new header_text('COD_NOTA_VENTA', 'I.COD_NOTA_VENTA', 'NV'));
 		$this->add_header(new header_text('NOM_EMPRESA', "I.NOM_EMPRESA", 'CLIENTE'));
-    $sql2 = "SELECT CHEQUE' NOM_TIPO_DOC
-                ,'CHEQUE' TIPO_DOC
-				    UNION
-				    SELECT 'EFECTIVO'  NOM_TIPO_DOC  
-                ,'EFECTIVO'  TIPO_DOC";
-    $this->add_header(new header_drop_down_string('NOM_TIPO_DOC', 'UPPER(I.NOM_TIPO_DOC)', 'TIPO DOC', $sql2));
-  	//$this->add_header(new header_text('NOM_TIPO_DOC', "I.NOM_TIPO_DOC", 'TIPO DOC'));
+		$sql2 = "SELECT CHEQUE' NOM_TIPO_DOC
+					,'CHEQUE' TIPO_DOC
+						UNION
+						SELECT 'EFECTIVO'  NOM_TIPO_DOC  
+					,'EFECTIVO'  TIPO_DOC";
+		$this->add_header(new header_drop_down_string('NOM_TIPO_DOC', 'UPPER(I.NOM_TIPO_DOC)', 'TIPO DOC', $sql2));
+		//$this->add_header(new header_text('NOM_TIPO_DOC', "I.NOM_TIPO_DOC", 'TIPO DOC'));
    
 		$this->add_header(new header_text('RUT', "I.RUT", 'RUT'));
 		$this->add_header(new header_num('COD_DOC', 'I.COD_DOC', 'IP'));
@@ -150,6 +152,7 @@ class wo_inf_cheque_fecha extends w_informe_pantalla{
 			$temp->setVar("wo_registro.WO_COLOR_CSS", '');
 
 		$temp->setVar("wo_registro.SELECCION", $control);
+		$temp->setVar("wo_registro.WO_TR_ID", 'INFORME_CHEQUE_FECHA_'+$record);
 	}
 
 	function paginacion(&$temp){
@@ -158,33 +161,36 @@ class wo_inf_cheque_fecha extends w_informe_pantalla{
 		$temp->setVar("CANT_REG_H", '<input id="CANT_REG_H_0" class="input_text" type="hidden" maxlength="100" size="100" value="'.$this->row_count_output.'" name="CANT_REG_H_0">');
 		//
 		$this->habilita_boton($temp, 'change_date_deposit', true);
-    $this->habilita_boton($temp, 'change_date_efectivo', true);
-  }
+    	$this->habilita_boton($temp, 'change_date_efectivo', true);
+ 	}
 	
 	function habilita_boton(&$temp, $boton, $habilita){
 		parent::habilita_boton($temp, $boton, $habilita);
+
 		if($boton == 'change_date_deposit'){
-    	if($habilita){
-    		$ruta_over = "'../../images_appl/b_change_date_deposit_over.jpg'";
-    		$ruta_out = "'../../images_appl/b_change_date_deposit.jpg'";
-    		$ruta_click = "'../../images_appl/b_change_date_deposit_click.jpg'";
-    		$temp->setVar("WO_".strtoupper($boton), '<input name="b_'.$boton.'" id="b_'.$boton.'" type="button" onmouseover="entrada(this, '.$ruta_over.')" onmouseout="salida(this, '.$ruta_out.')" onmousedown="down(this, '.$ruta_click.')"'.
-    										'style="cursor:pointer;height:68px;width:66px;border: 0;background-image:url(../../images_appl/b_'.$boton.'.jpg);background-repeat:no-repeat;background-position:center;border-radius: 15px;"'.
-    										'onClick="request_fecha_ingreso(\'Cambio de Fecha Depósito\',\'\');" />');
-    	}else{
-    		$temp->setVar("WO_".strtoupper($boton), '<img src="'.$ruta_imag.'b_'.$boton.'_d.jpg"/>');
-      }
-		}if($boton == 'change_date_efectivo'){
-    	if($habilita){
-    		$ruta_over = "'../../images_appl/b_depositar_inf_over.jpg'";
-    		$ruta_out = "'../../images_appl/b_depositar_inf.jpg'";
-    		$ruta_click = "'../../images_appl/b_depositar_inf_click.jpg'";
-    		$temp->setVar("WO_".strtoupper($boton), '<input name="b_'.$boton.'" id="b_'.$boton.'" type="button" onmouseover="entrada(this, '.$ruta_over.')" onmouseout="salida(this, '.$ruta_out.')" onmousedown="down(this, '.$ruta_click.')"'.
-    										'style="cursor:pointer;height:68px;width:66px;border: 0;background-image:url(../../images_appl/b_depositar_inf.jpg);background-repeat:no-repeat;background-position:center;border-radius: 15px;"'.
-    										'onClick="request_fecha_efectivo(\'Cambio de Fecha Depósito\',\'\');" />');
-    	}else{
-    		$temp->setVar("WO_".strtoupper($boton), '<img src="'.$ruta_imag.'b_depositar_inf_d.jpg"/>');
-      }
+			if($habilita){
+				$ruta_over = "'../../images_appl/b_change_date_deposit_over.jpg'";
+				$ruta_out = "'../../images_appl/b_change_date_deposit.jpg'";
+				$ruta_click = "'../../images_appl/b_change_date_deposit_click.jpg'";
+				$temp->setVar("WO_".strtoupper($boton), '<input name="b_'.$boton.'" id="b_'.$boton.'" type="button" onmouseover="entrada(this, '.$ruta_over.')" onmouseout="salida(this, '.$ruta_out.')" onmousedown="down(this, '.$ruta_click.')"'.
+												'style="cursor:pointer;height:68px;width:66px;border: 0;background-image:url(../../images_appl/b_'.$boton.'.jpg);background-repeat:no-repeat;background-position:center;border-radius: 15px;"'.
+												'onClick="request_fecha_ingreso(\'Cambio de Fecha Depósito\',\'\');" />');
+			}else{
+				$temp->setVar("WO_".strtoupper($boton), '<img src="'.$ruta_imag.'b_'.$boton.'_d.jpg"/>');
+			}
+		}
+		
+		if($boton == 'change_date_efectivo'){
+			if($habilita){
+				$ruta_over = "'../../images_appl/b_depositar_inf_over.jpg'";
+				$ruta_out = "'../../images_appl/b_depositar_inf.jpg'";
+				$ruta_click = "'../../images_appl/b_depositar_inf_click.jpg'";
+				$temp->setVar("WO_".strtoupper($boton), '<input name="b_'.$boton.'" id="b_'.$boton.'" type="button" onmouseover="entrada(this, '.$ruta_over.')" onmouseout="salida(this, '.$ruta_out.')" onmousedown="down(this, '.$ruta_click.')"'.
+												'style="cursor:pointer;height:68px;width:66px;border: 0;background-image:url(../../images_appl/b_depositar_inf.jpg);background-repeat:no-repeat;background-position:center;border-radius: 15px;"'.
+												'onClick="request_fecha_efectivo(\'Cambio de Fecha Depósito\',\'\');" />');
+			}else{
+				$temp->setVar("WO_".strtoupper($boton), '<img src="'.$ruta_imag.'b_depositar_inf_d.jpg"/>');
+			}
 		}
 	}
 	
@@ -235,11 +241,7 @@ class wo_inf_cheque_fecha extends w_informe_pantalla{
 			$db->COMMIT_TRANSACTION();
 		
 		$db->EXECUTE_SP("spi_cheque_a_fecha", "$this->fecha, $this->cod_usuario");
-
-		//$this->headers['FECHA_DOC']->valor_filtro = $this->current_date();
-			
 		$this->save_SESSION();	
-		//$this->make_filtros();
 		$this->retrieve();
 	}
 	
@@ -253,9 +255,6 @@ class wo_inf_cheque_fecha extends w_informe_pantalla{
 		$db->EXECUTE_SP("spu_inf_cheque_fecha", $param);
 		
 		$db->EXECUTE_SP("spi_cheque_a_fecha", "$this->fecha, $this->cod_usuario");
-		//$this->headers['FECHA_DOC']->valor_filtro = $this->current_date();
-				
-		//$this->make_filtros();
 		$this->retrieve();
 	}
 	

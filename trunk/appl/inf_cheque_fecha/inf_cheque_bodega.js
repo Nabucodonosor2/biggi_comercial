@@ -44,6 +44,7 @@ function request_fecha_ingreso(ve_prompt, ve_valor){
 
 function request_fecha_efectivo(ve_prompt, ve_valor){
 	const aTR = get_TR('INFORME_CHEQUE_FECHA');
+	let count_sel = 0;
 	for (let i = 0; i < aTR.length; i++){
 		let vl_rec = get_num_rec_field(aTR[i].id);
 
@@ -56,14 +57,17 @@ function request_fecha_efectivo(ve_prompt, ve_valor){
 		if(vl_nom_tipo_doc == 'CHEQUE' && vl_check == true){
 			alert('La utilidad "Depositar" es solo para los documentos tipo "Efectivo", se detectaron documentos del tipo "Cheque" en la selección actual.');
 			return false;
-		}	
+		}
+
+		if(vl_check == true)
+			count_sel++;
 	}
 
-	var url = "request_fecha_efectivo.php?prompt="+URLEncode(ve_prompt)+"&valor="+URLEncode(ve_valor);
+	var url = "request_fecha_efectivo.php?prompt="+URLEncode(ve_prompt)+"&valor="+URLEncode(ve_valor)+"&count="+count_sel;
 	$.showModalDialog({
 		 url: url,
 		 dialogArguments: '',
-		 height: 280,
+		 height: 220,
 		 width: 320,
 		 scrollable: false,
 		 onClose: function(){ 

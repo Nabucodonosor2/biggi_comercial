@@ -8,21 +8,10 @@ class wo_inf_cheque_fecha extends w_informe_pantalla{
    var $cod_usuario;
    function wo_inf_cheque_fecha(){
    		// El cod_usuario debe leerese desde la sesion porque no se puede usar $this->cod_usuario
-   		//   hasta despues de llamar al ancestro
-   		  
-   		$cod_usuario =  session::get("COD_USUARIO");
-   		
-   		$db 	= new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
-   		$fecha	=	"select convert (varchar ,dbo.f_makedate(day(getdate()), month(getdate()), year(getdate())),103) FECHA";
-		$result = $db->build_results($fecha);
-		$fecha1 = $this->str2date($result[0]['FECHA']);
-		
-		$this->fecha = $fecha1;
-		$this->cod_usuario = $cod_usuario;
-		
-		$db->EXECUTE_SP("spi_cheque_a_fecha", "$fecha1, $cod_usuario");
+   		// hasta despues de llamar al ancestro
+		$cod_usuario =  session::get("COD_USUARIO");
+		$this->refresh_sql();
 
-		//echo 'perro '.$fecha1;
 		$sql = "SELECT COD_INF_CHEQUE_FECHA
 						,substring (I.COD_NOTA_VENTA,1,11) COD_NOTA_VENTA
 						,I.COD_NOTA_VENTA COD_NOTA_VENTA_H
@@ -47,7 +36,6 @@ class wo_inf_cheque_fecha extends w_informe_pantalla{
 				WHERE COD_USUARIO = $cod_usuario
 				AND I.COD_BANCO = B.COD_BANCO
 				ORDER BY DATE_FECHA_DOC ASC";
-		//	echo 'perro 2 '.$sql;
 
 		parent::w_informe_pantalla('inf_cheque_fecha', $sql, $_REQUEST['cod_item_menu']);
      
@@ -187,7 +175,7 @@ class wo_inf_cheque_fecha extends w_informe_pantalla{
 				$ruta_click = "'../../images_appl/b_depositar_inf_click.jpg'";
 				$temp->setVar("WO_".strtoupper($boton), '<input name="b_'.$boton.'" id="b_'.$boton.'" type="button" onmouseover="entrada(this, '.$ruta_over.')" onmouseout="salida(this, '.$ruta_out.')" onmousedown="down(this, '.$ruta_click.')"'.
 												'style="cursor:pointer;height:68px;width:66px;border: 0;background-image:url(../../images_appl/b_depositar_inf.jpg);background-repeat:no-repeat;background-position:center;border-radius: 15px;"'.
-												'onClick="request_fecha_efectivo(\'Cambio de Fecha Depósito\',\'\');" />');
+												'onClick="request_fecha_efectivo(\'Depositar efectivo\',\'\');" />');
 			}else{
 				$temp->setVar("WO_".strtoupper($boton), '<img src="'.$ruta_imag.'b_depositar_inf_d.jpg"/>');
 			}
@@ -257,7 +245,61 @@ class wo_inf_cheque_fecha extends w_informe_pantalla{
 		$db->EXECUTE_SP("spi_cheque_a_fecha", "$this->fecha, $this->cod_usuario");
 		$this->retrieve();
 	}
+
+	function change_date_efectivo($ve_fecha){
+		$db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
+		
+		$ve_fecha = $this->str2date($ve_fecha);
+		$this->dw->get_values_from_POST();
+		$sp = 'spu_inf_cheque_efectivo';
+		
+		$db->BEGIN_TRANSACTION();
+		$error = false;
+		// primer registro de la pagina
+		$ind = $this->row_per_page * ($this->current_page - 1);		
+		// loop en los registros de la pagina visible
+		$i = 0;
+		while (($i < $this->row_per_page) && ($ind < $this->row_count_output)){
+			$seleccion = $this->dw->get_item($i, 'SELECCION');
+			if ($seleccion=='S'){
+				$cod_doc_ingreso_pago = $this->dw->get_item($i, 'COD_ITEM_DOC');
+				$param = "$this->cod_usuario, $cod_doc_ingreso_pago, $ve_fecha";
+
+	    		if (!$db->EXECUTE_SP($sp, $param)) {
+	    			$error = true;
+					$db->ROLLBACK_TRANSACTION();
+					$error_sp = $db->GET_ERROR();
+					$this->alert('No se pudo grabar el registro.\n\n'.$db->make_msg_error_bd());
+					break;
+	    		}
+    		}
+
+    		$i++;
+			$ind++;
+		}
+
+		if (!$error) 
+			$db->COMMIT_TRANSACTION();
+		
+		$this->save_SESSION();
+		$this->refresh_sql();
+		$this->retrieve();
+	}
 	
+	function refresh_sql(){
+		$cod_usuario =  session::get("COD_USUARIO");
+   		
+   		$db 	= new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
+   		$fecha	= "select convert (varchar ,dbo.f_makedate(day(getdate()), month(getdate()), year(getdate())),103) FECHA";
+		$result = $db->build_results($fecha);
+		$fecha1 = $this->str2date($result[0]['FECHA']);
+		
+		$this->fecha = $fecha1;
+		$this->cod_usuario = $cod_usuario;
+		
+		$db->EXECUTE_SP("spi_cheque_a_fecha", "$fecha1, $cod_usuario");
+	}
+
 	function procesa_event() {
 		if(isset($_POST['b_change_date_deposit_x'])){
 			$vl_record = explode('|', $_POST['wo_hidden']);
@@ -265,7 +307,9 @@ class wo_inf_cheque_fecha extends w_informe_pantalla{
 				$this->change_date_ingreso_es($_POST['wo_hidden']);
 			else
 				$this->change_date_ingreso($_POST['wo_hidden']);
-		}else
+		}else if(isset($_POST['b_change_date_efectivo_x']))
+			$this->change_date_efectivo($_POST['wo_hidden']);
+		else
 			parent::procesa_event();	
 	}
 }

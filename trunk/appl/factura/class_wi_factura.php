@@ -638,6 +638,13 @@ class wi_factura_base extends w_cot_nv {
         $this->add_auditoria('PORC_IVA');
         $this->add_auditoria('NO_TIENE_OC');
         $this->add_auditoria('CENTRO_COSTO_CLIENTE');
+
+        $this->add_auditoria('RETIRADO_POR');
+        $this->add_auditoria('GUIA_TRANSPORTE');
+        $this->add_auditoria('PATENTE');
+        $this->add_auditoria('OBS');
+        $this->add_auditoria('RUT_RETIRADO_POR');
+        $this->add_auditoria('DIG_VERIF_RETIRADO_POR');
         
         $this->add_auditoria_relacionada('BITACORA_FACTURA', 'FECHA_BITACORA_FACTURA');
         $this->add_auditoria_relacionada('BITACORA_FACTURA', 'COD_USUARIO');
@@ -876,54 +883,47 @@ class wi_factura_base extends w_cot_nv {
                 $this->dws['dw_factura']->set_entrable('FECHA_FACTURA'		 , false);
             }
             $this->dws['dw_factura']->set_entrable('REFERENCIA'				 , false);
-            $priv = $this->get_privilegio_opcion_usuario(self::K_AUTORIZA_GENERA_SALIDA, $this->cod_usuario);
-            if ($priv=='E') {
-                $this->dws['dw_factura']->set_entrable('GENERA_SALIDA'		, true);
-            }
-            else {
-                $this->dws['dw_factura']->set_entrable('GENERA_SALIDA'		, false);
-            }
-            
             $this->dws['dw_factura']->set_entrable('CANCELADA'				 , false);
+
             if($this->tiene_privilegio_opcion(self::K_PUEDE_MODIFICAR_VENDEDOR))
                 $this->dws['dw_factura']->set_entrable('COD_USUARIO_VENDEDOR1', true);
-                else
-                    $this->dws['dw_factura']->set_entrable('COD_USUARIO_VENDEDOR1', false);
+            else
+                $this->dws['dw_factura']->set_entrable('COD_USUARIO_VENDEDOR1', false);
                     
-                    //aqui se deja no entrable los datos de vendedor y origen de la venta
-                    $this->dws['dw_factura']->set_entrable('PORC_VENDEDOR1'			 , false);
-                    $this->dws['dw_factura']->set_entrable('COD_USUARIO_VENDEDOR2'	 , false);
-                    $this->dws['dw_factura']->set_entrable('PORC_VENDEDOR2'			 , false);
-                    $this->dws['dw_factura']->set_entrable('COD_ORIGEN_VENTA'		 , false);
-                    
-                    $this->dws['dw_factura']->set_entrable('RETIRADO_POR'			 , false);
-                    $this->dws['dw_factura']->set_entrable('GUIA_TRANSPORTE'		 , false);
-                    $this->dws['dw_factura']->set_entrable('PATENTE'				 , false);
-                    $this->dws['dw_factura']->set_entrable('OBS'					 , false);
-                    $this->dws['dw_factura']->set_entrable('RUT_RETIRADO_POR'		 , false);
-                    $this->dws['dw_factura']->set_entrable('DIG_VERIF_RETIRADO_POR'  , false);
-                    
-                    $this->dws['dw_factura']->set_entrable('NOM_EMPRESA'			, false);
-                    $this->dws['dw_factura']->set_entrable('ALIAS'				    , false);
-                    $this->dws['dw_factura']->set_entrable('COD_EMPRESA'			, false);
-                    $this->dws['dw_factura']->set_entrable('RUT'					, false);
-                    $this->dws['dw_factura']->set_entrable('COD_SUCURSAL_FACTURA'   , false);
-                    $this->dws['dw_factura']->set_entrable('COD_PERSONA'			, false);
-                    
-                    //aqui se dejan no ingresable los datos de forma de pago y los totales del tab item_factura
-                    $this->dws['dw_factura']->set_entrable('COD_FORMA_PAGO'			 , false);
-                    $this->dws['dw_factura']->set_entrable('NOM_FORMA_PAGO_OTRO'	 , false);
-                    $this->dws['dw_factura']->set_entrable('PORC_DSCTO1'			 , false);
-                    $this->dws['dw_factura']->set_entrable('MONTO_DSCTO1'			 , false);
-                    $this->dws['dw_factura']->set_entrable('PORC_DSCTO2'			 , false);
-                    $this->dws['dw_factura']->set_entrable('MONTO_DSCTO2'			 , false);
-                    $this->dws['dw_factura']->set_entrable('PORC_IVA'				 , false);
-                    
-                    
-                    // aqui se dejan no modificables los datos del tab items
-                    $this->dws['dw_item_factura']->set_entrable_dw(false);
-                    
-                    $this->b_delete_visible  = false;
+            //aqui se deja no entrable los datos de vendedor y origen de la venta
+            $this->dws['dw_factura']->set_entrable('PORC_VENDEDOR1'			 , false);
+            $this->dws['dw_factura']->set_entrable('COD_USUARIO_VENDEDOR2'	 , false);
+            $this->dws['dw_factura']->set_entrable('PORC_VENDEDOR2'			 , false);
+            $this->dws['dw_factura']->set_entrable('COD_ORIGEN_VENTA'		 , false);
+            
+            $this->dws['dw_factura']->set_entrable('RETIRADO_POR'			 , false);
+            $this->dws['dw_factura']->set_entrable('GUIA_TRANSPORTE'		 , false);
+            $this->dws['dw_factura']->set_entrable('PATENTE'				 , false);
+            $this->dws['dw_factura']->set_entrable('OBS'					 , false);
+            $this->dws['dw_factura']->set_entrable('RUT_RETIRADO_POR'		 , false);
+            $this->dws['dw_factura']->set_entrable('DIG_VERIF_RETIRADO_POR'  , false);
+            
+            $this->dws['dw_factura']->set_entrable('NOM_EMPRESA'			, false);
+            $this->dws['dw_factura']->set_entrable('ALIAS'				    , false);
+            $this->dws['dw_factura']->set_entrable('COD_EMPRESA'			, false);
+            $this->dws['dw_factura']->set_entrable('RUT'					, false);
+            $this->dws['dw_factura']->set_entrable('COD_SUCURSAL_FACTURA'   , false);
+            $this->dws['dw_factura']->set_entrable('COD_PERSONA'			, false);
+            
+            //aqui se dejan no ingresable los datos de forma de pago y los totales del tab item_factura
+            $this->dws['dw_factura']->set_entrable('COD_FORMA_PAGO'			 , false);
+            $this->dws['dw_factura']->set_entrable('NOM_FORMA_PAGO_OTRO'	 , false);
+            $this->dws['dw_factura']->set_entrable('PORC_DSCTO1'			 , false);
+            $this->dws['dw_factura']->set_entrable('MONTO_DSCTO1'			 , false);
+            $this->dws['dw_factura']->set_entrable('PORC_DSCTO2'			 , false);
+            $this->dws['dw_factura']->set_entrable('MONTO_DSCTO2'			 , false);
+            $this->dws['dw_factura']->set_entrable('PORC_IVA'				 , false);
+            
+            
+            // aqui se dejan no modificables los datos del tab items
+            $this->dws['dw_item_factura']->set_entrable_dw(false);
+            
+            $this->b_delete_visible  = false;
                     
         }else if ($COD_ESTADO_DOC_SII == self::K_ESTADO_SII_ENVIADA) {
             //SI USUARIO TIENE PRIVILEGIOS DE ENVIAR POR SEGUNDA VES LA FA-ELECTRONICA
@@ -947,14 +947,6 @@ class wi_factura_base extends w_cot_nv {
             
             $this->dws['dw_factura']->set_entrable('REFERENCIA'				 , false);
             
-            $priv = $this->get_privilegio_opcion_usuario(self::K_AUTORIZA_GENERA_SALIDA, $this->cod_usuario);
-            if ($priv=='E') {
-                $this->dws['dw_factura']->set_entrable('GENERA_SALIDA'		, true);
-            }
-            else {
-                $this->dws['dw_factura']->set_entrable('GENERA_SALIDA'		, false);
-            }
-            
             $this->dws['dw_factura']->set_entrable('CANCELADA'				 , false);
             if($this->tiene_privilegio_opcion(self::K_PUEDE_MODIFICAR_VENDEDOR))
                 $this->dws['dw_factura']->set_entrable('COD_USUARIO_VENDEDOR1', true);
@@ -966,14 +958,7 @@ class wi_factura_base extends w_cot_nv {
                     $this->dws['dw_factura']->set_entrable('COD_USUARIO_VENDEDOR2'	 , false);
                     $this->dws['dw_factura']->set_entrable('PORC_VENDEDOR2'			 , false);
                     $this->dws['dw_factura']->set_entrable('COD_ORIGEN_VENTA'		 , false);
-                    
-                    $this->dws['dw_factura']->set_entrable('RETIRADO_POR'			 , false);
-                    $this->dws['dw_factura']->set_entrable('GUIA_TRANSPORTE'		 , false);
-                    $this->dws['dw_factura']->set_entrable('PATENTE'				 , false);
-                    $this->dws['dw_factura']->set_entrable('OBS'					 , false);
-                    $this->dws['dw_factura']->set_entrable('RUT_RETIRADO_POR'		 , false);
-                    $this->dws['dw_factura']->set_entrable('DIG_VERIF_RETIRADO_POR'  , false);
-                    
+                                        
                     $this->dws['dw_factura']->set_entrable('NOM_EMPRESA'			, false);
                     $this->dws['dw_factura']->set_entrable('ALIAS'				    , false);
                     $this->dws['dw_factura']->set_entrable('COD_EMPRESA'			, false);
@@ -1086,10 +1071,21 @@ class wi_factura_base extends w_cot_nv {
             $this->dws['dw_factura']->controls['MONTO_DSCTO2']->readonly = true;
         }
         
+        $priv = $this->get_privilegio_opcion_usuario(self::K_AUTORIZA_GENERA_SALIDA, $this->cod_usuario);
         $nv_valida = $this->dws['dw_factura']->get_item(0, 'NV_VALIDADA');
-        if($nv_valida == 'N'){
-            $this->dws['dw_factura']->set_entrable('GENERA_SALIDA', false);
+
+        if($priv=='E' && $nv_valida == 'S'){
+            $this->dws['dw_factura']->set_entrable('GENERA_SALIDA', true);
+        }else{
+            $this->dws['dw_factura']->set_entrable('GENERA_SALIDA'           , false);
+            $this->dws['dw_factura']->set_entrable('RETIRADO_POR'			 , false);
+            $this->dws['dw_factura']->set_entrable('GUIA_TRANSPORTE'		 , false);
+            $this->dws['dw_factura']->set_entrable('PATENTE'				 , false);
+            $this->dws['dw_factura']->set_entrable('OBS'					 , false);
+            $this->dws['dw_factura']->set_entrable('RUT_RETIRADO_POR'		 , false);
+            $this->dws['dw_factura']->set_entrable('DIG_VERIF_RETIRADO_POR'  , false);
         }
+
     }
     
     

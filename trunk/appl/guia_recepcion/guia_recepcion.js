@@ -504,3 +504,18 @@ function compruebaBodega(ve_campo){
 		}
 	}
 }
+
+function valida_archivo(ve_control){
+	const archivo = ve_control.value.toLowerCase();
+	const archivoExt = archivo.substring(archivo.lastIndexOf('.'), archivo.length);
+	
+	if(archivoExt != '.jpg' && archivoExt != '.gif' && archivoExt != '.tiff'){
+		alert('Debe ingresar un archivo valido');
+		ve_control.value = '';
+	}
+	
+	if(ve_control.files[0].size > (1024*1024)*10){
+		alert('El peso del archivo supera los 10 megas');
+		ve_control.value = '';
+	}
+}

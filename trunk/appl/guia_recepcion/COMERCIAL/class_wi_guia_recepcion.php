@@ -2,6 +2,184 @@
 require_once(dirname(__FILE__)."/../../../../../commonlib/trunk/php/auto_load.php");
 require_once(dirname(__FILE__)."/../../empresa/class_dw_help_empresa.php");
 
+class input_file extends edit_control {
+	function input_file($field) {
+		parent::edit_control($field);
+	}
+	function draw_entrable($dato, $record) {
+		$field = $this->field.'_'.$record;
+		return '<input type="file" name="'.$field.'" id="'.$field.'" class="Button" onChange="valida_archivo(this);"/>';
+	}
+	function draw_no_entrable($dato, $record) {
+		return '';
+	}
+}
+
+class dw_gr_foto extends datawindow{
+	function dw_gr_foto(){
+		$sql = "SELECT COD_GUIA_RECEPCION_FOTO
+					  ,COD_GUIA_RECEPCION						D_COD_GUIA_RECEPCION
+					  ,OBS										D_OBS
+					  ,NOM_ARCHIVO								D_NOM_ARCHIVO
+					  ,convert(varchar, FECHA_REGISTRO, 103)	D_FECHA_REGISTRO
+					  ,GRF.COD_USUARIO	          				D_COD_USUARIO
+    				  ,U.NOM_USUARIO            				D_NOM_USUARIO
+					  ,null										D_FILE
+					  ,''										D_DIV_LINK
+					  ,null				      					D_COD_ENCRIPT
+					  ,'none'          	  	  					D_DIV_FILE
+					  ,RIGHT('000' + CAST(ROW_NUMBER()OVER(ORDER BY COD_GUIA_RECEPCION_FOTO DESC) AS VARCHAR), 3) CORRELATIVE
+					  ,RUTA_ARCHIVO
+	  				  ,NOM_ARCHIVO
+				FROM GUIA_RECEPCION_FOTO GRF
+					,USUARIO U
+				WHERE COD_GUIA_RECEPCION = {KEY1}
+				AND GRF.COD_USUARIO = U.COD_USUARIO
+				ORDER BY COD_GUIA_RECEPCION_FOTO ASC";
+
+		parent::datawindow($sql, 'GR_FOTO', true, true);
+
+		$this->add_control(new edit_text_upper('D_OBS',78, 50));
+		$this->add_control(new static_text('D_NOM_ARCHIVO'));
+		$this->add_control(new input_file('D_FILE'));
+
+		$this->set_mandatory('D_FILE', 'Archivo');
+	}
+
+	function draw_field($field, $record) {
+		if ($field=='D_FILE') {
+			$status = $this->get_status_row($record);
+			if ($status==K_ROW_NEW || $status==K_ROW_NEW_MODIFIED) {
+				$row = $this->redirect($record);
+				$dato = $this->get_item($record, $field);
+				return $this->controls[$field]->draw_entrable($dato, $row);
+			}
+			else 
+				return $this->controls[$field]->draw_no_entrable($dato, $row);
+		}
+		else
+			return parent::draw_field($field, $record);
+	}
+
+	function retrieve($cod_guia_recepcion_foto) {
+		parent::retrieve($cod_guia_recepcion_foto);
+		for($i=0; $i<$this->row_count(); $i++) {
+			$cod_guia_recepcion_foto = $this->get_item($i, 'COD_GUIA_RECEPCION_FOTO');
+			$this->set_item($i, 'D_COD_ENCRIPT', base64_encode($cod_guia_recepcion_foto));
+		}
+	}
+
+	function insert_row($row = -1) {
+		$row = parent::insert_row($row);
+		$this->set_item($row, 'D_COD_USUARIO', $this->cod_usuario);
+		$this->set_item($row, 'D_NOM_USUARIO', $this->nom_usuario);
+		$db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
+		$this->set_item($row, 'D_FECHA_REGISTRO', $db->current_date());
+		$this->set_item($row, 'D_FILE', 'NV_ARCHIVO_'.$this->redirect($row));
+		$this->set_item($row, 'D_DIV_LINK', 'none');
+		$this->set_item($row, 'D_DIV_FILE', '');
+		$this->set_item($row, 'CORRELATIVE', str_pad($row+1, 3, '0', STR_PAD_LEFT));
+		return $row;
+	}
+	
+	function get_ruta($cod_guia_recepcion){
+		$db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
+		$sql = "SELECT P.VALOR RUTA
+				FROM PARAMETRO P
+				WHERE P.COD_PARAMETRO = 88";
+				  
+      	$result = $db->build_results($sql);
+      	$folder = $result[0]['RUTA']."/".$cod_guia_recepcion."/";
+		if (!file_exists($folder))	
+			$res = mkdir($folder, 0777 , true);	// recursive = true		
+			
+		return $folder;
+	}
+
+	function update($db){
+		$sp = 'spu_guia_recepcion_foto';
+
+		for ($i = 0; $i < $this->row_count(); $i++){
+			$statuts = $this->get_status_row($i);
+			if ($statuts == K_ROW_NOT_MODIFIED || $statuts == K_ROW_NEW)
+				continue;			
+
+			if($statuts == K_ROW_NEW_MODIFIED){
+				$operacion = 'INSERT';
+				$cod_guia_recepcion_foto = 'null';
+				$cod_usuario = $this->cod_usuario;
+				$cod_guia_recepcion = $this->get_item($i, 'D_COD_GUIA_RECEPCION');
+				$correlative = $this->get_item($i, 'CORRELATIVE');
+
+				// subir archivo
+				$ruta_archivo = $this->get_ruta($cod_guia_recepcion);	// obtiene la ruta donde debe quedar 
+
+				// direccion absoluta
+				$row = $this->redirect($i);
+				$file = 'D_FILE_'.$row;
+				$nom_archivo = $_FILES[$file]['name'];
+				$char = '';
+				$pos  = 0;
+				$nom_archivo_s='';
+
+				$nom_archivo = $cod_guia_recepcion.'_'.$correlative.'_'.$nom_archivo;
+
+				$e		= array(archivo::getTipoArchivo($nom_archivo));
+				$t		= $_FILES[$file]['size'];
+				$tmp	= $_FILES[$file]['tmp_name'];
+				
+				$archivo = new archivo($nom_archivo, $ruta_archivo, $e,$t,$tmp);
+			 	$u = $archivo->upLoadFile();	// sube el archivo al directorio definitivo
+			 	
+			 	if(!file_exists($ruta_archivo.$nom_archivo)){
+			 		$this->alert('Se ha producido un error en la carga del archivo seleccionado.\nPuede deberse a problemas de red y/o archivo dañado.');
+			 		return true;
+			 	}
+			 	
+			}else if ($statuts == K_ROW_MODIFIED) {
+				$operacion = 'UPDATE';
+				$cod_guia_recepcion_foto = $this->get_item($i, 'COD_GUIA_RECEPCION_FOTO');
+				$cod_usuario = 'null';
+				$cod_guia_recepcion = 'null';
+				$nom_archivo = 'null';
+				$ruta_archivo = 'null';
+			}
+
+			$obs = $this->get_item($i, 'D_OBS');
+			$obs = $obs =='' ? 'null' : "'$obs'";
+
+			$param = "'$operacion'
+					,$cod_guia_recepcion_foto 
+					,$cod_guia_recepcion 
+					,$cod_usuario
+					,'$ruta_archivo'
+					,'$nom_archivo'
+					,$obs";
+					
+			if (!$db->EXECUTE_SP($sp, $param))
+				return false;	
+		}
+		
+		for ($i = 0; $i < $this->row_count('delete'); $i++) {
+			$statuts = $this->get_status_row($i, 'delete');			
+			if ($statuts == K_ROW_NEW || $statuts == K_ROW_NEW_MODIFIED)
+				continue;
+			
+			$cod_guia_recepcion_foto = $this->get_item($i, 'COD_GUIA_RECEPCION_FOTO', 'delete');
+			if (!$db->EXECUTE_SP($sp, "'DELETE', $cod_guia_recepcion_foto"))
+				return false;
+				
+			$ruta_archivo = $this->get_item($i, 'RUTA_ARCHIVO', 'delete');
+			$nom_archivo = $this->get_item($i, 'NOM_ARCHIVO', 'delete');
+			
+			if (file_exists($ruta_archivo.$nom_archivo))
+				unlink($ruta_archivo.$nom_archivo);		
+		}
+
+		return true;
+	}
+}
+
 class dw_item_guia_recepcion extends dw_item_guia_recepcion_base {
 	
 	const K_ESTADO_GR_EMITIDA 		= 1;
@@ -297,12 +475,13 @@ class dw_guia_recepcion extends dw_guia_recepcion_base{
 		$this->add_control($control = new edit_check_box('NO_BODEGA','S', 'N'));
 		$control->set_onChange("compruebaBodega(this);");
 
-		$this->add_control($control = new edit_check_box('GR_RESUELTA','S', 'N'));
+		$this->add_control(new edit_check_box('GR_RESUELTA','S', 'N'));
 		$sql	=  "SELECT COD_DOC_GR_RESUELTA
 						  ,NOM_DOC_GR_RESUELTA
 					FROM DOC_GR_RESUELTA";
 		$this->add_control($control = new drop_down_dw('COD_DOC_GR_RESUELTA',$sql,100));
 		$control->set_onChange("valida_doc();");
+		
 
 		$this->add_control($control = new edit_num('COD_DOC_RESUELTA', 10, 10, 0, true, false, false));
 		$control->set_onChange("valida_doc();");
@@ -376,6 +555,7 @@ class wi_guia_recepcion extends wi_guia_recepcion_base {
    
 		// DATAWINDOWS BITACORA_GUIA_RECEPCION
 		$this->dws['dw_bitacora_guia_recepcion'] = new dw_bitacora_guia_recepcion();
+		$this->dws['dw_gr_foto'] = new dw_gr_foto();
 		
 		//auditoria Solicitado por IS.
 		$this->add_auditoria('COD_TIPO_GUIA_RECEPCION');
@@ -415,11 +595,13 @@ class wi_guia_recepcion extends wi_guia_recepcion_base {
 		$this->dws['dw_guia_recepcion']->retrieve($cod_guia_recepcion);
 		$this->dws['dw_item_guia_recepcion']->retrieve($cod_guia_recepcion);
     	$this->dws['dw_bitacora_guia_recepcion']->retrieve($cod_guia_recepcion);
+		$this->dws['dw_gr_foto']->retrieve($cod_guia_recepcion);
 		$cod_empresa = $this->dws['dw_guia_recepcion']->get_item(0, 'COD_EMPRESA');
 		$this->dws['dw_guia_recepcion']->controls['COD_SUCURSAL_FACTURA']->retrieve($cod_empresa);
 		$this->dws['dw_guia_recepcion']->controls['COD_PERSONA']->retrieve($cod_empresa);
-		$this->dws['dw_bitacora_guia_recepcion']->set_entrable_dw(true);
 		
+		$this->dws['dw_bitacora_guia_recepcion']->set_entrable_dw(true);
+		$this->dws['dw_gr_foto']->set_entrable_dw(true);
 		$COD_ESTADO_GUIA_RECEPCION = $this->dws['dw_guia_recepcion']->get_item(0, 'COD_ESTADO_GUIA_RECEPCION');
 		
 		$this->b_no_save_visible = true;
@@ -526,6 +708,7 @@ class wi_guia_recepcion extends wi_guia_recepcion_base {
 			$this->dws['dw_guia_recepcion']->set_entrable('COD_DOC_RESUELTA', false);
 			$this->dws['dw_guia_recepcion']->set_entrable('GR_RESUELTA_OBS', false);
 			$this->dws['dw_bitacora_guia_recepcion']->set_entrable_dw(false);
+			$this->dws['dw_gr_foto']->set_entrable_dw(false);
 		}else{
 			if(($this->cod_usuario ==1) or ($this->cod_usuario == 4) or ($this->cod_usuario == 71) or ($this->cod_usuario == 46)){
 				$this->dws['dw_guia_recepcion']->set_entrable('GR_RESUELTA', true);
@@ -632,13 +815,17 @@ class wi_guia_recepcion extends wi_guia_recepcion_base {
 				$this->dws['dw_item_guia_recepcion']->set_item($i, 'COD_GUIA_RECEPCION', $COD_GUIA_RECEPCION);
 				$this->dws['dw_item_guia_recepcion']->set_item($i, 'TIPO_DOC_GR', $TIPO_DOC);
 			}
-      
+			for ($i=0; $i<$this->dws['dw_gr_foto']->row_count(); $i++)
+				$this->dws['dw_gr_foto']->set_item($i, 'D_COD_GUIA_RECEPCION', $COD_GUIA_RECEPCION);
+			
 			if (!$this->dws['dw_item_guia_recepcion']->update($db, $COD_GUIA_RECEPCION)) return false;
 			
 			if (!$this->dws['dw_bitacora_guia_recepcion']->update($db, $COD_GUIA_RECEPCION)) return false;
+
+			if (!$this->dws['dw_gr_foto']->update($db)) return false;
 			
-			if ($GR_RESUELTA != 'N')// se da por resuelto
-				$this->envia_mail_resuelta($db, $COD_GUIA_RECEPCION);
+			/*if ($GR_RESUELTA != 'N')// se da por resuelto
+				$this->envia_mail_resuelta($db, $COD_GUIA_RECEPCION);*/
       
       		return true;
 		}

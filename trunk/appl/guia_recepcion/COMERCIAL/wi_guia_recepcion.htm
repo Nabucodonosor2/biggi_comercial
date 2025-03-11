@@ -10,8 +10,17 @@
 	<script charset="iso-8859-1" src="../../../../commonlib/trunk/script_js/general.js" type="text/javascript"></script>
 	<script charset="iso-8859-1" src="../empresa/help_empresa.js" type="text/javascript"></script>
 	<script charset="iso-8859-1" src="guia_recepcion.js" type="text/javascript"></script>
+	<script src="../../slider/dist/js/splide.min.js"></script>
+	<link rel="stylesheet" href="../../slider/dist/css/splide.min.css">
 	{WI_JAVA_SCRIPT}
 	<script type="text/javascript">
+		document.addEventListener( 'DOMContentLoaded', function () {
+			new Splide( '#image-slider', {
+				cover      : true,
+				heightRatio: 0.5,
+			} ).mount();
+		} );
+
 		function entrada(objeto, url){
 		   objeto.style.backgroundImage = "url('"+url+"')";
 		}
@@ -82,6 +91,7 @@
 													<li class="TabbedPanelsTab" tabindex="0" id="val_items" name="val_items" style="display:{VISIBLE_TAB}">Ítems</li>
 													<li class="TabbedPanelsTab" tabindex="0" style="display:{TAB_153010}">Resolución Guía Recepción</li>
 													<li class="TabbedPanelsTab" tabindex="0" style="display:{TAB_}">Fotos</li>
+													<li class="TabbedPanelsTab" tabindex="0" style="display:{TAB_}">Slider</li>
 												</ul>
 												<div class="TabbedPanelsContentGroup">
 													<!--INI GUIA_RECEPCION-->
@@ -242,20 +252,6 @@
 													<!--FIN ITEMS-->
 													<!--INI RESOLUCION GR-->
 													<div class="TabbedPanelsContent">
-														<!--<table width="1000" rules="none" border="1" align="center">
-															<tr class="titulo_tabla">
-																<td colspan="6">DATOS GENERALES</td>
-															</tr>
-															<tr class="encabezado_right">
-																<td width="166">Nº Guía Recepcion:</td>
-																<td width="166" class="claro" align="left">{COD_GUIA_RECEPCION}</td>
-																<td width="166">Fecha:</td>
-																<td width="166" class="claro" align="left">{FECHA_GUIA_RECEPCION}</td>
-																<td width="166">Emisor:</td>
-																<td width="166" class="claro" align="left">{NOM_USUARIO}</td>
-															</tr>
-														</table>
-														<P />-->
 														<table width="1000" rules="none" border="1" align="center">
 															<!--<tr class="titulo_tabla">
 																<td colspan="6">DATOS GENERALES</td>
@@ -365,6 +361,36 @@
 														</table>			
 													</div>
 													<!--FIN FOTO GR-->
+
+													<!--INI SLIDER-->
+													<div class="TabbedPanelsContent" style="height: 494px;">
+														<table width="1000" rules="none" border="1" align="center">
+															<tr class="titulo_tabla">
+																<td colspan="6">DATOS GENERALES</td>
+															</tr>
+															<tr class="encabezado_right">
+																<td width="166">Nº Guía Recepcion:</td>
+																<td width="166" class="claro" align="left">{COD_GUIA_RECEPCION}</td>
+																<td width="166">Fecha:</td>
+																<td width="166" class="claro" align="left">{FECHA_GUIA_RECEPCION}</td>
+																<td width="166">Emisor:</td>
+																<td width="166" class="claro" align="left">{NOM_USUARIO}</td>
+															</tr>
+														</table>
+														<div id="image-slider" class="splide" style="height: 447px;">
+															<div class="splide__track">
+																<ul class="splide__list">
+																	<!-- startBlock(LINK_FOTO_SLIDER) -->
+																	<li class="splide__slide">
+																		<img src="../../../../../docs_gr_comercial_biggi/{S_COD_GUIA_RECEPCION}/{S_NOM_ARCHIVO}">
+																	</li>
+																	<!-- endBlock(LINK_FOTO_SLIDER) -->
+																</ul>
+															</div>
+														</div>
+													</div>
+													<!--FIN SLIDER-->
+
 												</div>
 												<!--FIN TabbedPanelsContentGroup-->
 											</div>
@@ -397,6 +423,8 @@
 			mostrarOcultar_item(document.getElementById("COD_TIPO_GUIA_RECEPCION_0"));
 		}
 	});
+
+	new Splide( '#image-slider' ).mount();
 	</script>
 </body>
 </html>

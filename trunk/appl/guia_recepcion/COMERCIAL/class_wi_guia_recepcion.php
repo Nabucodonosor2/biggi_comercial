@@ -15,6 +15,18 @@ class input_file extends edit_control {
 	}
 }
 
+class dw_slider_foto extends datawindow {
+	function dw_slider_foto(){
+		$sql = "SELECT COD_GUIA_RECEPCION_FOTO	S_COD_GUIA_RECEPCION_FOTO
+					  ,NOM_ARCHIVO				S_NOM_ARCHIVO
+					  ,COD_GUIA_RECEPCION		S_COD_GUIA_RECEPCION
+				FROM GUIA_RECEPCION_FOTO
+				WHERE COD_GUIA_RECEPCION = {KEY1}";
+
+		parent::datawindow($sql, 'LINK_FOTO_SLIDER', true, true);
+	}
+}
+
 class dw_gr_foto extends datawindow{
 	function dw_gr_foto(){
 		$sql = "SELECT COD_GUIA_RECEPCION_FOTO
@@ -556,6 +568,7 @@ class wi_guia_recepcion extends wi_guia_recepcion_base {
 		// DATAWINDOWS BITACORA_GUIA_RECEPCION
 		$this->dws['dw_bitacora_guia_recepcion'] = new dw_bitacora_guia_recepcion();
 		$this->dws['dw_gr_foto'] = new dw_gr_foto();
+		$this->dws['dw_slider_foto'] = new dw_slider_foto();
 		
 		//auditoria Solicitado por IS.
 		$this->add_auditoria('COD_TIPO_GUIA_RECEPCION');
@@ -596,6 +609,7 @@ class wi_guia_recepcion extends wi_guia_recepcion_base {
 		$this->dws['dw_item_guia_recepcion']->retrieve($cod_guia_recepcion);
     	$this->dws['dw_bitacora_guia_recepcion']->retrieve($cod_guia_recepcion);
 		$this->dws['dw_gr_foto']->retrieve($cod_guia_recepcion);
+		$this->dws['dw_slider_foto']->retrieve($cod_guia_recepcion);
 		$cod_empresa = $this->dws['dw_guia_recepcion']->get_item(0, 'COD_EMPRESA');
 		$this->dws['dw_guia_recepcion']->controls['COD_SUCURSAL_FACTURA']->retrieve($cod_empresa);
 		$this->dws['dw_guia_recepcion']->controls['COD_PERSONA']->retrieve($cod_empresa);

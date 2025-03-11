@@ -98,26 +98,26 @@ function validate() {
 				document.getElementById('NRO_CUOTAS_TBK_' + record).focus();
 				return false;
 			}
-      if (nro_doc == 0){
+      		if (nro_doc == 0){
 				alert ("Debe ingresar el Número de Documento.");
 				document.getElementById('NRO_DOC_' + record).focus();
 				return false;
 			}
 		}
-
 		else if (cod_tipo_doc_pago != tipo_doc_pago_efectivo
-			  && cod_tipo_doc_pago != tipo_doc_pago_anticipo
-			  && cod_tipo_doc_pago != tipo_doc_pago_nc
-			  && cod_tipo_doc_pago != tipo_doc_factura_compra
-			  && cod_tipo_doc_pago != tipo_doc_deposito_cta_cte
-			  && cod_tipo_doc_pago != tipo_doc_transferencia_bancaria
-			  && cod_tipo_doc_pago != tipo_doc_deuda_castigada){
+			&& cod_tipo_doc_pago != tipo_doc_pago_anticipo
+			&& cod_tipo_doc_pago != tipo_doc_pago_nc
+			&& cod_tipo_doc_pago != tipo_doc_factura_compra
+			&& cod_tipo_doc_pago != tipo_doc_deposito_cta_cte
+			&& cod_tipo_doc_pago != tipo_doc_transferencia_bancaria
+			&& cod_tipo_doc_pago != tipo_doc_deuda_castigada){
+
 			if (nro_doc == 0){
 				alert ("Debe ingresar el Número de Documento.");
 				document.getElementById('NRO_DOC_' + record).focus();
 				return false;
 			}
-			else if (cod_banco == '' && cod_tipo_doc_pago != tipo_doc_pago_tarjeta_credito){
+			else if (cod_banco == '' && (cod_tipo_doc_pago != tipo_doc_pago_tarjeta_credito && cod_tipo_doc_pago != tipo_doc_pago_tarjeta_debito)){
 				alert ("Debe ingresar el Banco.");
 				document.getElementById('COD_BANCO_' + record).focus();
 				return false;

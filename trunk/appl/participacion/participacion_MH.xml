@@ -46,11 +46,6 @@
 			<Cell text="{FECHA_PARTICIPACION}" width="18%" font="Arial"/>
 			<Cell text="Emisor :" width="10%" align="L" font="ArialBoldBlue"/>
 			<Cell text="{NOM_USUARIO}" width="29%" align="L" border="R" font="Arial" redl="192" greenl="192" bluel="192" newline="1"/>
-
-			<Cell text="" width="2%" border="L"  redl="192" greenl="192" bluel="192"/>
-			<Cell text="Referencia :" width="15%" align="L" font="ArialBoldBlue"/>
-			<Cell text="{REFERENCIA}" width="83%" align="L" font="Arial" border="R" redl="192" greenl="192" bluel="192" newline="1"/>
-
 			<Cell text="" height="5" border="LRB" redl="192" greenl="192" bluel="192" newline="1" />			
 			<Cell text="" newline="1" />
 			

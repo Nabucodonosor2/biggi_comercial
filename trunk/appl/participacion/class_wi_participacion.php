@@ -475,13 +475,42 @@ class wi_participacion extends w_input {
 		--Gasto fijo, agregar 16% al seleccionar el % de impuesto 
 		--JC / SP
 		--13/10/2023
+
+		Marcelo
+		Favor modificar % a los siguientes
+		Pago Participacion
+		1.- Hector Escudero = 16,75%
+		2.- Rodrigo Barraza = 16,75%
+		3.- Eduardo Olmedo = 16,75%
+		Gasto fijo, cambiar 16% a 16,75% al seleccionar el % de impuesto 
+		--JC / SP
+		--04/01/2024
+
+		Marcelo
+		Marcelo
+
+		Favor dejar a Hector y Brraraza con 14,50% de retencion segun actualizacion de l SII
+
+		Atte
+
+		Marcelo
+
+		Recien Eduerdo me envio boleta, favor dejar con 14,50% 
+
+		Gracias 
+		--JC / SP
+		--24/01/2025
 		*/
-		if($cod_usuario == 11 || $cod_usuario == 7 || $cod_usuario == 12){
-			$porc_part = "16";
+
+		// MH 05032025 SOLICITA POR CORREO JCATALAN
+		if($cod_usuario == 11){
+			$porc_part = "17.50";
 		}else{
 			$porc_part = "dbo.f_get_parametro(2)";
 		}
+		//$porc_part = "dbo.f_get_parametro(2)";
 
+		
 		$sql_crea_desde = "SELECT null COD_PARTICIPACION
 								,convert(nvarchar, getdate(), 103) FECHA_PARTICIPACION
 								,".$this->cod_usuario." COD_USUARIO
@@ -535,7 +564,7 @@ class wi_participacion extends w_input {
 							WHERE COD_USUARIO = ".$cod_usuario;
 			$result = $db-> build_results($sql_crea_desde);
 			$porc_iva = $result[0]['PORC_IVA'];
-			
+
 			$sql = $this->dws['dw_participacion']->get_sql();
 			$this->dws['dw_participacion']->set_sql($sql_crea_desde);
 			$this->dws['dw_participacion']->retrieve($cod_usuario);
@@ -549,7 +578,8 @@ class wi_participacion extends w_input {
 			}else{
 				$select_centro_costo = "and NV.COD_EMPRESA IN (SELECT COD_EMPRESA FROM CENTRO_COSTO_EMPRESA WHERE COD_CENTRO_COSTO = '".$cod_centro_c."')";
 			}	
-						
+			
+			//MH 15-01-2025 ADM SOLICITA QUE SE CONSIDEREN LAS OP DESDE 2024 EN ADELANTE, ANTES DE ESTO CONSIDERABA DESDE EL 2020		
 			$sql_item_crea_desde = "select 'N' SELECCION 
 									,null COD_ORDEN_PAGO_PARTICIPACION 
 									,null COD_PARTICIPACION 
@@ -570,15 +600,18 @@ class wi_participacion extends w_input {
 							and ($cod_tipo_op = 99 or COD_TIPO_ORDEN_PAGO = $cod_tipo_op)
 							and NV.COD_NOTA_VENTA = OP.COD_NOTA_VENTA
 							and E.COD_EMPRESA = NV.COD_EMPRESA
-					and YEAR(FECHA_ORDEN_PAGO) > 2020
+					and YEAR(FECHA_ORDEN_PAGO) > 2023
 				".$select_centro_costo;
 
-			if ($es_sueldo=='S') 
-				$sql_item_crea_desde .= " ORDER BY year(NV.FECHA_NOTA_VENTA) ASC, dbo.f_op_por_asignar(OP.COD_ORDEN_PAGO) asc";
-			else
-				$sql_item_crea_desde .= " ORDER BY NV.COD_NOTA_VENTA ASC";
+			//MH 15-01-2025 SE COMENTA IF POR ENTENDERSE QUE YA NO SE USA	
+			//if ($es_sueldo=='S') 
+			//	$sql_item_crea_desde .= " ORDER BY year(NV.FECHA_NOTA_VENTA) ASC, dbo.f_op_por_asignar(OP.COD_ORDEN_PAGO) asc";
+			//else
+			//	$sql_item_crea_desde .= " ORDER BY NV.COD_NOTA_VENTA ASC";
+			$sql_item_crea_desde .= " ORDER BY NV.COD_NOTA_VENTA ASC";
 				
 			$sql = $this->dws['dw_participacion_orden_pago']->get_sql();
+
 			$this->dws['dw_participacion_orden_pago']->set_sql($sql_item_crea_desde);
 			$this->dws['dw_participacion_orden_pago']->retrieve($cod_usuario);
 			$this->dws['dw_participacion_orden_pago']->set_sql($sql);

@@ -88,15 +88,48 @@ class wo_participacion extends w_output_biggi {
 		$this->detalle_record($pag_a_mostrar);	// Se va al primer registro
 	}
 	
-	function crear_desde($cod_usuario_tipo_op) {
-		session::set('CREA_PARTICIPACION', $cod_usuario_tipo_op);
-		$this->add();	
+	function crear_desde($cod_usuario_tipo_op){
+		$db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
+		$partes = explode("|", $cod_usuario_tipo_op);
+		$cod_usuario  = $partes[0];
+		$cod_tipo_op  = $partes[1];
+		
+		$sql_cod_empresa = "SELECT COD_EMPRESA
+								  ,NOM_USUARIO
+								  ,FORMAT(GETDATE(), 'dd/MM/yyyy HH:mm') FECHA_HORA_ACTUAL
+							FROM USUARIO
+							WHERE COD_USUARIO = ".$cod_usuario;
+		$result = $db->build_results($sql_cod_empresa);
+		$cod_empresa = $result[0]['COD_EMPRESA'];
+		$nom_usuario = $result[0]['NOM_USUARIO'];
+		$fecha		 = $result[0]['FECHA_HORA_ACTUAL'];
+		
+		$sql = "SELECT COUNT(*) COUNT
+				FROM ORDEN_PAGO OP, NOTA_VENTA NV, EMPRESA E
+				WHERE dbo.f_op_por_asignar(OP.COD_ORDEN_PAGO) <> 0
+				AND OP.COD_EMPRESA = ".$cod_empresa."
+				AND ($cod_tipo_op = 99 or COD_TIPO_ORDEN_PAGO = $cod_tipo_op)
+				AND NV.COD_NOTA_VENTA = OP.COD_NOTA_VENTA
+				AND E.COD_EMPRESA = NV.COD_EMPRESA
+				AND YEAR(FECHA_ORDEN_PAGO) > 2023";
+		
+		$result = $db->build_results($sql);
+		$count = $result[0]['COUNT'];
+		
+		if($count > 0){
+			session::set('CREA_PARTICIPACION', $cod_usuario_tipo_op);
+			$this->add();
+		}else{
+			$this->retrieve();
+			$this->alert('No se encontraron participaciones pendientes de pago para el vendedor '.$nom_usuario.'\n('.$fecha.' hrs)');
+		}
+
 	}
-   function redraw(&$temp){
-		parent::redraw(&$temp);
+   	function redraw(&$temp){
+		parent::redraw($temp);
 		$this->dw_check_box->habilitar($temp, true);
 	}
-  function procesa_event() {
+  	function procesa_event() {
 		if ($_POST['HIZO_CLICK_0'] == 'S') {
 			$this->checkbox_sumar = isset($_POST['CHECK_SUMAR_0']);
 			
@@ -120,14 +153,12 @@ class wo_participacion extends w_output_biggi {
 			$this->save_SESSION();	
 			$this->make_filtros();
 			$this->retrieve();
-    }else if(isset($_POST['b_create_x'])){
+    	}else if(isset($_POST['b_create_x'])){
 			$this->crear_desde($_POST['wo_hidden']);
-			
 		}else{ 
 			$this->checkbox_sumar = 0;
 			parent::procesa_event();
 		}
-   
 	}
 }
 ?>

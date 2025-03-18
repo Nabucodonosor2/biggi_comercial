@@ -2,8 +2,8 @@
 require_once(dirname(__FILE__)."/../../../../../commonlib/trunk/php/auto_load.php");
 require_once(dirname(__FILE__)."/../../empresa/class_dw_help_empresa.php");
 
-class input_file extends edit_control {
-	function input_file($field) {
+class input_file_gr extends edit_control {
+	function input_file_gr($field) {
 		parent::edit_control($field);
 	}
 	function draw_entrable($dato, $record) {
@@ -53,7 +53,7 @@ class dw_gr_foto extends datawindow{
 
 		$this->add_control(new edit_text_upper('D_OBS',78, 50));
 		$this->add_control(new static_text('D_NOM_ARCHIVO'));
-		$this->add_control(new input_file('D_FILE'));
+		$this->add_control(new input_file_gr('D_FILE'));
 
 		$this->set_mandatory('D_FILE', 'Archivo');
 	}

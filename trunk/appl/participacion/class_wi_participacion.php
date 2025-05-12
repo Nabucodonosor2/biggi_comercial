@@ -73,16 +73,15 @@ class dw_participacion_orden_pago extends datawindow {
 		if ($COD_ESTADO_PARTICIPACION != 1){
 			$temp->setVar('DISABLE_BUTTON_SELECCION', 'style="display:none"');
 			$temp->setVar('DISABLE_BUTTON_TODO', 'style="display:none"');
-		}
-		else{	
-				if ($this->entrable){
-					$temp->setVar('DISABLE_BUTTON_SELECCION', '');
-					$temp->setVar('DISABLE_BUTTON_TODO', '');
-				}
-				else{
-					$temp->setVar('DISABLE_BUTTON_SELECCION', 'disabled="disabled"');
-					$temp->setVar('DISABLE_BUTTON_TODO', 'disabled="disabled"');
-				}
+		}else{	
+			if ($this->entrable){
+				$temp->setVar('DISABLE_BUTTON_SELECCION', '');
+				$temp->setVar('DISABLE_BUTTON_TODO', '');
+			}
+			else{
+				$temp->setVar('DISABLE_BUTTON_SELECCION', 'disabled="disabled"');
+				$temp->setVar('DISABLE_BUTTON_TODO', 'disabled="disabled"');
+			}
 		}				
 	}
 	
@@ -562,87 +561,97 @@ class wi_participacion extends w_input {
 								,null REFERENCIA	
 							FROM USUARIO
 							WHERE COD_USUARIO = ".$cod_usuario;
-			$result = $db-> build_results($sql_crea_desde);
-			$porc_iva = $result[0]['PORC_IVA'];
+		$result = $db-> build_results($sql_crea_desde);
+		$porc_iva = $result[0]['PORC_IVA'];
 
-			$sql = $this->dws['dw_participacion']->get_sql();
-			$this->dws['dw_participacion']->set_sql($sql_crea_desde);
-			$this->dws['dw_participacion']->retrieve($cod_usuario);
-			$this->dws['dw_participacion']->set_sql($sql);
+		$sql = $this->dws['dw_participacion']->get_sql();
+		$this->dws['dw_participacion']->set_sql($sql_crea_desde);
+		$this->dws['dw_participacion']->retrieve($cod_usuario);
+		$this->dws['dw_participacion']->set_sql($sql);
 
-			if ($cod_centro_c == 0){
-				$select_centro_costo = "";	
-			}
-			else if ($cod_centro_c == '001'){
-				$select_centro_costo = "and NV.COD_EMPRESA NOT IN (SELECT COD_EMPRESA FROM CENTRO_COSTO_EMPRESA WHERE COD_CENTRO_COSTO <> '".$cod_centro_c."')";	
-			}else{
-				$select_centro_costo = "and NV.COD_EMPRESA IN (SELECT COD_EMPRESA FROM CENTRO_COSTO_EMPRESA WHERE COD_CENTRO_COSTO = '".$cod_centro_c."')";
-			}	
+		if ($cod_centro_c == 0){
+			$select_centro_costo = "";	
+		}
+		else if ($cod_centro_c == '001'){
+			$select_centro_costo = "and NV.COD_EMPRESA NOT IN (SELECT COD_EMPRESA FROM CENTRO_COSTO_EMPRESA WHERE COD_CENTRO_COSTO <> '".$cod_centro_c."')";	
+		}else{
+			$select_centro_costo = "and NV.COD_EMPRESA IN (SELECT COD_EMPRESA FROM CENTRO_COSTO_EMPRESA WHERE COD_CENTRO_COSTO = '".$cod_centro_c."')";
+		}	
+		
+		if($this->cod_usuario <> 1)
+			$seleccion = 'S';
+		else
+			$seleccion = 'N';
 			
-			//MH 15-01-2025 ADM SOLICITA QUE SE CONSIDEREN LAS OP DESDE 2024 EN ADELANTE, ANTES DE ESTO CONSIDERABA DESDE EL 2020		
-			$sql_item_crea_desde = "select 'N' SELECCION 
-									,null COD_ORDEN_PAGO_PARTICIPACION 
-									,null COD_PARTICIPACION 
-									,COD_ORDEN_PAGO 
-									,convert(nvarchar, FECHA_ORDEN_PAGO, 103) FECHA_ORDEN_PAGO 
-									,OP.COD_NOTA_VENTA 
-									,convert(nvarchar, FECHA_NOTA_VENTA, 103) FECHA_NOTA_VENTA
-									,E.NOM_EMPRESA 
-									,dbo.f_op_por_asignar(OP.COD_ORDEN_PAGO) TOTAL_NETO_POP 
-									,dbo.f_op_por_asignar(OP.COD_ORDEN_PAGO) TOTAL_NETO_POP_C 
-									,".self::K_ESTADO_PARTICIPACION_EMITIDA." COD_ESTADO_PARTICIPACION 
-									,COD_TIPO_ORDEN_PAGO
-									,convert(varchar(20), NV.FECHA_CIERRE, 103) FECHA_CIERRE
-									,'S' VISIBLE_TR
-							from ORDEN_PAGO OP, NOTA_VENTA NV, EMPRESA E
-							where dbo.f_op_por_asignar(OP.COD_ORDEN_PAGO) <> 0
-							and OP.COD_EMPRESA = ".$cod_empresa."
-							and ($cod_tipo_op = 99 or COD_TIPO_ORDEN_PAGO = $cod_tipo_op)
-							and NV.COD_NOTA_VENTA = OP.COD_NOTA_VENTA
-							and E.COD_EMPRESA = NV.COD_EMPRESA
-					and YEAR(FECHA_ORDEN_PAGO) > 2023
-				".$select_centro_costo;
+		//MH 15-01-2025 ADM SOLICITA QUE SE CONSIDEREN LAS OP DESDE 2024 EN ADELANTE, ANTES DE ESTO CONSIDERABA DESDE EL 2020		
+		$sql_item_crea_desde = "select '$seleccion' SELECCION 
+								,null COD_ORDEN_PAGO_PARTICIPACION 
+								,null COD_PARTICIPACION 
+								,COD_ORDEN_PAGO 
+								,convert(nvarchar, FECHA_ORDEN_PAGO, 103) FECHA_ORDEN_PAGO 
+								,OP.COD_NOTA_VENTA 
+								,convert(nvarchar, FECHA_NOTA_VENTA, 103) FECHA_NOTA_VENTA
+								,E.NOM_EMPRESA 
+								,dbo.f_op_por_asignar(OP.COD_ORDEN_PAGO) TOTAL_NETO_POP 
+								,dbo.f_op_por_asignar(OP.COD_ORDEN_PAGO) TOTAL_NETO_POP_C 
+								,".self::K_ESTADO_PARTICIPACION_EMITIDA." COD_ESTADO_PARTICIPACION 
+								,COD_TIPO_ORDEN_PAGO
+								,convert(varchar(20), NV.FECHA_CIERRE, 103) FECHA_CIERRE
+								,'S' VISIBLE_TR
+						from ORDEN_PAGO OP, NOTA_VENTA NV, EMPRESA E
+						where dbo.f_op_por_asignar(OP.COD_ORDEN_PAGO) <> 0
+						and OP.COD_EMPRESA = ".$cod_empresa."
+						and ($cod_tipo_op = 99 or COD_TIPO_ORDEN_PAGO = $cod_tipo_op)
+						and NV.COD_NOTA_VENTA = OP.COD_NOTA_VENTA
+						and E.COD_EMPRESA = NV.COD_EMPRESA
+				and YEAR(FECHA_ORDEN_PAGO) > 2023
+			".$select_centro_costo;
 
-			//MH 15-01-2025 SE COMENTA IF POR ENTENDERSE QUE YA NO SE USA	
-			//if ($es_sueldo=='S') 
-			//	$sql_item_crea_desde .= " ORDER BY year(NV.FECHA_NOTA_VENTA) ASC, dbo.f_op_por_asignar(OP.COD_ORDEN_PAGO) asc";
-			//else
-			//	$sql_item_crea_desde .= " ORDER BY NV.COD_NOTA_VENTA ASC";
-			$sql_item_crea_desde .= " ORDER BY NV.COD_NOTA_VENTA ASC";
+		//MH 15-01-2025 SE COMENTA IF POR ENTENDERSE QUE YA NO SE USA	
+		//if ($es_sueldo=='S') 
+		//	$sql_item_crea_desde .= " ORDER BY year(NV.FECHA_NOTA_VENTA) ASC, dbo.f_op_por_asignar(OP.COD_ORDEN_PAGO) asc";
+		//else
+		//	$sql_item_crea_desde .= " ORDER BY NV.COD_NOTA_VENTA ASC";
+		$sql_item_crea_desde .= " ORDER BY NV.COD_NOTA_VENTA ASC";
 				
-			$sql = $this->dws['dw_participacion_orden_pago']->get_sql();
+		$sql = $this->dws['dw_participacion_orden_pago']->get_sql();
 
-			$this->dws['dw_participacion_orden_pago']->set_sql($sql_item_crea_desde);
-			$this->dws['dw_participacion_orden_pago']->retrieve($cod_usuario);
-			$this->dws['dw_participacion_orden_pago']->set_sql($sql);
-			
+		$this->dws['dw_participacion_orden_pago']->set_sql($sql_item_crea_desde);
+		$this->dws['dw_participacion_orden_pago']->retrieve($cod_usuario);
+		$this->dws['dw_participacion_orden_pago']->set_sql($sql);
+		
 
-			$this->dws['dw_participacion_orden_pago']->set_item(0, 'SUM_TOTAL_NETO_POP_C', 0);
-			
-			///calcula totales participacion
-			$result = $db-> build_results($sql_item_crea_desde);
-			$total_neto = 0;
-   			for($i=0; $i<count($result); $i++)	
-   				$total_neto = $total_neto + $result[$i]['TOTAL_NETO_POP'];	
-   			
-   			$monto_iva = round($total_neto * $porc_iva/100);
-			if ($tipo_participacion == 'BH')
-				$total_con_iva = $total_neto - $monto_iva;
-			else if ($tipo_participacion == 'FA')
-				$total_con_iva = $total_neto + $monto_iva;
-			else if ($tipo_participacion == 'SUELDO')
-				$total_con_iva = $total_neto;
-   			
-   			/*
+		$this->dws['dw_participacion_orden_pago']->set_item(0, 'SUM_TOTAL_NETO_POP_C', 0);
+		
+		///calcula totales participacion
+		$result = $db-> build_results($sql_item_crea_desde);
+		$total_neto = 0;
+		for($i=0; $i<count($result); $i++)	
+			$total_neto = $total_neto + $result[$i]['TOTAL_NETO_POP'];	
+		
+		$monto_iva = round($total_neto * $porc_iva/100);
+		if ($tipo_participacion == 'BH')
+			$total_con_iva = $total_neto - $monto_iva;
+		else if ($tipo_participacion == 'FA')
+			$total_con_iva = $total_neto + $monto_iva;
+		else if ($tipo_participacion == 'SUELDO')
+			$total_con_iva = $total_neto;
+		
+		if($this->cod_usuario <> 1){
+			$this->dws['dw_participacion']->set_item(0, 'TOTAL_CON_IVA', $total_con_iva);
+			$this->dws['dw_participacion']->set_item(0, 'TOTAL_CON_IVA_H', $total_con_iva);
+
 			$this->dws['dw_participacion']->set_item(0, 'TOTAL_NETO', $total_neto);
 			$this->dws['dw_participacion']->set_item(0, 'TOTAL_NETO_H', $total_neto);
 				
 			$this->dws['dw_participacion']->set_item(0, 'MONTO_IVA', $monto_iva);
 			$this->dws['dw_participacion']->set_item(0, 'MONTO_IVA_H', $monto_iva);
-			
-			$this->dws['dw_participacion']->set_item(0, 'TOTAL_CON_IVA', $total_con_iva);
-			$this->dws['dw_participacion']->set_item(0, 'TOTAL_CON_IVA_H', $total_con_iva);
-			*/
+
+			$this->dws['dw_participacion_orden_pago']->set_item(0, 'SUM_TOTAL_NETO_POP_C', $total_con_iva);
+			$this->dws['dw_participacion_orden_pago']->set_entrable_dw(false);
+		}else{
+			$this->dws['dw_participacion_orden_pago']->set_entrable_dw(true);
+		}
 	}	
 	
 	function print_record() {	

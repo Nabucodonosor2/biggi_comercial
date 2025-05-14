@@ -353,3 +353,24 @@ function validaNv(){
 		}
 	});
 }
+
+function dlg_display_fa(){
+	const cod_nota_venta	= get_value('COD_NOTA_VENTA_H_0');
+	const nro_factura		= get_value('NRO_FACTURA_H_0');
+
+	$.showModalDialog({
+		url: "dlg_factura.php?cod_nota_venta="+cod_nota_venta+"&nro_factura="+nro_factura,
+		dialogArguments: '',
+		height: 350,
+		width: 550,
+		scrollable: false,
+		onClose: function(){ 
+			const returnVal = this.returnValue;
+			if (returnVal == null){		
+				return false;
+			}else{
+				set_value('NRO_FACTURA_H_0', returnVal, returnVal);
+			}
+		}
+	});
+}

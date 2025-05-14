@@ -205,7 +205,10 @@ class dw_guia_despacho extends dw_help_empresa {
 					GD.GUIA_TRANSPORTE,
 					GD.PATENTE,
 					GD.COD_FACTURA,
-					dbo.f_gd_nros_factura(COD_GUIA_DESPACHO) NRO_FACTURA,
+			--		dbo.f_gd_nros_factura(COD_GUIA_DESPACHO) NRO_FACTURA,
+					REPLACE(dbo.f_get_numero_fa_gd(COD_GUIA_DESPACHO), '|', '-') NRO_FACTURA,
+					dbo.f_get_numero_fa_gd(COD_GUIA_DESPACHO) NRO_FACTURA_H,
+					dbo.f_get_numero_fa_gd(COD_GUIA_DESPACHO) NRO_FACTURA_OLD,
 					GD.COD_BODEGA,
 					GD.COD_TIPO_GUIA_DESPACHO,
 					GD.COD_DOC,
@@ -261,7 +264,8 @@ class dw_guia_despacho extends dw_help_empresa {
 						WHEN AUTORIZA_GD_FACTURADA = 'S' THEN ''
 						ELSE 'none'
 					END DISPLAY_GD_FACTURADA,
-                    '' DESDE_BNT_NEW
+                    '' DESDE_BNT_NEW,
+					GD.COD_DOC COD_NOTA_VENTA_H
 				FROM GUIA_DESPACHO GD LEFT OUTER JOIN FACTURA F 
 				ON GD.COD_FACTURA = F.COD_FACTURA, USUARIO U, EMPRESA E, ESTADO_DOC_SII EDS,
 				TIPO_GUIA_DESPACHO TGD, TIPO_GD_INTERNO_SII TGIS
@@ -303,7 +307,9 @@ class dw_guia_despacho extends dw_help_empresa {
 		
 		$this->add_control(new edit_text('COD_ESTADO_DOC_SII',10,10, 'hidden'));
 		$this->add_control(new static_text('NOM_ESTADO_DOC_SII'));
-		$this->add_control(new static_text('NRO_FACTURA'));		
+		$this->add_control(new static_text('NRO_FACTURA'));
+		$this->add_control(new edit_text_hidden('NRO_FACTURA_H'));
+		$this->add_control(new edit_text_hidden('NRO_FACTURA_OLD'));
 		
 		$this->add_control(new static_link('COD_DOC', '../../../../commonlib/trunk/php/link_wi.php?modulo_origen=guia_despacho&modulo_destino=nota_venta&cod_modulo_destino=[COD_DOC]&cod_item_menu=1510&current_tab_page=0'));
 		$this->add_control(new static_text('COD_ARRIENDO'));
@@ -311,7 +317,7 @@ class dw_guia_despacho extends dw_help_empresa {
 		$this->add_control(new edit_text('SUM_TOTAL_H',10,10, 'hidden'));
 		
 		$this->add_control(new edit_text('COD_DOC_H',10,10, 'hidden'));
-		
+		$this->add_control(new edit_text_hidden('COD_NOTA_VENTA_H'));
 	
 		// usuario anulación
 		$sql = "select 	COD_USUARIO
@@ -364,7 +370,12 @@ class dw_guia_despacho extends dw_help_empresa {
 				$temp->setVar('DISABLE_BUTTON', '');
 			else
 				$temp->setVar('DISABLE_BUTTON', 'disabled="disabled"');
-		}				
+		}
+		
+		if ($this->entrable)
+			$temp->setVar('DISABLE_BUTTON_DOS', '');
+		else
+			$temp->setVar('DISABLE_BUTTON_DOS', 'disabled="disabled"');
 	}
 }
 class wi_guia_despacho extends w_input {
@@ -685,6 +696,8 @@ class wi_guia_despacho extends w_input {
 		$COD_USU_VENDEDOR_RESP			= $this->dws['dw_guia_despacho']->get_item(0, 'COD_USU_VENDEDOR_RESP');
 		$AUTORIZA_GD_FACTURADA			= $this->dws['dw_guia_despacho']->get_item(0, 'AUTORIZA_GD_FACTURADA');
 		$MOTIVO_GD_FACTURADA			= $this->dws['dw_guia_despacho']->get_item(0, 'MOTIVO_GD_FACTURADA');
+		$NRO_FACTURA_H					= $this->dws['dw_guia_despacho']->get_item(0, 'NRO_FACTURA_H');
+		$NRO_FACTURA_OLD				= $this->dws['dw_guia_despacho']->get_item(0, 'NRO_FACTURA_OLD');
 		
 		if (($MOTIVO_ANULA != '') && ($COD_USUARIO_ANULA == '')) // se anula 
 			$COD_USUARIO_ANULA			= $this->cod_usuario;
@@ -709,6 +722,7 @@ class wi_guia_despacho extends w_input {
 		$COD_USU_VENDEDOR_RESP			= ($COD_USU_VENDEDOR_RESP =='') ? "null" : $COD_USU_VENDEDOR_RESP;
 		$AUTORIZA_GD_FACTURADA			= ($AUTORIZA_GD_FACTURADA =='') ? "null" : "'$AUTORIZA_GD_FACTURADA'";
 		$MOTIVO_GD_FACTURADA			= ($MOTIVO_GD_FACTURADA =='') ? "null" : "'$MOTIVO_GD_FACTURADA'";
+		$NRO_FACTURA_H					= ($NRO_FACTURA_H =='') ? "null" : "'$NRO_FACTURA_H'";
 		
 		$sp = 'spu_guia_despacho';
 		if ($this->is_new_record()){
@@ -762,6 +776,11 @@ class wi_guia_despacho extends w_input {
 			
 			$parametros_sp = "'item_guia_despacho','guia_despacho',$COD_GUIA_DESPACHO";
 			if (!$db->EXECUTE_SP('sp_orden_no_parametricas', $parametros_sp)) return false;
+
+			if($NRO_FACTURA_H <> $NRO_FACTURA_OLD){
+				$parametros_sp = "$COD_GUIA_DESPACHO, $NRO_FACTURA_H";
+				if (!$db->EXECUTE_SP('spu_guia_despacho_factura', $parametros_sp)) return false;
+			}
 			
 			return true;
 		}

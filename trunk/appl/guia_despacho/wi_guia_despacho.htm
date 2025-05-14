@@ -95,7 +95,7 @@ function down(objeto, url)
 										</ul>
 										<div class="TabbedPanelsContentGroup">
 										<!--INI COTIZACION-->
-											<div class="TabbedPanelsContent">
+											<div class="TabbedPanelsContent" style="display: block;height: 480px;">
 												<table width="1000" rules="none" border="1" align="center">
 													<tr class="titulo_tabla">
 														<td colspan="6">DATOS GENERALES</td>
@@ -116,7 +116,7 @@ function down(objeto, url)
 														<td width="166">Tipo Despacho:</td>
 													 	<td width="166" class="oscuro" align="left">{COD_TIPO_GUIA_DESPACHO}</td>
 														<td width="166">Documento:</td>
-														<td width="166" class="oscuro" align="left">{COD_DOC}{COD_DOC_H}</td>
+														<td width="166" class="oscuro" align="left">{COD_DOC}{COD_DOC_H}{COD_NOTA_VENTA_H}</td>
 													</tr>
 													<tr class="encabezado_right">
 														<td>Estado:</td>
@@ -124,23 +124,29 @@ function down(objeto, url)
 														<td>Bodega:</td>
 														<td class="claro" align="left">{COD_BODEGA}</td>
 														<td>Nº Factura:</td>
-														<td class="claro" align="left">{NRO_FACTURA}</td>
+														<td class="claro" align="left"><input type="button" class="Button" value="Sel." onclick="dlg_display_fa();" {DISABLE_BUTTON_DOS} />{NRO_FACTURA_H}{NRO_FACTURA_OLD}</td>
 													</tr>
+
+													<tr class="encabezado_right">
+														<td class="oscuro" align="left" colspan="4"></td>
+														<td class="oscuro" align="left" colspan="2">{NRO_FACTURA}</td>
+													</tr>
+
 													<tr class="encabezado_right">
 														<td>Indicador Traslado:</td>
-														<td class="oscuro" align="left" colspan="3">{NOM_TIPO_GD_INTERNO_SII}</td>
+														<td class="claro" align="left" colspan="3">{NOM_TIPO_GD_INTERNO_SII}</td>
 														<td style="display:{DISPLAY_USU_VENDEDOR}">Vendedor Responsable:</td>
-														<td class="oscuro" align="left" style="display:{DISPLAY_USU_VENDEDOR}">{COD_USU_VENDEDOR_RESP}</td>
+														<td class="claro" align="left" style="display:{DISPLAY_USU_VENDEDOR}">{COD_USU_VENDEDOR_RESP}</td>
 													</tr>
 													<tr class="encabezado_right">
 														<td>Referencia:</td>
-														<td class="claro" colspan="5" align="left">{REFERENCIA}</td>
+														<td class="oscuro" colspan="5" align="left">{REFERENCIA}</td>
 													</tr>
 													<tr class="encabezado_right" id="tr_anula" style="display:{TR_DISPLAY}">
 														<td>Anulación:</td>
-														<td class="oscuro" colspan="3" align="left">{MOTIVO_ANULA}</td>
-														<td class="oscuro" align="center">{FECHA_ANULA}</td>
-														<td class="oscuro" align="left">{COD_USUARIO_ANULA}</td>
+														<td class="claro" colspan="3" align="left">{MOTIVO_ANULA}</td>
+														<td class="claro" align="center">{FECHA_ANULA}</td>
+														<td class="claro" align="left">{COD_USUARIO_ANULA}</td>
 													</tr>
 												</table>
 												<p />

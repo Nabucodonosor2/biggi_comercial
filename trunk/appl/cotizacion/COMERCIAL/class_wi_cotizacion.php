@@ -3,7 +3,6 @@ require_once(dirname(__FILE__)."/../../../../../commonlib/trunk/php/auto_load.ph
 require_once(dirname(__FILE__)."/../../common_appl/class_w_cot_nv.php");
 require_once(dirname(__FILE__)."/../../empresa/class_dw_help_empresa.php");
 
-
 class edit_protected extends edit_control {
     var $edit_text;
     var $static_text;
@@ -38,6 +37,32 @@ class edit_protected extends edit_control {
     function get_values_from_POST($record) {
         return $this->edit_text->get_values_from_POST($record);
     }
+}
+
+class dw_item_analisis_costo extends datawindow {
+	function dw_item_analisis_costo() {
+		$sql = "SELECT DISTINCT	COD_ITEM_COTIZACION                                             COD_ITEM_COTIZACION_AC,
+                            IC.COD_PRODUCTO                                                     COD_PRODUCTO_AC,
+                            IC.NOM_PRODUCTO                                                     NOM_PRODUCTO_AC,
+							PRECIO_VENTA_PUBLICO,
+                            PRECIO                                                              PRECIO_AC,
+							PRECIO * 0.75			                                            PRECIO_ARAMARK,
+							PRECIO - PRECIO_VENTA_PUBLICO                                   	PRECIO_25_ARA,
+							ROUND(100 - (((PRECIO * 0.75) * 100) / PRECIO_VENTA_PUBLICO), 1)    DESCTO_FINAL
+                FROM		ITEM_COTIZACION IC
+						   ,PRODUCTO P
+                WHERE		COD_COTIZACION = {KEY1}
+				AND			IC.COD_PRODUCTO = P.COD_PRODUCTO
+                ORDER BY IC.COD_PRODUCTO ASC";
+
+		parent::datawindow($sql, 'ITEM_ANA_COSTO');
+
+        $this->add_control(new static_num('PRECIO_AC'));
+        $this->add_control(new static_num('PRECIO_VENTA_PUBLICO'));
+        $this->add_control(new static_num('PRECIO_ARAMARK'));
+        $this->add_control(new static_num('PRECIO_25_ARA'));
+        $this->add_control(new static_num('DESCTO_FINAL', 1));
+	}
 }
 
 class dw_item_resumen_cotizacion extends datawindow{
@@ -433,8 +458,6 @@ class dw_llamado extends datawindow {
 }
 
 class wi_cotizacion extends wi_cotizacion_base {
-    
-    
     const K_ESTADO_EMITIDA 			= 1;
     const K_PARAM_VALIDEZ_OFERTA 	= 7;
     const K_ESTADO_ANULADA			= 7;
@@ -461,7 +484,6 @@ class wi_cotizacion extends wi_cotizacion_base {
     const K_AUTORIZA_MOD_COTIZACION = '990535';
     const K_AUTORIZA_VALIDA_OFERTA = '990545';
     
-    
     var $desde_wo_bitacora_cotizacion = false;
     var $desde_wo_seguimiento_cotizacion = false;
     var $imprime_logo_wp = 'S';
@@ -471,6 +493,7 @@ class wi_cotizacion extends wi_cotizacion_base {
             session::un_set('DESDE_wo_bitacora_cotizacion');
             $this->desde_wo_bitacora_cotizacion = true;
         }
+
         if (session::is_set('DESDE_wo_seguimiento_cotizacion')) {
             session::un_set('DESDE_wo_seguimiento_cotizacion');
             $this->desde_wo_seguimiento_cotizacion = true;
@@ -607,6 +630,7 @@ class wi_cotizacion extends wi_cotizacion_base {
 						,AUT_DESCTO_ESP
 						,AUT_DESCTO_ESP AUT_DESCTO_ESP_H
 						,dbo.f_last_usu_mod_dscto_mod(COD_COTIZACION, 3) LAST_USU_DSCTO3
+                        ,'' DISPLAY_AC
 						,CASE $this->cod_usuario
 							WHEN 1 THEN ''
 							WHEN 2 THEN ''
@@ -700,7 +724,7 @@ class wi_cotizacion extends wi_cotizacion_base {
         $this->dws['dw_item_cotizacion'] = new dw_item_cotizacion();
         $this->dws['dw_item_resumen_cotizacion'] = new dw_item_resumen_cotizacion();
         $this->dws['dw_llamado'] = new dw_llamado();
-        
+        $this->dws['dw_item_analisis_costo'] = new dw_item_analisis_costo();
         
         // TOTALES
         $this->dws['dw_cotizacion']->add_control(new edit_check_box('SUMAR_ITEMS','S','N'));
@@ -862,10 +886,11 @@ class wi_cotizacion extends wi_cotizacion_base {
         $this->dws[$this->dw_tabla]->controls['PORC_DSCTO'.$nro_dscto]->set_onChange($jsP.$java_script);
         $this->dws[$this->dw_tabla]->controls['MONTO_DSCTO'.$nro_dscto]->set_onChange($jsM.$java_script);
     }
-    function new_record() {
+    function new_record(){
         $this->dws['dw_cotizacion']->insert_row();
         $this->dws['dw_cotizacion']->set_item(0, 'FECHA_COTIZACION', $this->current_date());
         $this->dws['dw_cotizacion']->set_item(0, 'COD_USUARIO', $this->cod_usuario);
+        $this->dws['dw_cotizacion']->set_item(0, 'DISPLAY_AC','none');
 
         if($this->cod_usuario == 1 || $this->cod_usuario == 2 || $this->cod_usuario == 4 || $this->cod_usuario == 10)
             $this->dws['dw_cotizacion']->set_item(0, 'VALIDA_USUARIO_BIGGI', 'S');
@@ -925,6 +950,7 @@ class wi_cotizacion extends wi_cotizacion_base {
             session::un_set('CREADA_DESDE_COTIZACION');
             return;
         }
+
         $priv = $this->get_privilegio_opcion_usuario(self::K_AUTORIZA_VALIDA_OFERTA, $this->cod_usuario);	// acceso bitacora
         if($priv <> 'E'){
             $this->dws['dw_cotizacion']->set_entrable('VALIDEZ_OFERTA', false);
@@ -942,14 +968,15 @@ class wi_cotizacion extends wi_cotizacion_base {
         }else
             $this->dws['dw_cotizacion']->set_item(0, 'PORC_DSCTO_MAX', $this->get_parametro(self::K_PARAM_PORC_DSCTO_MAX));
             
-            $sql = "select COD_PERFIL
-					  ,PORC_DESCUENTO_PERMITIDO
-				from USUARIO
-				where COD_USUARIO = $this->cod_usuario";
-            $result = $db->build_results($sql);
-            $porc_desc_permitido = $result[0]['PORC_DESCUENTO_PERMITIDO'];
-            $this->dws['dw_cotizacion']->set_item(0, 'PORC_DESC_PERMITIDO', $porc_desc_permitido);
+        $sql = "select COD_PERFIL
+                    ,PORC_DESCUENTO_PERMITIDO
+            from USUARIO
+            where COD_USUARIO = $this->cod_usuario";
+        $result = $db->build_results($sql);
+        $porc_desc_permitido = $result[0]['PORC_DESCUENTO_PERMITIDO'];
+        $this->dws['dw_cotizacion']->set_item(0, 'PORC_DESC_PERMITIDO', $porc_desc_permitido);
     }
+
     function load_cotizacion($cod_cotizacion) {
         $this->dws['dw_cotizacion']->retrieve($cod_cotizacion);
         
@@ -984,11 +1011,18 @@ class wi_cotizacion extends wi_cotizacion_base {
                     $this->dws['dw_llamado']->insert_row();
                     $this->dws['dw_cotizacion']->set_item(0, 'LL_LLAMADO','');
     }
-    function load_record() {
+
+    function load_record(){
         $cod_cotizacion = $this->get_item_wo($this->current_record, 'COD_COTIZACION');
         $this->load_cotizacion($cod_cotizacion);
         $this->dws['dw_cotizacion']->set_item(0, 'CONTACTO_WEB','none');
         $this->dws['dw_cotizacion']->set_item(0,'LL_LLAMADO','none');
+        $cod_empresa = $this->dws['dw_cotizacion']->get_item(0, 'COD_EMPRESA');
+        
+        if($cod_empresa == 630 || $cod_empresa == 3109 || $cod_empresa == 5308 || $cod_empresa == 7326)
+            $this->dws['dw_cotizacion']->set_item(0,'DISPLAY_AC','');
+        else
+            $this->dws['dw_cotizacion']->set_item(0,'DISPLAY_AC','none');
         
         if($this->dws['dw_cotizacion']->get_item(0, 'RECHAZADA') == 'S'){
             $this->dws['dw_cotizacion']->set_item(0,'DISPLAY_TR1','');
@@ -1002,11 +1036,10 @@ class wi_cotizacion extends wi_cotizacion_base {
             $this->dws['dw_cotizacion']->set_entrable('TEXTO_RECHAZO', true);
             $this->dws['dw_cotizacion']->set_entrable('RECHAZADA', true);
             $this->dws['dw_cotizacion']->controls['COD_TIPO_RECHAZO']->enabled = true;
-            
         }
         
         $os = base::get_tipo_dispositivo();
-        if($os == 'IPAD' ){
+        if($os == 'IPAD'){
             $this->dws['dw_cotizacion']->set_item(0,'TIPO_DISPOSITIVO', 'IPAD');
         }
         
@@ -1018,13 +1051,12 @@ class wi_cotizacion extends wi_cotizacion_base {
         
         $result = $db->build_results($sql);
         
-        
         $cod_solicitud_cotizacion=$result[0]['COD_SOLICITUD_COTIZACION'];
         if($cod_solicitud_cotizacion == ''){
             $this->dws['dw_cotizacion']->set_item(0, 'DESDE_COTI','');
             $this->dws['dw_cotizacion']->set_item(0, 'DESDE_SOLI','none');
             $this->dws['dw_cotizacion']->set_item(0,'LL_LLAMADO','');
-        }else {
+        }else{
             $this->dws['dw_cotizacion']->set_item(0, 'DESDE_COTI','none');
             $this->dws['dw_cotizacion']->set_item(0, 'DESDE_SOLI','');
             $this->dws['dw_cotizacion']->set_item(0, 'CONTACTO_WEB','');
@@ -1104,6 +1136,7 @@ class wi_cotizacion extends wi_cotizacion_base {
         
         //$this->dws['dw_bitacora_cotizacion']->retrieve($cod_cotizacion);
         $this->dws['dw_seguimiento_cotizacion']->retrieve($cod_cotizacion);
+        $this->dws['dw_item_analisis_costo']->retrieve($cod_cotizacion);
         
         $cod_empresa = $this->dws['dw_cotizacion']->get_item(0, 'COD_EMPRESA');
         $this->dws['dw_seguimiento_cotizacion']->controls['SC_COD_PERSONA']->retrieve($cod_empresa);
@@ -1153,18 +1186,24 @@ class wi_cotizacion extends wi_cotizacion_base {
             
         }else
             $this->dws['dw_cotizacion']->set_item(0, 'PORC_DSCTO_MAX', $this->get_parametro(self::K_PARAM_PORC_DSCTO_MAX));
+
     }
+
     function get_key() {
         return $this->dws['dw_cotizacion']->get_item(0, 'COD_COTIZACION');
     }
-    function habilita_boton_print(&$temp, $boton, $habilita) {
-        if ($habilita){
-            $ruta_over = "'../../../../commonlib/trunk/images/b_print_over.jpg'";
-            $ruta_out = "'../../../../commonlib/trunk/images/b_print.jpg'";
-            $ruta_click = "'../../../../commonlib/trunk/images/b_print_click.jpg'";
+    
+    function habilita_boton_print(&$temp, $boton, $habilita){
+        $ruta_over = "'../../../../commonlib/trunk/images/b_print_over.jpg'";
+        $ruta_out = "'../../../../commonlib/trunk/images/b_print.jpg'";
+        $ruta_click = "'../../../../commonlib/trunk/images/b_print_click.jpg'";
+
+        if($habilita){
             $temp->setVar("WI_PRINT", '<input name="b_'.$boton.'" id="b_'.$boton.'" type="button" onmouseover="entrada(this, '.$ruta_over.')" onmouseout="salida(this, '.$ruta_out.')" onmousedown="down(this, '.$ruta_click.')"'.
-                'style="cursor:pointer;height:68px;width:66px;border: 0;background-image:url(../../../../commonlib/trunk/images/b_print.jpg);background-repeat:no-repeat;background-position:center;border-radius: 15px;"'.
-                'onClick="var vl_tab = document.getElementById(\'wi_current_tab_page\'); if (TabbedPanels1 && vl_tab) vl_tab.value =TabbedPanels1.getCurrentTabIndex();dlg_print();" />');
+                                      'style="cursor:pointer;height:68px;width:66px;border: 0;background-image:url(../../../../commonlib/trunk/images/b_print.jpg);background-repeat:no-repeat;background-position:center;border-radius: 15px;"'.
+                                      'onClick="var vl_tab = document.getElementById(\'wi_current_tab_page\'); if (TabbedPanels1 && vl_tab) vl_tab.value =TabbedPanels1.getCurrentTabIndex();dlg_print();" />');
+        }else{
+            $temp->setVar("WI_PRINT", '<img src="../../../../commonlib/trunk/images/b_'.$boton.'_d.jpg">');
         }
         
     }
@@ -1200,23 +1239,6 @@ class wi_cotizacion extends wi_cotizacion_base {
         }
     }
     
-    function navegacion(&$temp){
-        parent::navegacion($temp);
-        
-        $priv = $this->get_privilegio_opcion_usuario('999505', $this->cod_usuario);
-        if($priv == 'E')
-            $this->habilita_boton($temp, 'print_folleto', true);
-            else
-                $this->habilita_boton($temp, 'print_folleto', false);
-                
-                $priv = $this->get_privilegio_opcion_usuario('999510', $this->cod_usuario);
-                if($priv == 'E')
-                    $this->habilita_boton($temp, 'f_tecnica', true);
-                    else
-                        $this->habilita_boton($temp, 'f_tecnica', false);
-                        
-    }
-    
     function habilitar(&$temp, $habilita) {
         parent::habilitar($temp, $habilita);
         
@@ -1229,11 +1251,35 @@ class wi_cotizacion extends wi_cotizacion_base {
                 || $cod_est_cot == 6) //Re-abierta
                 $this->habilita_boton($temp, 'modify', (false));
         }
-        if($this->is_new_record())
+
+        if($this->is_new_record()){
             $this->habilita_boton_print($temp, 'print', false);
-            else
+            $this->habilita_boton($temp, 'print_folleto', false);
+            $this->habilita_boton($temp, 'f_tecnica', false);
+        }else{
+            $cod_cotizacion = $this->get_key();
+
+          if(($cod_cotizacion == 242662 || $cod_cotizacion == 245017) && $this->cod_usuario <> 1){
+                $this->habilita_boton($temp, 'modify', false);
+                $this->habilita_boton($temp, 'save', false);
+                $this->habilita_boton($temp, 'print', false);
+                $this->habilita_boton($temp, 'print_folleto', false);
+                $this->habilita_boton($temp, 'f_tecnica', false);
+            }else{
                 $this->habilita_boton_print($temp, 'print', true);
-                
+                $priv = $this->get_privilegio_opcion_usuario('999505', $this->cod_usuario);
+                if($priv == 'E')
+                    $this->habilita_boton($temp, 'print_folleto', true);
+                else
+                    $this->habilita_boton($temp, 'print_folleto', false);
+                        
+                $priv = $this->get_privilegio_opcion_usuario('999510', $this->cod_usuario);
+                if($priv == 'E')
+                    $this->habilita_boton($temp, 'f_tecnica', true);
+                else
+                    $this->habilita_boton($temp, 'f_tecnica', false);
+            }
+        }      
     }
     
     function envia_mail_acuse(){

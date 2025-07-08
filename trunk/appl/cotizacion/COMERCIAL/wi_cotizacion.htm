@@ -160,11 +160,12 @@ function down(objeto, url)
 										<li class="TabbedPanelsTab" tabindex="0" style="display:{TAB_150530}">Resumen Ítems</li>
 										<li class="TabbedPanelsTab" tabindex="0" style="display:{TAB_150515}">Condiciones Generales</li>
 										<li class="TabbedPanelsTab" tabindex="0" style="display:none">Stock</li>
-									<!--<li class="TabbedPanelsTab" tabindex="0" style="display:{TAB_150525}">Bitacora</li>-->
+										<!--<li class="TabbedPanelsTab" tabindex="0" style="display:{TAB_150525}">Bitacora</li>-->
 										<li class="TabbedPanelsTab" tabindex="0" style="display:none">Pre-Resultado </li>
 										<li class="TabbedPanelsTab" tabindex="0" style="display:{TAB_150535}">Seguimiento Cotización</li>
 										<li class="TabbedPanelsTab" tabindex="0" style="display:{DISPLAY_RECHAZO}">Rechazo</li>
 										<li class="TabbedPanelsTab" tabindex="0" style="display:{TAB_150540}">Descuento Autorizado</li>
+										<li class="TabbedPanelsTab" tabindex="0" style="display:{DISPLAY_AC}">Análisis Costo</li>
 										</ul>
 										<div class="TabbedPanelsContentGroup">
 										<!--INI COTIZACION-->
@@ -320,10 +321,10 @@ function down(objeto, url)
 													</tr>
 												</table>
 												</div>
-										  </div>
-												<!--FIN COTIZACION-->
-												<!--INI ITEMS-->
-										  <div class="TabbedPanelsContent">
+										  	</div>
+											<!--FIN COTIZACION-->
+											<!--INI ITEMS-->
+										  	<div class="TabbedPanelsContent">
 												<table width="1000" rules="none" border="1" align="center">
 													<tr class="titulo_tabla">
 														<td colspan="6">DATOS GENERALES</td>
@@ -357,7 +358,7 @@ function down(objeto, url)
 												<div style="overflow-x:hidden; overflow-y:auto; height:240; margin-top:-1em;">
 												<table width="1000" rules="none" border="1" align="center" class="claro" id="ITEM_COTIZACION">
 													<!-- startBlock(ITEM_COTIZACION) -->
-													<tr class="{DW_TR_CSS}" id="{DW_TR_ID}">
+													<tr class="{DW_TR_CSS}" id="{DW_TR_ID}" {STYLE_ARAMARK}>
 														<td width="5%" align="center">{COD_ITEM_COTIZACION}{ORDEN}</td>
 														<td width="5%" align="center">{ITEM}</td>
 														<td width="14%" align="left">{COD_PRODUCTO}</td>
@@ -940,6 +941,53 @@ function down(objeto, url)
 												</table>
 											</div>
 											<!--FIN DESCUENTO AUTORIZADO-->
+											<!--INI ANALISIS COSTO-->
+											<div class="TabbedPanelsContent">
+												<table width="1000" rules="none" border="1" align="center">
+													<tr class="titulo_tabla">
+														<td colspan="6">DATOS GENERALES</td>
+													</tr>
+													<tr class="encabezado_right">
+														<td width="166">Nº Cotización:</td>
+														<td width="166" class="claro" align="left">{COD_COTIZACION}</td>
+														<td width="166">Fecha:</td>
+														<td width="166" class="claro" align="right">{FECHA_COTIZACION}</td>
+														<td width="166">Emisor:</td>
+														<td width="166" class="claro" align="left">{NOM_USUARIO}</td>
+													</tr>
+												</table>
+												<P />
+												<table width="1000" rules="none" border="1" align="center" class="claro">
+													<tr class="titulo_tabla">
+														<td colspan="11">Análisis Costo</td>
+													</tr>
+													<tr class="encabezado_center">
+														<th width="10%">Módelo</th>
+														<th width="40%">Descripción</th>
+														<th width="10%">Precio Cotización</th>
+														<th width="10%"></th>
+														<th width="10%">25% Aramark</th>
+														<th width="10%">Precio Venta Público</th>
+														<th width="10%">% Dscto Final</th>
+													</tr>
+												</table>
+												<div style="overflow-x:hidden; overflow-y:auto; height:360; margin-top:-1em;">
+													<table width="1000" rules="none" border="1" align="center" class="claro" id="ITEM_ANA_COSTO">
+														<!-- startBlock(ITEM_ANA_COSTO) -->
+														<tr class="{DW_TR_CSS}" id="{DW_TR_ID}">
+															<td width="10%" align="left">{COD_PRODUCTO_AC}</td>
+															<td width="40%" align="left">{NOM_PRODUCTO_AC}</td>
+															<td width="10%" align="right">{PRECIO_VENTA_PUBLICO}</td>
+															<td width="10%" align="right">{PRECIO_AC}</td>
+															<td width="10%" align="right">{PRECIO_ARAMARK}</td>
+															<td width="10%" align="right">{PRECIO_25_ARA}</td>
+															<td width="10%" align="right">{DESCTO_FINAL}</td>
+														</tr>
+														<!-- endBlock(ITEM_ANA_COSTO) -->
+													</table>
+												</div>
+											</div>
+											<!--FIN ANALISIS COSTO-->
 										 	 
 										</div><!--FIN TabbedPanelsContentGroup-->
 									</div>

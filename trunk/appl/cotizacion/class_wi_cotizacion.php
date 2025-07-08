@@ -3,22 +3,10 @@ require_once(dirname(__FILE__)."/../../../../commonlib/trunk/php/auto_load.php")
 require_once(dirname(__FILE__)."/../common_appl/class_w_cot_nv.php");
 require_once(dirname(__FILE__)."/../empresa/class_dw_help_empresa.php");
 
-/*
-class dw_item_stock extends datawindow {
-	function dw_item_stock() {
-		$sql = "exec spdw_cot_stock {KEY1}";
-		parent::datawindow($sql, 'ITEM_STOCK');
-		
-		$this->add_control(new static_num('ST_CANTIDAD', 1));
-		$this->add_control(new static_num('ST_STOCK', 1));
-	}
-}
-*/
-
 class dw_item_cotizacion extends dw_item {
 	function dw_item_cotizacion() {
 		$sql = "SELECT		COD_ITEM_COTIZACION,
-							COD_COTIZACION,
+							IC.COD_COTIZACION,
 							ORDEN,
 							ITEM,
 							COD_PRODUCTO,
@@ -27,9 +15,12 @@ class dw_item_cotizacion extends dw_item {
 							PRECIO,
 							'' MOTIVO,
 							COD_TIPO_TE,
-							MOTIVO_TE
-				FROM		ITEM_COTIZACION
-				WHERE		COD_COTIZACION = {KEY1}
+							MOTIVO_TE,
+							dbo.f_get_producto_aramark(COD_PRODUCTO, C.COD_EMPRESA, 242662, C.COD_COTIZACION) STYLE_ARAMARK
+				FROM		ITEM_COTIZACION IC
+						   ,COTIZACION C
+				WHERE		IC.COD_COTIZACION = {KEY1}
+				AND			IC.COD_COTIZACION = C.COD_COTIZACION
 				ORDER BY	ORDEN";
 
 
@@ -49,10 +40,6 @@ class dw_item_cotizacion extends dw_item {
 
 		$this->set_first_focus('COD_PRODUCTO');
 
-		 
-		
-		
-		
 		// asigna los mandatorys
 		$this->set_mandatory('ORDEN', 'Orden');
 		$this->set_mandatory('COD_PRODUCTO', 'Código del producto');
@@ -117,7 +104,6 @@ class dw_item_cotizacion extends dw_item {
 		}		
 		return true;
 	}
-
 }
 
 class wi_cotizacion_base extends w_cot_nv {

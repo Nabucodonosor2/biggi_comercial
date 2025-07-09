@@ -420,8 +420,8 @@ class dw_bitacora_cotizacion extends datawindow {
     }
 }
 
-class dw_llamado extends datawindow {
-    function dw_llamado() {
+class dw_llamado_cot extends datawindow {
+    function dw_llamado_cot() {
         
         $sql = "SELECT LL.COD_LLAMADO LL_COD_LLAMADO
 						,CONVERT (VARCHAR(10), LL.FECHA_LLAMADO, 103) LL_FECHA_LLAMADO
@@ -723,7 +723,7 @@ class wi_cotizacion extends wi_cotizacion_base {
         // DATAWINDOWS ITEMS COTIZACION
         $this->dws['dw_item_cotizacion'] = new dw_item_cotizacion();
         $this->dws['dw_item_resumen_cotizacion'] = new dw_item_resumen_cotizacion();
-        $this->dws['dw_llamado'] = new dw_llamado();
+        $this->dws['dw_llamado_cot'] = new dw_llamado_cot();
         $this->dws['dw_item_analisis_costo'] = new dw_item_analisis_costo();
         
         // TOTALES
@@ -934,7 +934,7 @@ class wi_cotizacion extends wi_cotizacion_base {
         $this->dws['dw_cotizacion']->set_item(0, 'DESDE_COTI','');
         $this->dws['dw_cotizacion']->set_item(0, 'DESDE_SOLI','none');
         
-        $this->dws['dw_llamado']->insert_row();
+        $this->dws['dw_llamado_cot']->insert_row();
         $this->dws['dw_seguimiento_cotizacion']->b_add_line_visible = false;
         //$this->valores_default_vend();
         if (session::is_set('CREADA_DESDE_SOLICITUD')) {
@@ -1005,10 +1005,10 @@ class wi_cotizacion extends wi_cotizacion_base {
                 
                 //$this->dws['dw_item_stock']->retrieve($cod_cotizacion);
                 
-                $this->dws['dw_llamado']->retrieve($cod_cotizacion);
+                $this->dws['dw_llamado_cot']->retrieve($cod_cotizacion);
                 $this->dws['dw_item_resumen_cotizacion']->retrieve($cod_cotizacion);
-                if ($this->dws['dw_llamado']->row_count()==0)
-                    $this->dws['dw_llamado']->insert_row();
+                if ($this->dws['dw_llamado_cot']->row_count()==0)
+                    $this->dws['dw_llamado_cot']->insert_row();
                     $this->dws['dw_cotizacion']->set_item(0, 'LL_LLAMADO','');
     }
 
@@ -1124,14 +1124,14 @@ class wi_cotizacion extends wi_cotizacion_base {
         
         if($cod_llamado <> ''){
             $this->dws['dw_cotizacion']->set_item(0,'LL_LLAMADO','');
-            $this->dws['dw_llamado']->set_item(0,'LL_COD_LLAMADO', $result[0]['LL_COD_LLAMADO']);
-            $this->dws['dw_llamado']->set_item(0,'LL_FECHA_LLAMADO', $result[0]['LL_FECHA_LLAMADO']);
-            $this->dws['dw_llamado']->set_item(0,'LL_NOM_LLAMADO_ACCION', $result[0]['LL_NOM_LLAMADO_ACCION']);
-            $this->dws['dw_llamado']->set_item(0,'LL_NOM_CONTACTO', $result[0]['LL_NOM_CONTACTO']);
-            $this->dws['dw_llamado']->set_item(0,'LL_TELEFONO_CONTACTO', $result[0]['LL_TELEFONO_CONTACTO']);
-            $this->dws['dw_llamado']->set_item(0,'LL_NOM_PERSONA', $result[0]['LL_NOM_PERSONA']);
-            $this->dws['dw_llamado']->set_item(0,'LL_TELEFONO_PERSONA', $result[0]['LL_TELEFONO_PERSONA']);
-            $this->dws['dw_llamado']->set_item(0,'LL_MENSAJE', $result[0]['LL_MENSAJE']);
+            $this->dws['dw_llamado_cot']->set_item(0,'LL_COD_LLAMADO', $result[0]['LL_COD_LLAMADO']);
+            $this->dws['dw_llamado_cot']->set_item(0,'LL_FECHA_LLAMADO', $result[0]['LL_FECHA_LLAMADO']);
+            $this->dws['dw_llamado_cot']->set_item(0,'LL_NOM_LLAMADO_ACCION', $result[0]['LL_NOM_LLAMADO_ACCION']);
+            $this->dws['dw_llamado_cot']->set_item(0,'LL_NOM_CONTACTO', $result[0]['LL_NOM_CONTACTO']);
+            $this->dws['dw_llamado_cot']->set_item(0,'LL_TELEFONO_CONTACTO', $result[0]['LL_TELEFONO_CONTACTO']);
+            $this->dws['dw_llamado_cot']->set_item(0,'LL_NOM_PERSONA', $result[0]['LL_NOM_PERSONA']);
+            $this->dws['dw_llamado_cot']->set_item(0,'LL_TELEFONO_PERSONA', $result[0]['LL_TELEFONO_PERSONA']);
+            $this->dws['dw_llamado_cot']->set_item(0,'LL_MENSAJE', $result[0]['LL_MENSAJE']);
         }
         
         //$this->dws['dw_bitacora_cotizacion']->retrieve($cod_cotizacion);
@@ -1149,7 +1149,7 @@ class wi_cotizacion extends wi_cotizacion_base {
         if ($priv=='E')	{	// tiene acceso solo a bitacora
             $this->dws['dw_cotizacion']->set_entrable_dw(false);
             $this->dws['dw_item_cotizacion']->set_entrable_dw(false);
-            $this->dws['dw_llamado']->set_entrable_dw(false);
+            $this->dws['dw_llamado_cot']->set_entrable_dw(false);
             //$this->dws['dw_item_stock']->set_entrable_dw(false);
             $this->b_delete_visible = false;
         }
@@ -1577,7 +1577,7 @@ class wi_cotizacion extends wi_cotizacion_base {
                                 if (!$db->EXECUTE_SP('sp_orden_no_parametricas', $parametros_sp))
                                     return false;
                                     
-                                    $cod_llamado	= $this->dws['dw_llamado']->get_item(0, 'LL_COD_LLAMADO');
+                                    $cod_llamado	= $this->dws['dw_llamado_cot']->get_item(0, 'LL_COD_LLAMADO');
                                     $parametros_sp="'REALIZADO_WEB'
 							,$cod_llamado
 							,null

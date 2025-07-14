@@ -125,7 +125,7 @@ function display_rechazo(){
 	}
 }
 
-function select_1_empresa(valores, record) {
+/*function select_1_empresa(valores, record) {
 	const cod_empresa			= get_value('COD_EMPRESA_0');
 	const valida_usuario_biggi	= get_value('VALIDA_USUARIO_BIGGI_0');
 
@@ -140,4 +140,4 @@ function select_1_empresa(valores, record) {
 			set_empresa_vacio(control)
 		}
 	}
-}
+}*/

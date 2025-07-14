@@ -16,7 +16,7 @@ class dw_item_cotizacion extends dw_item {
 							'' MOTIVO,
 							COD_TIPO_TE,
 							MOTIVO_TE,
-							dbo.f_get_producto_aramark(COD_PRODUCTO, C.COD_EMPRESA, 242662, C.COD_COTIZACION) STYLE_ARAMARK
+							dbo.f_get_producto_aramark(COD_PRODUCTO, C.COD_EMPRESA, 245017, C.COD_COTIZACION) STYLE_ARAMARK
 				FROM		ITEM_COTIZACION IC
 						   ,COTIZACION C
 				WHERE		IC.COD_COTIZACION = {KEY1}

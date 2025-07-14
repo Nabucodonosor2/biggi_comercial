@@ -3,6 +3,8 @@ require_once(dirname(__FILE__)."/../../../../../commonlib/trunk/php/auto_load.ph
 require_once(dirname(__FILE__)."/../../common_appl/class_w_cot_nv.php");
 require_once(dirname(__FILE__)."/../../empresa/class_dw_help_empresa.php");
 
+//ini_set('display_errors', 1);
+
 class edit_protected extends edit_control {
     var $edit_text;
     var $static_text;
@@ -27,7 +29,7 @@ class edit_protected extends edit_control {
     function draw_no_entrable($dato, $record) {
         // input text visible
         $this->edit_text->type = 'hidden';
-        $html = $this->edit_text->draw_entrable($dato, $record);		// Es correcto que diga draw_entrable, porque se dese aque cree el input text
+        $html = $this->edit_text->draw_entrable($dato, $record);        // Es correcto que diga draw_entrable, porque se dese aque cree el input text
         
         // static text hidden
         $this->static_text->type = '';
@@ -40,52 +42,62 @@ class edit_protected extends edit_control {
 }
 
 class dw_item_analisis_costo extends datawindow {
-	function dw_item_analisis_costo() {
-		$sql = "SELECT DISTINCT	COD_ITEM_COTIZACION                                             COD_ITEM_COTIZACION_AC,
-                            IC.COD_PRODUCTO                                                     COD_PRODUCTO_AC,
-                            IC.NOM_PRODUCTO                                                     NOM_PRODUCTO_AC,
-							PRECIO_VENTA_PUBLICO,
-                            PRECIO                                                              PRECIO_AC,
-							PRECIO * 0.75			                                            PRECIO_ARAMARK,
-							PRECIO - PRECIO_VENTA_PUBLICO                                   	PRECIO_25_ARA,
-							ROUND(100 - (((PRECIO * 0.75) * 100) / PRECIO_VENTA_PUBLICO), 1)    DESCTO_FINAL
-                FROM		ITEM_COTIZACION IC
-						   ,PRODUCTO P
-                WHERE		COD_COTIZACION = {KEY1}
-				AND			IC.COD_PRODUCTO = P.COD_PRODUCTO
-                ORDER BY IC.COD_PRODUCTO ASC";
+    function dw_item_analisis_costo() {
 
-		parent::datawindow($sql, 'ITEM_ANA_COSTO');
+    $sql =      "SELECT DISTINCT
+                        IC.COD_ITEM_COTIZACION              AS COD_ITEM_COTIZACION_AC,
+                        IC.COD_PRODUCTO                     AS COD_PRODUCTO_AC,
+                        IC.NOM_PRODUCTO                     AS NOM_PRODUCTO_AC,
+                        P.PRECIO_VENTA_PUBLICO,
+                        PRECIO                              AS PRECIO_AC,
+                        PRECIO * 0.75                       AS PRECIO_ARAMARK,
+                        PRECIO - P.PRECIO_VENTA_PUBLICO     AS PRECIO_25_ARA,
+                        dbo.f_get_dscto_aramark(P.PRECIO_VENTA_PUBLICO, PRECIO) AS DESCTO_FINAL,
+						CASE
+							WHEN dbo.f_get_dscto_aramark(P.PRECIO_VENTA_PUBLICO, PRECIO) >= 0 THEN 'bold'
+							ELSE ''
+						END STYLE_CSS_AC
+                FROM 
+                        ITEM_COTIZACION IC
+                INNER JOIN 
+                        PRODUCTO P ON IC.COD_PRODUCTO = P.COD_PRODUCTO
+                WHERE 
+                        IC.COD_COTIZACION = {KEY1}
+                AND     P.PRECIO_VENTA_PUBLICO > 0
+                ORDER BY 
+                        IC.COD_PRODUCTO ASC";
+
+        parent::datawindow($sql, 'ITEM_ANA_COSTO');
 
         $this->add_control(new static_num('PRECIO_AC'));
         $this->add_control(new static_num('PRECIO_VENTA_PUBLICO'));
         $this->add_control(new static_num('PRECIO_ARAMARK'));
         $this->add_control(new static_num('PRECIO_25_ARA'));
         $this->add_control(new static_num('DESCTO_FINAL', 1));
-	}
+    }
 }
 
 class dw_item_resumen_cotizacion extends datawindow{
     function dw_item_resumen_cotizacion(){
-        $sql = "SELECT		COD_PRODUCTO R_COD_PRODUCTO,
-							NOM_PRODUCTO R_NOM_PRODUCTO,
-							SUM(CANTIDAD) R_CANTIDAD,
-							PRECIO R_PRECIO,
-							SUM(CANTIDAD * PRECIO) R_TOTAL
-				FROM		ITEM_COTIZACION
-				WHERE		COD_COTIZACION = {KEY1}
-				AND			COD_PRODUCTO not in ('T', 'TE', 'F', 'I', 'E')
-				GROUP BY COD_PRODUCTO, NOM_PRODUCTO, PRECIO
-				UNION
-				SELECT		COD_PRODUCTO R_COD_PRODUCTO,
-							NOM_PRODUCTO R_NOM_PRODUCTO,
-							SUM(CANTIDAD) R_CANTIDAD,
-							PRECIO R_PRECIO,
-							SUM(CANTIDAD * PRECIO) R_TOTAL
-				FROM		ITEM_COTIZACION
-				WHERE		COD_COTIZACION = {KEY1}
-				AND			COD_PRODUCTO in ('TE', 'F', 'I', 'E')
-				GROUP BY COD_PRODUCTO, NOM_PRODUCTO, PRECIO";
+        $sql = "SELECT      COD_PRODUCTO R_COD_PRODUCTO,
+                            NOM_PRODUCTO R_NOM_PRODUCTO,
+                            SUM(CANTIDAD) R_CANTIDAD,
+                            PRECIO R_PRECIO,
+                            SUM(CANTIDAD * PRECIO) R_TOTAL
+                FROM        ITEM_COTIZACION
+                WHERE       COD_COTIZACION = {KEY1}
+                AND         COD_PRODUCTO not in ('T', 'TE', 'F', 'I', 'E')
+                GROUP BY COD_PRODUCTO, NOM_PRODUCTO, PRECIO
+                UNION
+                SELECT      COD_PRODUCTO R_COD_PRODUCTO,
+                            NOM_PRODUCTO R_NOM_PRODUCTO,
+                            SUM(CANTIDAD) R_CANTIDAD,
+                            PRECIO R_PRECIO,
+                            SUM(CANTIDAD * PRECIO) R_TOTAL
+                FROM        ITEM_COTIZACION
+                WHERE       COD_COTIZACION = {KEY1}
+                AND         COD_PRODUCTO in ('TE', 'F', 'I', 'E')
+                GROUP BY COD_PRODUCTO, NOM_PRODUCTO, PRECIO";
         
         
         parent::datawindow($sql, 'ITEM_RESUMEN_COTIZACION');
@@ -100,35 +112,35 @@ class dw_item_resumen_cotizacion extends datawindow{
 /*Begin- Seguimiento Cotizacion*/
 class dw_seguimiento_cotizacion extends datawindow {
     function dw_seguimiento_cotizacion() {
-        $sql = "select BC.COD_BITACORA_COTIZACION  										SC_COD_BITACORA_COTIZACION
-						,convert(varchar, BC.FECHA_BITACORA, 103) 						SC_FECHA_BITACORA
-						,substring(convert(varchar, BC.FECHA_BITACORA, 108),1 , 5) 		SC_HORA_BITACORA
-						,convert(varchar, BC.FECHA_COMPROMISO, 103)						SC_FECHA_COMPROMISO
-						,substring(convert(varchar, BC.FECHA_COMPROMISO, 108),1 , 5)	SC_HORA_COMPROMISO
-						,convert(varchar, BC.FECHA_REALIZADO, 103)						SC_FECHA_REALIZADO
-						,substring(convert(varchar, BC.FECHA_REALIZADO, 108),1 , 5)		SC_HORA_REALIZADO
-						,BC.COD_USUARIO  					SC_COD_USUARIO
-						,U1.INI_USUARIO  					SC_INI_USUARIO
-						,BC.COD_COTIZACION 					SC_COD_COTIZACION
-						,BC.COD_ACCION_COTIZACION			SC_COD_ACCION_COTIZACION
-						,BC.CONTACTO						SC_CONTACTO
-						,BC.TELEFONO						SC_TELEFONO
-						,BC.MAIL							SC_MAIL
-						,BC.TELEFONO						SC_TELEFONO_H
-						,BC.MAIL							SC_MAIL_H
-						,BC.GLOSA							SC_GLOSA
-						,BC.TIENE_COMPROMISO				SC_TIENE_COMPROMISO
-						,BC.GLOSA_COMPROMISO				SC_GLOSA_COMPROMISO
-						,BC.COMPROMISO_REALIZADO			SC_COMPROMISO_REALIZADO
-						,BC.COD_USUARIO_REALIZADO			SC_COD_USUARIO_REALIZADO
-						,U2.INI_USUARIO						SC_INI_USUARIO_REALIZADO
-						,BC.COD_PERSONA						SC_COD_PERSONA
-						,'N' IS_NEW
-						,'S' DISABLED
-				from BITACORA_COTIZACION BC left outer join USUARIO U2 on U2.COD_USUARIO = BC.COD_USUARIO_REALIZADO
-					,USUARIO U1
-				where BC.COD_COTIZACION = {KEY1}
-				 and U1.COD_USUARIO = BC.COD_USUARIO";
+        $sql = "select BC.COD_BITACORA_COTIZACION                                       SC_COD_BITACORA_COTIZACION
+                        ,convert(varchar, BC.FECHA_BITACORA, 103)                       SC_FECHA_BITACORA
+                        ,substring(convert(varchar, BC.FECHA_BITACORA, 108),1 , 5)      SC_HORA_BITACORA
+                        ,convert(varchar, BC.FECHA_COMPROMISO, 103)                     SC_FECHA_COMPROMISO
+                        ,substring(convert(varchar, BC.FECHA_COMPROMISO, 108),1 , 5)    SC_HORA_COMPROMISO
+                        ,convert(varchar, BC.FECHA_REALIZADO, 103)                      SC_FECHA_REALIZADO
+                        ,substring(convert(varchar, BC.FECHA_REALIZADO, 108),1 , 5)     SC_HORA_REALIZADO
+                        ,BC.COD_USUARIO                     SC_COD_USUARIO
+                        ,U1.INI_USUARIO                     SC_INI_USUARIO
+                        ,BC.COD_COTIZACION                  SC_COD_COTIZACION
+                        ,BC.COD_ACCION_COTIZACION           SC_COD_ACCION_COTIZACION
+                        ,BC.CONTACTO                        SC_CONTACTO
+                        ,BC.TELEFONO                        SC_TELEFONO
+                        ,BC.MAIL                            SC_MAIL
+                        ,BC.TELEFONO                        SC_TELEFONO_H
+                        ,BC.MAIL                            SC_MAIL_H
+                        ,BC.GLOSA                           SC_GLOSA
+                        ,BC.TIENE_COMPROMISO                SC_TIENE_COMPROMISO
+                        ,BC.GLOSA_COMPROMISO                SC_GLOSA_COMPROMISO
+                        ,BC.COMPROMISO_REALIZADO            SC_COMPROMISO_REALIZADO
+                        ,BC.COD_USUARIO_REALIZADO           SC_COD_USUARIO_REALIZADO
+                        ,U2.INI_USUARIO                     SC_INI_USUARIO_REALIZADO
+                        ,BC.COD_PERSONA                     SC_COD_PERSONA
+                        ,'N' IS_NEW
+                        ,'S' DISABLED
+                from BITACORA_COTIZACION BC left outer join USUARIO U2 on U2.COD_USUARIO = BC.COD_USUARIO_REALIZADO
+                    ,USUARIO U1
+                where BC.COD_COTIZACION = {KEY1}
+                 and U1.COD_USUARIO = BC.COD_USUARIO";
         parent::datawindow($sql, 'SEGUIMIENTO_COTIZACION', true, false);
         
         // controls
@@ -154,14 +166,14 @@ class dw_seguimiento_cotizacion extends datawindow {
         $this->add_control(new static_text('SC_FECHA_REALIZADO'));
         
         $sql = "SELECT P.COD_PERSONA
-					  ,P.NOM_PERSONA
-				FROM PERSONA P
-					,SUCURSAL S
-					,EMPRESA E
-				WHERE E.COD_EMPRESA = {KEY1}
-				AND P.COD_SUCURSAL = S.COD_SUCURSAL
-				AND S.COD_EMPRESA = E.COD_EMPRESA
-				ORDER BY NOM_PERSONA ASC";
+                      ,P.NOM_PERSONA
+                FROM PERSONA P
+                    ,SUCURSAL S
+                    ,EMPRESA E
+                WHERE E.COD_EMPRESA = {KEY1}
+                AND P.COD_SUCURSAL = S.COD_SUCURSAL
+                AND S.COD_EMPRESA = E.COD_EMPRESA
+                ORDER BY NOM_PERSONA ASC";
         $this->add_control($control = new drop_down_dw('SC_COD_PERSONA', $sql, 103));
         $control->set_onChange("set_mail_telefono(this);");
         // mandatory
@@ -193,15 +205,15 @@ class dw_seguimiento_cotizacion extends datawindow {
         
         $db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
         $sql = "select INI_USUARIO
-				from USUARIO
-				where COD_USUARIO = ".$this->cod_usuario;
+                from USUARIO
+                where COD_USUARIO = ".$this->cod_usuario;
         $result = $db->build_results($sql);
         $this->set_item($row, 'SC_INI_USUARIO', $result[0]['INI_USUARIO']);
         $this->set_item($row, 'IS_NEW', 'S');
         $this->set_item($row, 'DISABLED', 'S');
         return $row;
     }
-    function update($db)	{
+    function update($db)    {
         $sp = 'spu_bitacora_cotizacion';
         for ($i = 0; $i < $this->row_count(); $i++){
             $statuts = $this->get_status_row($i);
@@ -237,19 +249,19 @@ class dw_seguimiento_cotizacion extends datawindow {
                         $operacion = 'UPDATE';
                         
                         $param = "'$operacion'
-					,$cod_bitacora_factura
-					,$this->cod_usuario
-					,$cod_factura
-					,$cod_accion_cobranza
-					,$contacto
-					,$telefono
-					,$mail
-					,$glosa
-					,'$tiene_compromiso'
-					,$fecha_compromiso
-					,$glosa_compromiso
-					,$compromiso_realizado
-					,$cod_persona";
+                    ,$cod_bitacora_factura
+                    ,$this->cod_usuario
+                    ,$cod_factura
+                    ,$cod_accion_cobranza
+                    ,$contacto
+                    ,$telefono
+                    ,$mail
+                    ,$glosa
+                    ,'$tiene_compromiso'
+                    ,$fecha_compromiso
+                    ,$glosa_compromiso
+                    ,$compromiso_realizado
+                    ,$cod_persona";
                         
                         if (!$db->EXECUTE_SP($sp, $param))
                             return false;
@@ -277,29 +289,29 @@ class dw_seguimiento_cotizacion extends datawindow {
 
 class dw_bitacora_cotizacion extends datawindow {
     function dw_bitacora_cotizacion() {
-        $sql = "select BC.COD_BITACORA_COTIZACION  									BC_COD_BITACORA_COTIZACION
-						,convert(varchar, BC.FECHA_BITACORA, 103) 					BC_FECHA_BITACORA
-						,substring(convert(varchar, BC.FECHA_BITACORA, 108),1 , 5) 	BC_HORA_BITACORA
-						,BC.COD_USUARIO  											BC_COD_USUARIO
-						,U1.INI_USUARIO  											BC_INI_USUARIO
-						,BC.COD_COTIZACION  BC_COD_COTIZACION
-						,BC.COD_ACCION_COTIZACION  BC_COD_ACCION_COTIZACION
-						,BC.CONTACTO   BC_CONTACTO
-						,BC.TELEFONO	BC_TELEFONO
-						,BC.MAIL		BC_MAIL
-						,BC.GLOSA		BC_GLOSA
-						,BC.TIENE_COMPROMISO 		BC_TIENE_COMPROMISO
-						,convert(varchar, BC.FECHA_COMPROMISO, 103)  BC_FECHA_COMPROMISO
-						,substring(convert(varchar, BC.FECHA_COMPROMISO, 108),1 , 5) 		BC_HORA_COMPROMISO
-						,BC.GLOSA_COMPROMISO		BC_GLOSA_COMPROMISO
-						,BC.COMPROMISO_REALIZADO	BC_COMPROMISO_REALIZADO
-						,convert(varchar, BC.FECHA_REALIZADO, 103) 	 BC_FECHA_REALIZADO
-						,substring(convert(varchar, BC.FECHA_REALIZADO, 108),1 , 5) BC_HORA_REALIZADO
-						,BC.COD_USUARIO_REALIZADO		BC_COD_USUARIO_REALIZADO
-						,U2.INI_USUARIO BC_INI_USUARIO_REALIZADO
-				from BITACORA_COTIZACION BC left outer join USUARIO U2 on U2.COD_USUARIO = BC.COD_USUARIO_REALIZADO, USUARIO U1
-				where BC.COD_COTIZACION = {KEY1}
-				 and U1.COD_USUARIO = BC.COD_USUARIO";
+        $sql = "select BC.COD_BITACORA_COTIZACION                                   BC_COD_BITACORA_COTIZACION
+                        ,convert(varchar, BC.FECHA_BITACORA, 103)                   BC_FECHA_BITACORA
+                        ,substring(convert(varchar, BC.FECHA_BITACORA, 108),1 , 5)  BC_HORA_BITACORA
+                        ,BC.COD_USUARIO                                             BC_COD_USUARIO
+                        ,U1.INI_USUARIO                                             BC_INI_USUARIO
+                        ,BC.COD_COTIZACION  BC_COD_COTIZACION
+                        ,BC.COD_ACCION_COTIZACION  BC_COD_ACCION_COTIZACION
+                        ,BC.CONTACTO   BC_CONTACTO
+                        ,BC.TELEFONO    BC_TELEFONO
+                        ,BC.MAIL        BC_MAIL
+                        ,BC.GLOSA       BC_GLOSA
+                        ,BC.TIENE_COMPROMISO        BC_TIENE_COMPROMISO
+                        ,convert(varchar, BC.FECHA_COMPROMISO, 103)  BC_FECHA_COMPROMISO
+                        ,substring(convert(varchar, BC.FECHA_COMPROMISO, 108),1 , 5)        BC_HORA_COMPROMISO
+                        ,BC.GLOSA_COMPROMISO        BC_GLOSA_COMPROMISO
+                        ,BC.COMPROMISO_REALIZADO    BC_COMPROMISO_REALIZADO
+                        ,convert(varchar, BC.FECHA_REALIZADO, 103)   BC_FECHA_REALIZADO
+                        ,substring(convert(varchar, BC.FECHA_REALIZADO, 108),1 , 5) BC_HORA_REALIZADO
+                        ,BC.COD_USUARIO_REALIZADO       BC_COD_USUARIO_REALIZADO
+                        ,U2.INI_USUARIO BC_INI_USUARIO_REALIZADO
+                from BITACORA_COTIZACION BC left outer join USUARIO U2 on U2.COD_USUARIO = BC.COD_USUARIO_REALIZADO, USUARIO U1
+                where BC.COD_COTIZACION = {KEY1}
+                 and U1.COD_USUARIO = BC.COD_USUARIO";
         parent::datawindow($sql, 'BITACORA_COTIZACION', true, false);
         
         // controls
@@ -307,9 +319,9 @@ class dw_bitacora_cotizacion extends datawindow {
         $this->add_control(new static_text('BC_HORA_BITACORA'));
         $this->add_control(new static_text('BC_INI_USUARIO'));
         $sql = "select COD_ACCION_COTIZACION
-						,NOM_ACCION_COTIZACION
-				from ACCION_COTIZACION
-				order by NOM_ACCION_COTIZACION";
+                        ,NOM_ACCION_COTIZACION
+                from ACCION_COTIZACION
+                order by NOM_ACCION_COTIZACION";
         $this->add_control(new drop_down_dw('BC_COD_ACCION_COTIZACION', $sql, 103));
         $this->add_control(new edit_text_upper('BC_CONTACTO', 20, 100));
         $this->add_control(new edit_text_upper('BC_TELEFONO', 20, 100));
@@ -344,13 +356,13 @@ class dw_bitacora_cotizacion extends datawindow {
         
         $db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
         $sql = "select INI_USUARIO
-				from USUARIO
-				where COD_USUARIO = ".$this->cod_usuario;
+                from USUARIO
+                where COD_USUARIO = ".$this->cod_usuario;
         $result = $db->build_results($sql);
         $this->set_item($row, 'BC_INI_USUARIO', $result[0]['INI_USUARIO']);
         return $row;
     }
-    function update($db)	{
+    function update($db)    {
         $sp = 'spu_bitacora_cotizacion';
         for ($i = 0; $i < $this->row_count(); $i++){
             $statuts = $this->get_status_row($i);
@@ -384,18 +396,18 @@ class dw_bitacora_cotizacion extends datawindow {
                         $operacion = 'UPDATE';
                         
                         $param = "'$operacion'
-					,$cod_bitacora_factura
-					,$this->cod_usuario
-					,$cod_factura
-					,$cod_accion_cobranza
-					,'$contacto'
-					,$telefono
-					,$mail
-					,$glosa
-					,'$tiene_compromiso'
-					,$fecha_compromiso
-					,$glosa_compromiso
-					,$compromiso_realizado";
+                    ,$cod_bitacora_factura
+                    ,$this->cod_usuario
+                    ,$cod_factura
+                    ,$cod_accion_cobranza
+                    ,'$contacto'
+                    ,$telefono
+                    ,$mail
+                    ,$glosa
+                    ,'$tiene_compromiso'
+                    ,$fecha_compromiso
+                    ,$glosa_compromiso
+                    ,$compromiso_realizado";
                         
                         if (!$db->EXECUTE_SP($sp, $param))
                             return false;
@@ -424,22 +436,22 @@ class dw_llamado_cot extends datawindow {
     function dw_llamado_cot() {
         
         $sql = "SELECT LL.COD_LLAMADO LL_COD_LLAMADO
-						,CONVERT (VARCHAR(10), LL.FECHA_LLAMADO, 103) LL_FECHA_LLAMADO
-						,LLA.NOM_LLAMADO_ACCION LL_NOM_LLAMADO_ACCION
-						,C.NOM_CONTACTO LL_NOM_CONTACTO
-						,dbo.f_llamado_telefono(LL.COD_CONTACTO, 'EMPRESA') LL_TELEFONO_CONTACTO
-						,CP.NOM_PERSONA LL_NOM_PERSONA
-						,dbo.f_llamado_telefono(LL.COD_CONTACTO_PERSONA, 'PERSONA') LL_TELEFONO_PERSONA
-						,LL.MENSAJE LL_MENSAJE
-					FROM LLAMADO LL
-						,LLAMADO_ACCION LLA
-						,CONTACTO C
-						,CONTACTO_PERSONA CP
-				   WHERE LL.TIPO_DOC_REALIZADO = 'COTIZACION'
-				   	 AND LL.COD_DOC_REALIZADO = {KEY1}
-					 AND LLA.COD_LLAMADO_ACCION = LL.COD_LLAMADO_ACCION
-					 AND C.COD_CONTACTO = LL.COD_CONTACTO
-					 AND CP.COD_CONTACTO_PERSONA = LL.COD_CONTACTO_PERSONA";
+                        ,CONVERT (VARCHAR(10), LL.FECHA_LLAMADO, 103) LL_FECHA_LLAMADO
+                        ,LLA.NOM_LLAMADO_ACCION LL_NOM_LLAMADO_ACCION
+                        ,C.NOM_CONTACTO LL_NOM_CONTACTO
+                        ,dbo.f_llamado_telefono(LL.COD_CONTACTO, 'EMPRESA') LL_TELEFONO_CONTACTO
+                        ,CP.NOM_PERSONA LL_NOM_PERSONA
+                        ,dbo.f_llamado_telefono(LL.COD_CONTACTO_PERSONA, 'PERSONA') LL_TELEFONO_PERSONA
+                        ,LL.MENSAJE LL_MENSAJE
+                    FROM LLAMADO LL
+                        ,LLAMADO_ACCION LLA
+                        ,CONTACTO C
+                        ,CONTACTO_PERSONA CP
+                   WHERE LL.TIPO_DOC_REALIZADO = 'COTIZACION'
+                     AND LL.COD_DOC_REALIZADO = {KEY1}
+                     AND LLA.COD_LLAMADO_ACCION = LL.COD_LLAMADO_ACCION
+                     AND C.COD_CONTACTO = LL.COD_CONTACTO
+                     AND CP.COD_CONTACTO_PERSONA = LL.COD_CONTACTO_PERSONA";
         
         parent::datawindow($sql);
         
@@ -458,11 +470,11 @@ class dw_llamado_cot extends datawindow {
 }
 
 class wi_cotizacion extends wi_cotizacion_base {
-    const K_ESTADO_EMITIDA 			= 1;
-    const K_PARAM_VALIDEZ_OFERTA 	= 7;
-    const K_ESTADO_ANULADA			= 7;
-    const K_PARAM_ENTREGA			= 8;
-    const K_PARAM_GARANTIA	 		= 9;
+    const K_ESTADO_EMITIDA          = 1;
+    const K_PARAM_VALIDEZ_OFERTA    = 7;
+    const K_ESTADO_ANULADA          = 7;
+    const K_PARAM_ENTREGA           = 8;
+    const K_PARAM_GARANTIA          = 9;
     
     const K_PARAM_NOM_EMPRESA        =6;
     const K_PARAM_RUT_EMPRESA        =20;
@@ -472,15 +484,15 @@ class wi_cotizacion extends wi_cotizacion_base {
     const K_PARAM_MAIL_EMPRESA       =13;
     const K_PARAM_CIUDAD_EMPRESA     =14;
     const K_PARAM_PAIS_EMPRESA       =15;
-    const K_PARAM_SMTP 				 =17;
-    const K_PARAM_GIRO_EMPRESA		 =21;
+    const K_PARAM_SMTP               =17;
+    const K_PARAM_GIRO_EMPRESA       =21;
     const K_PARAM_SITIO_WEB_EMPRESA  =25;
-    const K_PARAM_BANCO				 =61;
-    const K_PARAM_CTA_CTE  			 =62;
+    const K_PARAM_BANCO              =61;
+    const K_PARAM_CTA_CTE            =62;
     const K_PARAM_PORC_DSCTO_MAX_ESP =69;
-    const K_PARAM_EQUIPO_ESPECIAL	 =72;
+    const K_PARAM_EQUIPO_ESPECIAL    =72;
     
-    const K_AUTORIZA_SOLO_BITACORA	= '990530';
+    const K_AUTORIZA_SOLO_BITACORA  = '990530';
     const K_AUTORIZA_MOD_COTIZACION = '990535';
     const K_AUTORIZA_VALIDA_OFERTA = '990545';
     
@@ -504,143 +516,143 @@ class wi_cotizacion extends wi_cotizacion_base {
         
         $db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
         $sql = "select COD_PERFIL
-					  ,PORC_DESCUENTO_PERMITIDO
-				from USUARIO
-				where COD_USUARIO = $this->cod_usuario";
+                      ,PORC_DESCUENTO_PERMITIDO
+                from USUARIO
+                where COD_USUARIO = $this->cod_usuario";
         $result = $db->build_results($sql);
         $porc_desc_permitido = $result[0]['PORC_DESCUENTO_PERMITIDO'];
         
-        $sql = "select	 C.COD_COTIZACION
+        $sql = "select   C.COD_COTIZACION
                         ,$porc_desc_permitido PORC_DESC_PERMITIDO
-						,convert(varchar(20), C.FECHA_COTIZACION, 103) FECHA_COTIZACION
-						,C.COD_USUARIO
-						,$this->cod_usuario COD_USUARIO_ACTUAL
-						,U.NOM_USUARIO
-						,COD_USUARIO_VENDEDOR1
-						,PORC_VENDEDOR1
-						,COD_USUARIO_VENDEDOR2
-						,PORC_VENDEDOR2
-						,IDIOMA
-						,REFERENCIA
-						,REFERENCIA REFERENCIA_L
-						,COD_MONEDA
-						,C.COD_ESTADO_COTIZACION
-						,EC.NOM_ESTADO_COTIZACION
-						,COD_ORIGEN_COTIZACION
-						,COD_COTIZACION_DESDE
-						,C.COD_EMPRESA
-						,E.ALIAS
-						,E.RUT
-						,E.DIG_VERIF
-						,E.NOM_EMPRESA
-						,C.COD_EMPRESA	COD_EMPRESA_L
-						,E.ALIAS		ALIAS_L
-						,E.RUT			RUT_L
-						,E.DIG_VERIF	DIG_VERIF_L
-						,E.NOM_EMPRESA	NOM_EMPRESA_L
-						,E.GIRO
-						,'none' LL_LLAMADO
-						,'' CONTACTO_WEB
-						,'' NOM_CONTACTO
-						,'' RUT_CONTACTO
-						,'' EMPRESA_CONTACTO
-						,'' CIUDAD_CONTACTO
-						,'' TELEFONO_CONTACTO
-						,'' CELULAR_CONTACTO
-						,'' EMAIL_CONTACTO
-						,'' COMENTARIO_CONTACTO
-						,''DESDE_COTI
-						,''DESDE_SOLI
-						,case E.SUJETO_A_APROBACION
-							when 'S' then 'SUJETO A APROBACION'
-							else ''
-						end SUJETO_A_APROBACION
-						,C.COD_FORMA_PAGO
-						,C.NOM_FORMA_PAGO_OTRO
-						,COD_COTIZACION_DESDE
-						,COD_SUCURSAL_FACTURA
-						,SUMAR_ITEMS
-						,SUBTOTAL SUM_TOTAL
-						,SUBTOTAL SUM_TOTAL_L
-						,PORC_DSCTO1
-						,PORC_DSCTO1 PORC_DSCTO1_L
-						,MONTO_DSCTO1
-						,MONTO_DSCTO1 MONTO_DSCTO1_L
-						,'none' VISIBLE
-						,INGRESO_USUARIO_DSCTO1
-						,PORC_DSCTO2
-						,PORC_DSCTO2 PORC_DSCTO2_L
-						,MONTO_DSCTO2
-						,MONTO_DSCTO2 MONTO_DSCTO2_L
-						,INGRESO_USUARIO_DSCTO2
-						,TOTAL_NETO
-						,TOTAL_NETO TOTAL_NETO_L
-						,PORC_IVA
-						,PORC_IVA PORC_IVA_L
-						,MONTO_IVA
-						,MONTO_IVA MONTO_IVA_L
-						,TOTAL_CON_IVA
-						,TOTAL_CON_IVA TOTAL_CON_IVA_L
-						,dbo.f_get_direccion('SUCURSAL', COD_SUCURSAL_FACTURA, '[DIRECCION]  [NOM_COMUNA] [NOM_CIUDAD] - TELEFONO: [TELEFONO] - FAX: [FAX]') DIRECCION_FACTURA
-						,COD_SUCURSAL_DESPACHO
-						,dbo.f_get_direccion('SUCURSAL', COD_SUCURSAL_DESPACHO, '[DIRECCION]  [NOM_COMUNA] [NOM_CIUDAD] - TELEFONO: [TELEFONO] - FAX: [FAX]') DIRECCION_DESPACHO
-						,C.COD_PERSONA
-						,NOM_PERSONA
-						,dbo.f_emp_get_mail_cargo_persona(C.COD_PERSONA,  '[EMAIL] - [NOM_CARGO]') MAIL_CARGO_PERSONA
-						,VALIDEZ_OFERTA
-						,ENTREGA
-						,C.COD_EMBALAJE_COTIZACION
-						,C.COD_FLETE_COTIZACION
-						,C.COD_INSTALACION_COTIZACION
-						,GARANTIA
-						,OBS
-						,POSIBILIDAD_CIERRE
-						,FECHA_POSIBLE_CIERRE
-						,dbo.f_get_parametro(".self::K_PARAM_PORC_DSCTO_MAX.") PORC_DSCTO_MAX
-						,dbo.f_get_parametro(".self::K_PARAM_PORC_DSCTO_MAX_ESP.") PORC_DSCTO_MAX_ESP
-						,dbo.f_get_parametro(".self::K_PARAM_PORC_DSCTO_MAX_ESP.") PORC_DSCTO_MAX_ESP_ST
-						,NOM_FORMA_PAGO_OTRO
-						,C.COD_SOLICITUD_COTIZACION
-						,case C.COD_ESTADO_COTIZACION
-							when ".self::K_ESTADO_ANULADA." then 'ANULADA'
-							else ''
-						end TITULO_ESTADO_SOLICITUD_COTIZACION
-						,FECHA_REGISTRO_COTIZACION
-						,case
-							when (INGRESO_USUARIO_DSCTO1='M' and MONTO_DSCTO1>0) then 'Descuento ingresado como monto'
-							else ''
-						end ETIQUETA_DESCT1
-						,case
-							when (INGRESO_USUARIO_DSCTO2='M' and MONTO_DSCTO2>0)  then 'Descuento ingresado como monto'
-							else ''
-						end ETIQUETA_DESCT2
-						,'' TIPO_DISPOSITIVO
-						,COD_TIPO_RECHAZO
-						,RECHAZADA
-						,TEXTO_RECHAZO
-						,'' DISPLAY_RECHAZO
-						,'' DISPLAY_TR1
-						,'' DISPLAY_TR2
-						,DESCTO_1_AUTORIZADO
-						,DESCTO_2_AUTORIZADO
+                        ,convert(varchar(20), C.FECHA_COTIZACION, 103) FECHA_COTIZACION
+                        ,C.COD_USUARIO
+                        ,$this->cod_usuario COD_USUARIO_ACTUAL
+                        ,U.NOM_USUARIO
+                        ,COD_USUARIO_VENDEDOR1
+                        ,PORC_VENDEDOR1
+                        ,COD_USUARIO_VENDEDOR2
+                        ,PORC_VENDEDOR2
+                        ,IDIOMA
+                        ,REFERENCIA
+                        ,REFERENCIA REFERENCIA_L
+                        ,COD_MONEDA
+                        ,C.COD_ESTADO_COTIZACION
+                        ,EC.NOM_ESTADO_COTIZACION
+                        ,COD_ORIGEN_COTIZACION
+                        ,COD_COTIZACION_DESDE
+                        ,C.COD_EMPRESA
+                        ,E.ALIAS
+                        ,E.RUT
+                        ,E.DIG_VERIF
+                        ,E.NOM_EMPRESA
+                        ,C.COD_EMPRESA  COD_EMPRESA_L
+                        ,E.ALIAS        ALIAS_L
+                        ,E.RUT          RUT_L
+                        ,E.DIG_VERIF    DIG_VERIF_L
+                        ,E.NOM_EMPRESA  NOM_EMPRESA_L
+                        ,E.GIRO
+                        ,'none' LL_LLAMADO
+                        ,'' CONTACTO_WEB
+                        ,'' NOM_CONTACTO
+                        ,'' RUT_CONTACTO
+                        ,'' EMPRESA_CONTACTO
+                        ,'' CIUDAD_CONTACTO
+                        ,'' TELEFONO_CONTACTO
+                        ,'' CELULAR_CONTACTO
+                        ,'' EMAIL_CONTACTO
+                        ,'' COMENTARIO_CONTACTO
+                        ,''DESDE_COTI
+                        ,''DESDE_SOLI
+                        ,case E.SUJETO_A_APROBACION
+                            when 'S' then 'SUJETO A APROBACION'
+                            else ''
+                        end SUJETO_A_APROBACION
+                        ,C.COD_FORMA_PAGO
+                        ,C.NOM_FORMA_PAGO_OTRO
+                        ,COD_COTIZACION_DESDE
+                        ,COD_SUCURSAL_FACTURA
+                        ,SUMAR_ITEMS
+                        ,SUBTOTAL SUM_TOTAL
+                        ,SUBTOTAL SUM_TOTAL_L
+                        ,PORC_DSCTO1
+                        ,PORC_DSCTO1 PORC_DSCTO1_L
+                        ,MONTO_DSCTO1
+                        ,MONTO_DSCTO1 MONTO_DSCTO1_L
+                        ,'none' VISIBLE
+                        ,INGRESO_USUARIO_DSCTO1
+                        ,PORC_DSCTO2
+                        ,PORC_DSCTO2 PORC_DSCTO2_L
+                        ,MONTO_DSCTO2
+                        ,MONTO_DSCTO2 MONTO_DSCTO2_L
+                        ,INGRESO_USUARIO_DSCTO2
+                        ,TOTAL_NETO
+                        ,TOTAL_NETO TOTAL_NETO_L
+                        ,PORC_IVA
+                        ,PORC_IVA PORC_IVA_L
+                        ,MONTO_IVA
+                        ,MONTO_IVA MONTO_IVA_L
+                        ,TOTAL_CON_IVA
+                        ,TOTAL_CON_IVA TOTAL_CON_IVA_L
+                        ,dbo.f_get_direccion('SUCURSAL', COD_SUCURSAL_FACTURA, '[DIRECCION]  [NOM_COMUNA] [NOM_CIUDAD] - TELEFONO: [TELEFONO] - FAX: [FAX]') DIRECCION_FACTURA
+                        ,COD_SUCURSAL_DESPACHO
+                        ,dbo.f_get_direccion('SUCURSAL', COD_SUCURSAL_DESPACHO, '[DIRECCION]  [NOM_COMUNA] [NOM_CIUDAD] - TELEFONO: [TELEFONO] - FAX: [FAX]') DIRECCION_DESPACHO
+                        ,C.COD_PERSONA
+                        ,NOM_PERSONA
+                        ,dbo.f_emp_get_mail_cargo_persona(C.COD_PERSONA,  '[EMAIL] - [NOM_CARGO]') MAIL_CARGO_PERSONA
+                        ,VALIDEZ_OFERTA
+                        ,ENTREGA
+                        ,C.COD_EMBALAJE_COTIZACION
+                        ,C.COD_FLETE_COTIZACION
+                        ,C.COD_INSTALACION_COTIZACION
+                        ,GARANTIA
+                        ,OBS
+                        ,POSIBILIDAD_CIERRE
+                        ,FECHA_POSIBLE_CIERRE
+                        ,dbo.f_get_parametro(".self::K_PARAM_PORC_DSCTO_MAX.") PORC_DSCTO_MAX
+                        ,dbo.f_get_parametro(".self::K_PARAM_PORC_DSCTO_MAX_ESP.") PORC_DSCTO_MAX_ESP
+                        ,dbo.f_get_parametro(".self::K_PARAM_PORC_DSCTO_MAX_ESP.") PORC_DSCTO_MAX_ESP_ST
+                        ,NOM_FORMA_PAGO_OTRO
+                        ,C.COD_SOLICITUD_COTIZACION
+                        ,case C.COD_ESTADO_COTIZACION
+                            when ".self::K_ESTADO_ANULADA." then 'ANULADA'
+                            else ''
+                        end TITULO_ESTADO_SOLICITUD_COTIZACION
+                        ,FECHA_REGISTRO_COTIZACION
+                        ,case
+                            when (INGRESO_USUARIO_DSCTO1='M' and MONTO_DSCTO1>0) then 'Descuento ingresado como monto'
+                            else ''
+                        end ETIQUETA_DESCT1
+                        ,case
+                            when (INGRESO_USUARIO_DSCTO2='M' and MONTO_DSCTO2>0)  then 'Descuento ingresado como monto'
+                            else ''
+                        end ETIQUETA_DESCT2
+                        ,'' TIPO_DISPOSITIVO
+                        ,COD_TIPO_RECHAZO
+                        ,RECHAZADA
+                        ,TEXTO_RECHAZO
+                        ,'' DISPLAY_RECHAZO
+                        ,'' DISPLAY_TR1
+                        ,'' DISPLAY_TR2
+                        ,DESCTO_1_AUTORIZADO
+                        ,DESCTO_2_AUTORIZADO
                         ,DESCTO_1_AUTORIZADO DESCTO_1_AUTORIZADO_H
-						,DESCTO_2_AUTORIZADO DESCTO_2_AUTORIZADO_H
-						,dbo.f_last_usu_mod_dscto_mod(COD_COTIZACION, 1) LAST_USU_DSCTO1
-						,dbo.f_last_usu_mod_dscto_mod(COD_COTIZACION, 2) LAST_USU_DSCTO2
-						,AUT_DESCTO_ESP
-						,AUT_DESCTO_ESP AUT_DESCTO_ESP_H
-						,dbo.f_last_usu_mod_dscto_mod(COD_COTIZACION, 3) LAST_USU_DSCTO3
+                        ,DESCTO_2_AUTORIZADO DESCTO_2_AUTORIZADO_H
+                        ,dbo.f_last_usu_mod_dscto_mod(COD_COTIZACION, 1) LAST_USU_DSCTO1
+                        ,dbo.f_last_usu_mod_dscto_mod(COD_COTIZACION, 2) LAST_USU_DSCTO2
+                        ,AUT_DESCTO_ESP
+                        ,AUT_DESCTO_ESP AUT_DESCTO_ESP_H
+                        ,dbo.f_last_usu_mod_dscto_mod(COD_COTIZACION, 3) LAST_USU_DSCTO3
                         ,'' DISPLAY_AC
-						,CASE $this->cod_usuario
-							WHEN 1 THEN ''
-							WHEN 2 THEN ''
-							WHEN 4 THEN ''
-							WHEN 8 THEN ''
-							WHEN 69 THEN ''
-							WHEN 71 THEN ''
-							WHEN 40 THEN ''
-							ELSE 'none'
-						END TR_DISPLAY_TXT
+                        ,CASE $this->cod_usuario
+                            WHEN 1 THEN ''
+                            WHEN 2 THEN ''
+                            WHEN 4 THEN ''
+                            WHEN 8 THEN ''
+                            WHEN 69 THEN ''
+                            WHEN 71 THEN ''
+                            WHEN 40 THEN ''
+                            ELSE 'none'
+                        END TR_DISPLAY_TXT
                         ,CASE $this->cod_usuario
                             WHEN 1 THEN 'S'
                             WHEN 2 THEN 'S'
@@ -648,12 +660,12 @@ class wi_cotizacion extends wi_cotizacion_base {
                             WHEN 10 THEN 'S'
                             ELSE 'N'
                         END VALIDA_USUARIO_BIGGI
-				from 	COTIZACION C, USUARIO U, EMPRESA E, ESTADO_COTIZACION EC, PERSONA P
-				where	COD_COTIZACION = {KEY1} and
-						U.COD_USUARIO = C.COD_USUARIO AND
-						P.COD_PERSONA = C.COD_PERSONA AND
-						E.COD_EMPRESA = C.COD_EMPRESA AND
-						EC.COD_ESTADO_COTIZACION = C.COD_ESTADO_COTIZACION";
+                from    COTIZACION C, USUARIO U, EMPRESA E, ESTADO_COTIZACION EC, PERSONA P
+                where   COD_COTIZACION = {KEY1} and
+                        U.COD_USUARIO = C.COD_USUARIO AND
+                        P.COD_PERSONA = C.COD_PERSONA AND
+                        E.COD_EMPRESA = C.COD_EMPRESA AND
+                        EC.COD_ESTADO_COTIZACION = C.COD_ESTADO_COTIZACION";
         
         
         ////////////////////
@@ -694,19 +706,19 @@ class wi_cotizacion extends wi_cotizacion_base {
         $this->dws['dw_cotizacion']->set_entrable('IDIOMA', false);
         
         $this->dws['dw_cotizacion']->add_control(new static_text('NOM_ESTADO_COTIZACION'));
-        $sql_origen  			= "	select 			COD_ORIGEN_COTIZACION
-													,NOM_ORIGEN_COTIZACION,
-													ORDEN
-									from 			ORIGEN_COTIZACION
-									order by 		ORDEN";
+        $sql_origen             = " select          COD_ORIGEN_COTIZACION
+                                                    ,NOM_ORIGEN_COTIZACION,
+                                                    ORDEN
+                                    from            ORIGEN_COTIZACION
+                                    order by        ORDEN";
         $this->dws['dw_cotizacion']->add_control(new drop_down_dw('COD_ORIGEN_COTIZACION',$sql_origen,150));
         $this->dws['dw_cotizacion']->add_control(new static_text('COD_COTIZACION_DESDE'));
         $this->dws['dw_cotizacion']->add_control(new static_text('NOM_ESTADO_COTIZACION'));
         
-        $sql_origen  			= "	SELECT COD_TIPO_RECHAZO
-										  ,NOM_TIPO_RECHAZO
-									FROM TIPO_RECHAZO
-									ORDER BY ORDEN";
+        $sql_origen             = " SELECT COD_TIPO_RECHAZO
+                                          ,NOM_TIPO_RECHAZO
+                                    FROM TIPO_RECHAZO
+                                    ORDER BY ORDEN";
         $this->dws['dw_cotizacion']->add_control(new drop_down_dw('COD_TIPO_RECHAZO',$sql_origen,490));
         $this->dws['dw_cotizacion']->add_control($control = new edit_check_box('RECHAZADA', 'S', 'N'));
         $control->set_onChange('display_rechazo();');
@@ -737,22 +749,22 @@ class wi_cotizacion extends wi_cotizacion_base {
         
         $this->dws['dw_cotizacion']->add_control(new edit_num('VALIDEZ_OFERTA',3,3));
         $this->dws['dw_cotizacion']->add_control(new edit_text_upper('ENTREGA',180,100));
-        $sql_embalaje_cot 		= "	select 			COD_EMBALAJE_COTIZACION
-													,NOM_EMBALAJE_COTIZACION
-						   			from			EMBALAJE_COTIZACION
-						   			order by  		NOM_EMBALAJE_COTIZACION asc";
+        $sql_embalaje_cot       = " select          COD_EMBALAJE_COTIZACION
+                                                    ,NOM_EMBALAJE_COTIZACION
+                                    from            EMBALAJE_COTIZACION
+                                    order by        NOM_EMBALAJE_COTIZACION asc";
         $this->dws['dw_cotizacion']->add_control(new drop_down_dw('COD_EMBALAJE_COTIZACION',$sql_embalaje_cot,740));
-        $sql_flete_cot 			= "	select 			COD_FLETE_COTIZACION
-													,NOM_FLETE_COTIZACION
-													,ORDEN
-						  			 from			FLETE_COTIZACION
-						  			order by  		ORDEN";
+        $sql_flete_cot          = " select          COD_FLETE_COTIZACION
+                                                    ,NOM_FLETE_COTIZACION
+                                                    ,ORDEN
+                                     from           FLETE_COTIZACION
+                                    order by        ORDEN";
         $this->dws['dw_cotizacion']->add_control(new drop_down_dw('COD_FLETE_COTIZACION',$sql_flete_cot,740));
-        $sql_ins_cot 			= "	select 			COD_INSTALACION_COTIZACION
-													,NOM_INSTALACION_COTIZACION
-													,ORDEN
-						  			from			INSTALACION_COTIZACION
-						   			order by  		ORDEN";
+        $sql_ins_cot            = " select          COD_INSTALACION_COTIZACION
+                                                    ,NOM_INSTALACION_COTIZACION
+                                                    ,ORDEN
+                                    from            INSTALACION_COTIZACION
+                                    order by        ORDEN";
         $this->dws['dw_cotizacion']->add_control(new drop_down_dw('COD_INSTALACION_COTIZACION',$sql_ins_cot,740));
         $this->dws['dw_cotizacion']->add_control(new edit_text_upper('GARANTIA',180,200));
         $this->dws['dw_cotizacion']->add_control(new edit_text_multiline('OBS',54,4));
@@ -769,9 +781,9 @@ class wi_cotizacion extends wi_cotizacion_base {
         $this->add_auditoria('COD_PERSONA');
         $this->add_auditoria('RECHAZADA');
         $this->add_auditoria('TEXTO_RECHAZO');
-		
-		//AGREGA MH 01092020
-		$this->add_auditoria('GARANTIA');
+        
+        //AGREGA MH 01092020
+        $this->add_auditoria('GARANTIA');
         
         $this->add_auditoria('DESCTO_1_AUTORIZADO');
         $this->add_auditoria('DESCTO_2_AUTORIZADO');
@@ -875,13 +887,13 @@ class wi_cotizacion extends wi_cotizacion_base {
         
         // maneja los static con los labes que indican el tipo dscto ingreso por el usuario
         $java_script = " if (document.getElementById('INGRESO_USUARIO_DSCTO".$nro_dscto."_0').value == 'M') {
-							if (document.getElementById('MONTO_DSCTO".$nro_dscto."_0').value == 0)
-								document.getElementById('ETIQUETA_DESCT".$nro_dscto."_0').innerHTML = '';
-							else
-								document.getElementById('ETIQUETA_DESCT".$nro_dscto."_0').innerHTML = 'Descuento ingresado como monto';
-						}
-						else
-							document.getElementById('ETIQUETA_DESCT".$nro_dscto."_0').innerHTML = '';";
+                            if (document.getElementById('MONTO_DSCTO".$nro_dscto."_0').value == 0)
+                                document.getElementById('ETIQUETA_DESCT".$nro_dscto."_0').innerHTML = '';
+                            else
+                                document.getElementById('ETIQUETA_DESCT".$nro_dscto."_0').innerHTML = 'Descuento ingresado como monto';
+                        }
+                        else
+                            document.getElementById('ETIQUETA_DESCT".$nro_dscto."_0').innerHTML = '';";
         
         $this->dws[$this->dw_tabla]->controls['PORC_DSCTO'.$nro_dscto]->set_onChange($jsP.$java_script);
         $this->dws[$this->dw_tabla]->controls['MONTO_DSCTO'.$nro_dscto]->set_onChange($jsM.$java_script);
@@ -899,17 +911,17 @@ class wi_cotizacion extends wi_cotizacion_base {
         
         $db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
         $sql = "SELECT CONVERT(VARCHAR, PORC_PARTICIPACION) PORC_PARTICIPACION
-				FROM USUARIO
-				WHERE COD_USUARIO = ".$this->cod_usuario;
+                FROM USUARIO
+                WHERE COD_USUARIO = ".$this->cod_usuario;
         $result = $db->build_results($sql);
         
         unset($this->dws['dw_cotizacion']->controls['COD_FORMA_PAGO']);
-        $sql_forma_pago	= "SELECT COD_FORMA_PAGO
-								 ,NOM_FORMA_PAGO
-								 ,ORDEN
-			   			   FROM FORMA_PAGO
-			   			   WHERE ES_VIGENTE = 'S'
-			   			   ORDER BY ORDEN";
+        $sql_forma_pago = "SELECT COD_FORMA_PAGO
+                                 ,NOM_FORMA_PAGO
+                                 ,ORDEN
+                           FROM FORMA_PAGO
+                           WHERE ES_VIGENTE = 'S'
+                           ORDER BY ORDEN";
         
         $this->dws['dw_cotizacion']->add_control($control = new drop_down_dw('COD_FORMA_PAGO', $sql_forma_pago, 180));
         $control->set_onChange('mostrarOcultar(this);');
@@ -951,7 +963,7 @@ class wi_cotizacion extends wi_cotizacion_base {
             return;
         }
 
-        $priv = $this->get_privilegio_opcion_usuario(self::K_AUTORIZA_VALIDA_OFERTA, $this->cod_usuario);	// acceso bitacora
+        $priv = $this->get_privilegio_opcion_usuario(self::K_AUTORIZA_VALIDA_OFERTA, $this->cod_usuario);   // acceso bitacora
         if($priv <> 'E'){
             $this->dws['dw_cotizacion']->set_entrable('VALIDEZ_OFERTA', false);
         }
@@ -960,8 +972,8 @@ class wi_cotizacion extends wi_cotizacion_base {
         if($priv == 'E'){
             $db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
             $sql = "SELECT PORC_DESCUENTO_PERMITIDO
-					FROM USUARIO
-					WHERE COD_USUARIO = ".$this->cod_usuario;
+                    FROM USUARIO
+                    WHERE COD_USUARIO = ".$this->cod_usuario;
             $result = $db->build_results($sql);
             $this->dws['dw_cotizacion']->set_item(0, 'PORC_DSCTO_MAX', $result[0]['PORC_DESCUENTO_PERMITIDO']);
             
@@ -986,14 +998,14 @@ class wi_cotizacion extends wi_cotizacion_base {
         $this->dws['dw_cotizacion']->controls['COD_SUCURSAL_DESPACHO']->retrieve($cod_empresa);
         $this->dws['dw_cotizacion']->controls['COD_PERSONA']->retrieve($cod_empresa);
         
-        $cod_forma_pago		= $this->dws['dw_cotizacion']->get_item(0, 'COD_FORMA_PAGO');
+        $cod_forma_pago     = $this->dws['dw_cotizacion']->get_item(0, 'COD_FORMA_PAGO');
         unset($this->dws['dw_cotizacion']->controls['COD_FORMA_PAGO']);
-        $sql_forma_pago	= "	select COD_FORMA_PAGO
-								  ,NOM_FORMA_PAGO
-								  ,ORDEN
-				   			from FORMA_PAGO
-				   			where ES_VIGENTE = 'S' OR COD_FORMA_PAGO = $cod_forma_pago
-				   			order by ORDEN";
+        $sql_forma_pago = " select COD_FORMA_PAGO
+                                  ,NOM_FORMA_PAGO
+                                  ,ORDEN
+                            from FORMA_PAGO
+                            where ES_VIGENTE = 'S' OR COD_FORMA_PAGO = $cod_forma_pago
+                            order by ORDEN";
         $this->dws['dw_cotizacion']->add_control($control = new drop_down_dw('COD_FORMA_PAGO', $sql_forma_pago, 180));
         $control->set_onChange('mostrarOcultar(this);');
         
@@ -1046,8 +1058,8 @@ class wi_cotizacion extends wi_cotizacion_base {
         $db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
         
         $sql="SELECT COD_SOLICITUD_COTIZACION
-				FROM COTIZACION
-			   WHERE COD_COTIZACION = $cod_cotizacion";
+                FROM COTIZACION
+               WHERE COD_COTIZACION = $cod_cotizacion";
         
         $result = $db->build_results($sql);
         
@@ -1062,29 +1074,29 @@ class wi_cotizacion extends wi_cotizacion_base {
             $this->dws['dw_cotizacion']->set_item(0, 'CONTACTO_WEB','');
             
             $sql="SELECT SC.COD_SOLICITUD_COTIZACION
-						, C.NOM_CONTACTO
-						, C.RUT
-						, C.DIG_VERIF
-						, C.NOM_CIUDAD
-						,dbo.f_contacto_telefono(CP.COD_CONTACTO_PERSONA,1) TELEFONO
-						,dbo.f_contacto_telefono(CP.COD_CONTACTO_PERSONA,2) CELULAR
-						,CP.NOM_PERSONA
-						,CP.MAIL
-						,LL.MENSAJE
-						,dbo.f_get_parametro(1) PORC_IVA
-				FROM	  ITEM_SOLICITUD_COTIZACION ISC
-						, SOLICITUD_COTIZACION SC
-						, CONTACTO C
-						, PRODUCTO P
-						,CONTACTO_PERSONA CP
-						,LLAMADO LL
-				WHERE	  ISC.COD_SOLICITUD_COTIZACION = $cod_solicitud_cotizacion
-				AND		  ISC.COD_SOLICITUD_COTIZACION = SC.COD_SOLICITUD_COTIZACION
-				AND		  C.COD_CONTACTO = SC.COD_CONTACTO
-				AND		  P.COD_PRODUCTO = ISC.COD_PRODUCTO
-				AND       C.COD_CONTACTO = CP.COD_CONTACTO
-				AND       SC.COD_LLAMADO = LL.COD_LLAMADO
-				ORDER BY  COD_ITEM_SOLICITUD_COTIZACION";
+                        , C.NOM_CONTACTO
+                        , C.RUT
+                        , C.DIG_VERIF
+                        , C.NOM_CIUDAD
+                        ,dbo.f_contacto_telefono(CP.COD_CONTACTO_PERSONA,1) TELEFONO
+                        ,dbo.f_contacto_telefono(CP.COD_CONTACTO_PERSONA,2) CELULAR
+                        ,CP.NOM_PERSONA
+                        ,CP.MAIL
+                        ,LL.MENSAJE
+                        ,dbo.f_get_parametro(1) PORC_IVA
+                FROM      ITEM_SOLICITUD_COTIZACION ISC
+                        , SOLICITUD_COTIZACION SC
+                        , CONTACTO C
+                        , PRODUCTO P
+                        ,CONTACTO_PERSONA CP
+                        ,LLAMADO LL
+                WHERE     ISC.COD_SOLICITUD_COTIZACION = $cod_solicitud_cotizacion
+                AND       ISC.COD_SOLICITUD_COTIZACION = SC.COD_SOLICITUD_COTIZACION
+                AND       C.COD_CONTACTO = SC.COD_CONTACTO
+                AND       P.COD_PRODUCTO = ISC.COD_PRODUCTO
+                AND       C.COD_CONTACTO = CP.COD_CONTACTO
+                AND       SC.COD_LLAMADO = LL.COD_LLAMADO
+                ORDER BY  COD_ITEM_SOLICITUD_COTIZACION";
             
             $result = $db->build_results($sql);
             
@@ -1102,22 +1114,22 @@ class wi_cotizacion extends wi_cotizacion_base {
         
         //////load modulo llamado
         $sql = "SELECT LL.COD_LLAMADO LL_COD_LLAMADO
-						,CONVERT (VARCHAR(10), LL.FECHA_LLAMADO, 103) LL_FECHA_LLAMADO
-						,LLA.NOM_LLAMADO_ACCION LL_NOM_LLAMADO_ACCION
-						,C.NOM_CONTACTO LL_NOM_CONTACTO
-						,dbo.f_llamado_telefono(LL.COD_CONTACTO, 'EMPRESA') LL_TELEFONO_CONTACTO
-						,CP.NOM_PERSONA LL_NOM_PERSONA
-						,dbo.f_llamado_telefono(LL.COD_CONTACTO_PERSONA, 'PERSONA') LL_TELEFONO_PERSONA
-						,LL.MENSAJE LL_MENSAJE
-					FROM LLAMADO LL
-						,LLAMADO_ACCION LLA
-						,CONTACTO C
-						,CONTACTO_PERSONA CP
-				   WHERE LL.TIPO_DOC_REALIZADO = 'COTIZACION'
-				   	 AND LL.COD_DOC_REALIZADO = $cod_cotizacion
-					 AND LLA.COD_LLAMADO_ACCION = LL.COD_LLAMADO_ACCION
-					 AND C.COD_CONTACTO = LL.COD_CONTACTO
-					 AND CP.COD_CONTACTO_PERSONA = LL.COD_CONTACTO_PERSONA";
+                        ,CONVERT (VARCHAR(10), LL.FECHA_LLAMADO, 103) LL_FECHA_LLAMADO
+                        ,LLA.NOM_LLAMADO_ACCION LL_NOM_LLAMADO_ACCION
+                        ,C.NOM_CONTACTO LL_NOM_CONTACTO
+                        ,dbo.f_llamado_telefono(LL.COD_CONTACTO, 'EMPRESA') LL_TELEFONO_CONTACTO
+                        ,CP.NOM_PERSONA LL_NOM_PERSONA
+                        ,dbo.f_llamado_telefono(LL.COD_CONTACTO_PERSONA, 'PERSONA') LL_TELEFONO_PERSONA
+                        ,LL.MENSAJE LL_MENSAJE
+                    FROM LLAMADO LL
+                        ,LLAMADO_ACCION LLA
+                        ,CONTACTO C
+                        ,CONTACTO_PERSONA CP
+                   WHERE LL.TIPO_DOC_REALIZADO = 'COTIZACION'
+                     AND LL.COD_DOC_REALIZADO = $cod_cotizacion
+                     AND LLA.COD_LLAMADO_ACCION = LL.COD_LLAMADO_ACCION
+                     AND C.COD_CONTACTO = LL.COD_CONTACTO
+                     AND CP.COD_CONTACTO_PERSONA = LL.COD_CONTACTO_PERSONA";
         
         $result = $db->build_results($sql);
         $cod_llamado = $result[0]['LL_COD_LLAMADO'];
@@ -1144,9 +1156,9 @@ class wi_cotizacion extends wi_cotizacion_base {
         
         //////////////////////////////////////////
         // Si tiene acceso solo bitacora se deshabilita lo demas
-        $priv = $this->get_privilegio_opcion_usuario(self::K_AUTORIZA_SOLO_BITACORA, $this->cod_usuario);	// acceso bitacora
+        $priv = $this->get_privilegio_opcion_usuario(self::K_AUTORIZA_SOLO_BITACORA, $this->cod_usuario);   // acceso bitacora
         
-        if ($priv=='E')	{	// tiene acceso solo a bitacora
+        if ($priv=='E') {   // tiene acceso solo a bitacora
             $this->dws['dw_cotizacion']->set_entrable_dw(false);
             $this->dws['dw_item_cotizacion']->set_entrable_dw(false);
             $this->dws['dw_llamado_cot']->set_entrable_dw(false);
@@ -1158,16 +1170,16 @@ class wi_cotizacion extends wi_cotizacion_base {
         if($cod_estado_cotizacion == 5 || $cod_estado_cotizacion == 6){
             unset($this->dws['dw_seguimiento_cotizacion']->controls['SC_COD_ACCION_COTIZACION']);
             $sql = "select COD_ACCION_COTIZACION
-							,NOM_ACCION_COTIZACION
-					from ACCION_COTIZACION
-					order by NOM_ACCION_COTIZACION";
+                            ,NOM_ACCION_COTIZACION
+                    from ACCION_COTIZACION
+                    order by NOM_ACCION_COTIZACION";
             $this->dws['dw_seguimiento_cotizacion']->add_control(new drop_down_dw('SC_COD_ACCION_COTIZACION', $sql, 103));
         }else{
             $sql = "select COD_ACCION_COTIZACION
-							,NOM_ACCION_COTIZACION
-					from ACCION_COTIZACION
-					where COD_ACCION_COTIZACION not in (3,4)
-					order by NOM_ACCION_COTIZACION";
+                            ,NOM_ACCION_COTIZACION
+                    from ACCION_COTIZACION
+                    where COD_ACCION_COTIZACION not in (3,4)
+                    order by NOM_ACCION_COTIZACION";
             $this->dws['dw_seguimiento_cotizacion']->add_control(new drop_down_dw('SC_COD_ACCION_COTIZACION', $sql, 103));
         }
         $priv = $this->get_privilegio_opcion_usuario(self::K_AUTORIZA_VALIDA_OFERTA, $this->cod_usuario);
@@ -1179,8 +1191,8 @@ class wi_cotizacion extends wi_cotizacion_base {
         if($priv == 'E'){
             $db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
             $sql = "SELECT PORC_DESCUENTO_PERMITIDO
-					FROM USUARIO
-					WHERE COD_USUARIO = ".$this->cod_usuario;
+                    FROM USUARIO
+                    WHERE COD_USUARIO = ".$this->cod_usuario;
             $result = $db->build_results($sql);
             $this->dws['dw_cotizacion']->set_item(0, 'PORC_DSCTO_MAX', $result[0]['PORC_DESCUENTO_PERMITIDO']);
             
@@ -1283,19 +1295,19 @@ class wi_cotizacion extends wi_cotizacion_base {
     }
     
     function envia_mail_acuse(){
-        $cod_cotizacion 	= $this->get_key();
-        $cod_empresa		= $this->dws['dw_cotizacion']->get_item(0, 'COD_EMPRESA');
-        $cod_usuario_vend1 	= $this->dws['dw_cotizacion']->get_item(0, 'COD_USUARIO_VENDEDOR1');
-        $cod_usuario_vend2 	= $this->dws['dw_cotizacion']->get_item(0, 'COD_USUARIO_VENDEDOR2');
+        $cod_cotizacion     = $this->get_key();
+        $cod_empresa        = $this->dws['dw_cotizacion']->get_item(0, 'COD_EMPRESA');
+        $cod_usuario_vend1  = $this->dws['dw_cotizacion']->get_item(0, 'COD_USUARIO_VENDEDOR1');
+        $cod_usuario_vend2  = $this->dws['dw_cotizacion']->get_item(0, 'COD_USUARIO_VENDEDOR2');
         
         $db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
-        $sql = "SELECT	E.COD_USUARIO,
-						E.NOM_EMPRESA,
-						U.NOM_USUARIO,
-						U.MAIL
-				FROM	EMPRESA E, USUARIO U
-				WHERE	E.COD_EMPRESA = $cod_empresa and
-						E.COD_USUARIO = U.COD_USUARIO";
+        $sql = "SELECT  E.COD_USUARIO,
+                        E.NOM_EMPRESA,
+                        U.NOM_USUARIO,
+                        U.MAIL
+                FROM    EMPRESA E, USUARIO U
+                WHERE   E.COD_EMPRESA = $cod_empresa and
+                        E.COD_USUARIO = U.COD_USUARIO";
         $result = $db->build_results($sql);
         
         $cod_usuario_empresa = $result[0]['COD_USUARIO'];
@@ -1306,11 +1318,11 @@ class wi_cotizacion extends wi_cotizacion_base {
         
         if( $cod_usuario_empresa != $cod_usuario_vend1 && $cod_usuario_empresa != $cod_usuario_vend2){
             $db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
-            $sql = "SELECT	COD_USUARIO,
-							NOM_USUARIO,
-							MAIL
-					FROM	USUARIO
-					WHERE	COD_USUARIO = $cod_usuario_vend1";
+            $sql = "SELECT  COD_USUARIO,
+                            NOM_USUARIO,
+                            MAIL
+                    FROM    USUARIO
+                    WHERE   COD_USUARIO = $cod_usuario_vend1";
             $result = $db->build_results($sql);
             
             $res_mail_emp = $db->build_results('SELECT VALOR FROM PARAMETRO WHERE COD_PARAMETRO ='.self::K_PARAM_MAIL_EMPRESA);
@@ -1330,9 +1342,9 @@ class wi_cotizacion extends wi_cotizacion_base {
             $cabeceras .= 'CC:'.$mail_vend."\n";
             
             /******* consulta el smtp desde parametros *********/
-            $sql = "SELECT 	VALOR
-					FROM	PARAMETRO
-					WHERE 	COD_PARAMETRO =".self::K_PARAM_SMTP;
+            $sql = "SELECT  VALOR
+                    FROM    PARAMETRO
+                    WHERE   COD_PARAMETRO =".self::K_PARAM_SMTP;
             $result = $db->build_results($sql);
             
             $smtp = $result[0]['VALOR'];
@@ -1356,15 +1368,15 @@ class wi_cotizacion extends wi_cotizacion_base {
     }
     
     function print_folleto($tipo_print){
-        $cod_cotizacion	= $this->get_key();
+        $cod_cotizacion = $this->get_key();
         
         $db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
         $sql = "SELECT DISTINCT COD_PRODUCTO, MIN(ORDEN)
-				FROM ITEM_COTIZACION
-				WHERE COD_COTIZACION = $cod_cotizacion
-				AND COD_PRODUCTO NOT IN ('T', 'TE', 'E', 'F', 'I')
-				GROUP BY COD_PRODUCTO
-				ORDER BY MIN(ORDEN)";
+                FROM ITEM_COTIZACION
+                WHERE COD_COTIZACION = $cod_cotizacion
+                AND COD_PRODUCTO NOT IN ('T', 'TE', 'E', 'F', 'I')
+                GROUP BY COD_PRODUCTO
+                ORDER BY MIN(ORDEN)";
         $result = $db->build_results($sql);
         
         for($i=0 ; $i < count($result) ; $i++)
@@ -1377,103 +1389,103 @@ class wi_cotizacion extends wi_cotizacion_base {
     
     function save_record($db) {
         session::un_set('SOLICITUD_COTIZACION');
-        $cod_cotizacion 	= $this->get_key();
-        $fecha_cotizacion	= $this->dws['dw_cotizacion']->get_item(0, 'FECHA_COTIZACION');
-        $cod_usuario 		= $this->dws['dw_cotizacion']->get_item(0, 'COD_USUARIO');
-        $cod_usuario_vend1 	= $this->dws['dw_cotizacion']->get_item(0, 'COD_USUARIO_VENDEDOR1');
-        $porc_vendedor1		= $this->dws['dw_cotizacion']->get_item(0, 'PORC_VENDEDOR1');
-        $cod_usuario_vend2 	= $this->dws['dw_cotizacion']->get_item(0, 'COD_USUARIO_VENDEDOR2');
+        $cod_cotizacion     = $this->get_key();
+        $fecha_cotizacion   = $this->dws['dw_cotizacion']->get_item(0, 'FECHA_COTIZACION');
+        $cod_usuario        = $this->dws['dw_cotizacion']->get_item(0, 'COD_USUARIO');
+        $cod_usuario_vend1  = $this->dws['dw_cotizacion']->get_item(0, 'COD_USUARIO_VENDEDOR1');
+        $porc_vendedor1     = $this->dws['dw_cotizacion']->get_item(0, 'PORC_VENDEDOR1');
+        $cod_usuario_vend2  = $this->dws['dw_cotizacion']->get_item(0, 'COD_USUARIO_VENDEDOR2');
         if ($cod_usuario_vend2 =='') {
-            $cod_usuario_vend2	= "null";
-            $porc_vendedor2		= "null";
+            $cod_usuario_vend2  = "null";
+            $porc_vendedor2     = "null";
         }
         else
-            $porc_vendedor2		= $this->dws['dw_cotizacion']->get_item(0, 'PORC_VENDEDOR2');
+            $porc_vendedor2     = $this->dws['dw_cotizacion']->get_item(0, 'PORC_VENDEDOR2');
             
-            $cod_moneda			= $this->dws['dw_cotizacion']->get_item(0, 'COD_MONEDA');
-            $idioma			 	= $this->dws['dw_cotizacion']->get_item(0, 'IDIOMA');
-            $referencia			= $this->dws['dw_cotizacion']->get_item(0, 'REFERENCIA');
-            $referencia 		= str_replace("'", "''", $referencia);
-            $cod_est_cot		= $this->dws['dw_cotizacion']->get_item(0, 'COD_ESTADO_COTIZACION');
-            $cod_ori_cot		= $this->dws['dw_cotizacion']->get_item(0, 'COD_ORIGEN_COTIZACION');
-            $cod_cot_desde		= $this->dws['dw_cotizacion']->get_item(0, 'COD_COTIZACION_DESDE');
-            $cod_cot_desde		= ($cod_cot_desde =='') ? "null" : "$cod_cot_desde";
-            $cod_empresa		= $this->dws['dw_cotizacion']->get_item(0, 'COD_EMPRESA');
-            $cod_suc_despacho	= $this->dws['dw_cotizacion']->get_item(0, 'COD_SUCURSAL_DESPACHO');
-            $cod_suc_factura	= $this->dws['dw_cotizacion']->get_item(0, 'COD_SUCURSAL_FACTURA');
-            $cod_persona		= $this->dws['dw_cotizacion']->get_item(0, 'COD_PERSONA');
-            $cod_persona		= ($cod_persona =='') ? "null" : "$cod_persona";
-            $sumar_items		= $this->dws['dw_cotizacion']->get_item(0, 'SUMAR_ITEMS');
-            $aut_descto_esp		= $this->dws['dw_cotizacion']->get_item(0, 'AUT_DESCTO_ESP');
+            $cod_moneda         = $this->dws['dw_cotizacion']->get_item(0, 'COD_MONEDA');
+            $idioma             = $this->dws['dw_cotizacion']->get_item(0, 'IDIOMA');
+            $referencia         = $this->dws['dw_cotizacion']->get_item(0, 'REFERENCIA');
+            $referencia         = str_replace("'", "''", $referencia);
+            $cod_est_cot        = $this->dws['dw_cotizacion']->get_item(0, 'COD_ESTADO_COTIZACION');
+            $cod_ori_cot        = $this->dws['dw_cotizacion']->get_item(0, 'COD_ORIGEN_COTIZACION');
+            $cod_cot_desde      = $this->dws['dw_cotizacion']->get_item(0, 'COD_COTIZACION_DESDE');
+            $cod_cot_desde      = ($cod_cot_desde =='') ? "null" : "$cod_cot_desde";
+            $cod_empresa        = $this->dws['dw_cotizacion']->get_item(0, 'COD_EMPRESA');
+            $cod_suc_despacho   = $this->dws['dw_cotizacion']->get_item(0, 'COD_SUCURSAL_DESPACHO');
+            $cod_suc_factura    = $this->dws['dw_cotizacion']->get_item(0, 'COD_SUCURSAL_FACTURA');
+            $cod_persona        = $this->dws['dw_cotizacion']->get_item(0, 'COD_PERSONA');
+            $cod_persona        = ($cod_persona =='') ? "null" : "$cod_persona";
+            $sumar_items        = $this->dws['dw_cotizacion']->get_item(0, 'SUMAR_ITEMS');
+            $aut_descto_esp     = $this->dws['dw_cotizacion']->get_item(0, 'AUT_DESCTO_ESP');
             
             
-            $sub_total			= $this->dws['dw_cotizacion']->get_item(0, 'SUM_TOTAL');
-            $sub_total      	= ($sub_total =='') ? 0 : "$sub_total";
+            $sub_total          = $this->dws['dw_cotizacion']->get_item(0, 'SUM_TOTAL');
+            $sub_total          = ($sub_total =='') ? 0 : "$sub_total";
             
-            $porc_descto1		= $this->dws['dw_cotizacion']->get_item(0, 'PORC_DSCTO1');
-            $porc_descto1		= ($porc_descto1 =='') ? "null" : "$porc_descto1";
+            $porc_descto1       = $this->dws['dw_cotizacion']->get_item(0, 'PORC_DSCTO1');
+            $porc_descto1       = ($porc_descto1 =='') ? "null" : "$porc_descto1";
             
-            $monto_dscto1		= $this->dws['dw_cotizacion']->get_item(0, 'MONTO_DSCTO1');
-            $monto_dscto1		= ($monto_dscto1 =='') ? 0 : "$monto_dscto1";
+            $monto_dscto1       = $this->dws['dw_cotizacion']->get_item(0, 'MONTO_DSCTO1');
+            $monto_dscto1       = ($monto_dscto1 =='') ? 0 : "$monto_dscto1";
             
-            $porc_descto2		= $this->dws['dw_cotizacion']->get_item(0, 'PORC_DSCTO2');
-            $porc_descto2		= ($porc_descto2 =='') ? "null" : "$porc_descto2";
+            $porc_descto2       = $this->dws['dw_cotizacion']->get_item(0, 'PORC_DSCTO2');
+            $porc_descto2       = ($porc_descto2 =='') ? "null" : "$porc_descto2";
             
-            $monto_dscto2		= $this->dws['dw_cotizacion']->get_item(0, 'MONTO_DSCTO2');
-            $monto_dscto2		= ($monto_dscto2 =='') ? 0 : "$monto_dscto2";
+            $monto_dscto2       = $this->dws['dw_cotizacion']->get_item(0, 'MONTO_DSCTO2');
+            $monto_dscto2       = ($monto_dscto2 =='') ? 0 : "$monto_dscto2";
             
-            $total_neto			= $this->dws['dw_cotizacion']->get_item(0, 'TOTAL_NETO');
-            $total_neto			= ($total_neto =='') ? 0 : "$total_neto";
+            $total_neto         = $this->dws['dw_cotizacion']->get_item(0, 'TOTAL_NETO');
+            $total_neto         = ($total_neto =='') ? 0 : "$total_neto";
             
-            $porc_iva			= $this->dws['dw_cotizacion']->get_item(0, 'PORC_IVA');
+            $porc_iva           = $this->dws['dw_cotizacion']->get_item(0, 'PORC_IVA');
             
-            $monto_iva			= $this->dws['dw_cotizacion']->get_item(0, 'MONTO_IVA');
-            $monto_iva			= ($monto_iva =='') ? 0 : "$monto_iva";
+            $monto_iva          = $this->dws['dw_cotizacion']->get_item(0, 'MONTO_IVA');
+            $monto_iva          = ($monto_iva =='') ? 0 : "$monto_iva";
             
-            $total_con_iva		= $this->dws['dw_cotizacion']->get_item(0, 'TOTAL_CON_IVA');
-            $total_con_iva		= ($total_con_iva =='') ? 0 : "$total_con_iva";
+            $total_con_iva      = $this->dws['dw_cotizacion']->get_item(0, 'TOTAL_CON_IVA');
+            $total_con_iva      = ($total_con_iva =='') ? 0 : "$total_con_iva";
             
-            $cod_forma_pago		= $this->dws['dw_cotizacion']->get_item(0, 'COD_FORMA_PAGO');
+            $cod_forma_pago     = $this->dws['dw_cotizacion']->get_item(0, 'COD_FORMA_PAGO');
             if ($cod_forma_pago==1){ // forma de pago = OTRO
                 $nom_forma_pago_otro= $this->dws['dw_cotizacion']->get_item(0, 'NOM_FORMA_PAGO_OTRO');
             }else{
                 $nom_forma_pago_otro= "";
             }
             $nom_forma_pago_otro= ($nom_forma_pago_otro =='') ? "null" : "'$nom_forma_pago_otro'";
-            $validez_oferta		= $this->dws['dw_cotizacion']->get_item(0, 'VALIDEZ_OFERTA');
-            $entrega			= $this->dws['dw_cotizacion']->get_item(0, 'ENTREGA');
-            $entrega 			= str_replace("'", "''", $entrega);
-            $cod_embalaje_cot	= $this->dws['dw_cotizacion']->get_item(0, 'COD_EMBALAJE_COTIZACION');
-            $cod_flete_cot		= $this->dws['dw_cotizacion']->get_item(0, 'COD_FLETE_COTIZACION');
-            $cod_inst_cot		= $this->dws['dw_cotizacion']->get_item(0, 'COD_INSTALACION_COTIZACION');
-            $garantia			= $this->dws['dw_cotizacion']->get_item(0, 'GARANTIA');
-            $garantia 			= str_replace("'", "''", $garantia);
-            $obs				= $this->dws['dw_cotizacion']->get_item(0, 'OBS');
-            $obs	 			= str_replace("'", "''", $obs);
-            $obs				= ($obs =='') ? "null" : "'$obs'";
-            $posib_cierre		= 1;//$this->dws['dw_cotizacion']->get_item(0, 'POSIBILIDAD_CIERRE');
-            $fec_posib_cierre	= '01/12/2009';	// NOTA: para el manejo de fecha se debe pasar un string dd/mm/yyyy y en el sp llamar a to_date ber eje en spi_orden_trabajo
-            $ing_usuario_dscto1	= $this->dws['dw_cotizacion']->get_item(0, 'INGRESO_USUARIO_DSCTO1');
-            $ing_usuario_dscto1	= ($ing_usuario_dscto1 =='') ? "null" : "'$ing_usuario_dscto1'";
-            $ing_usuario_dscto2	= $this->dws['dw_cotizacion']->get_item(0, 'INGRESO_USUARIO_DSCTO2');
-            $ing_usuario_dscto2	= ($ing_usuario_dscto2 =='') ? "null" : "'$ing_usuario_dscto2'";
+            $validez_oferta     = $this->dws['dw_cotizacion']->get_item(0, 'VALIDEZ_OFERTA');
+            $entrega            = $this->dws['dw_cotizacion']->get_item(0, 'ENTREGA');
+            $entrega            = str_replace("'", "''", $entrega);
+            $cod_embalaje_cot   = $this->dws['dw_cotizacion']->get_item(0, 'COD_EMBALAJE_COTIZACION');
+            $cod_flete_cot      = $this->dws['dw_cotizacion']->get_item(0, 'COD_FLETE_COTIZACION');
+            $cod_inst_cot       = $this->dws['dw_cotizacion']->get_item(0, 'COD_INSTALACION_COTIZACION');
+            $garantia           = $this->dws['dw_cotizacion']->get_item(0, 'GARANTIA');
+            $garantia           = str_replace("'", "''", $garantia);
+            $obs                = $this->dws['dw_cotizacion']->get_item(0, 'OBS');
+            $obs                = str_replace("'", "''", $obs);
+            $obs                = ($obs =='') ? "null" : "'$obs'";
+            $posib_cierre       = 1;//$this->dws['dw_cotizacion']->get_item(0, 'POSIBILIDAD_CIERRE');
+            $fec_posib_cierre   = '01/12/2009'; // NOTA: para el manejo de fecha se debe pasar un string dd/mm/yyyy y en el sp llamar a to_date ber eje en spi_orden_trabajo
+            $ing_usuario_dscto1 = $this->dws['dw_cotizacion']->get_item(0, 'INGRESO_USUARIO_DSCTO1');
+            $ing_usuario_dscto1 = ($ing_usuario_dscto1 =='') ? "null" : "'$ing_usuario_dscto1'";
+            $ing_usuario_dscto2 = $this->dws['dw_cotizacion']->get_item(0, 'INGRESO_USUARIO_DSCTO2');
+            $ing_usuario_dscto2 = ($ing_usuario_dscto2 =='') ? "null" : "'$ing_usuario_dscto2'";
             //
-            $cod_solicitud_cotizacion	= $this->dws['dw_cotizacion']->get_item(0, 'COD_SOLICITUD_COTIZACION');
-            $cod_solicitud_cotizacion	= ($cod_solicitud_cotizacion =='') ? "null" : "$cod_solicitud_cotizacion";
+            $cod_solicitud_cotizacion   = $this->dws['dw_cotizacion']->get_item(0, 'COD_SOLICITUD_COTIZACION');
+            $cod_solicitud_cotizacion   = ($cod_solicitud_cotizacion =='') ? "null" : "$cod_solicitud_cotizacion";
             
-            $cod_tipo_rechazo	= $this->dws['dw_cotizacion']->get_item(0, 'COD_TIPO_RECHAZO');
-            $rechazo			= $this->dws['dw_cotizacion']->get_item(0, 'RECHAZADA');
-            $texto_rechazo		= $this->dws['dw_cotizacion']->get_item(0, 'TEXTO_RECHAZO');
+            $cod_tipo_rechazo   = $this->dws['dw_cotizacion']->get_item(0, 'COD_TIPO_RECHAZO');
+            $rechazo            = $this->dws['dw_cotizacion']->get_item(0, 'RECHAZADA');
+            $texto_rechazo      = $this->dws['dw_cotizacion']->get_item(0, 'TEXTO_RECHAZO');
             
-            $DESCTO_1_AUTORIZADO	= $this->dws['dw_cotizacion']->get_item(0, 'DESCTO_1_AUTORIZADO_H');
-            $DESCTO_2_AUTORIZADO	= $this->dws['dw_cotizacion']->get_item(0, 'DESCTO_2_AUTORIZADO_H');
+            $DESCTO_1_AUTORIZADO    = $this->dws['dw_cotizacion']->get_item(0, 'DESCTO_1_AUTORIZADO_H');
+            $DESCTO_2_AUTORIZADO    = $this->dws['dw_cotizacion']->get_item(0, 'DESCTO_2_AUTORIZADO_H');
             
-            $cod_tipo_rechazo	= ($cod_tipo_rechazo =='') ? "null" : "$cod_tipo_rechazo";
-            $rechazo			= ($rechazo =='') ? "null" : "'$rechazo'";
-            $texto_rechazo		= ($texto_rechazo =='') ? "null" : "'$texto_rechazo'";
+            $cod_tipo_rechazo   = ($cod_tipo_rechazo =='') ? "null" : "$cod_tipo_rechazo";
+            $rechazo            = ($rechazo =='') ? "null" : "'$rechazo'";
+            $texto_rechazo      = ($texto_rechazo =='') ? "null" : "'$texto_rechazo'";
             
-            $DESCTO_1_AUTORIZADO		= ($DESCTO_1_AUTORIZADO =='') ? 0 : "$DESCTO_1_AUTORIZADO";
-            $DESCTO_2_AUTORIZADO		= ($DESCTO_2_AUTORIZADO =='') ? 0 : "$DESCTO_2_AUTORIZADO";
+            $DESCTO_1_AUTORIZADO        = ($DESCTO_1_AUTORIZADO =='') ? 0 : "$DESCTO_1_AUTORIZADO";
+            $DESCTO_2_AUTORIZADO        = ($DESCTO_2_AUTORIZADO =='') ? 0 : "$DESCTO_2_AUTORIZADO";
             
             //
             
@@ -1485,54 +1497,54 @@ class wi_cotizacion extends wi_cotizacion_base {
                 else
                     $operacion = 'UPDATE';
                     
-                    $param	= "		'$operacion'
-						,$cod_cotizacion
-						,'$fecha_cotizacion'
-						,$cod_usuario
-						,$cod_usuario_vend1
-						,$porc_vendedor1
-						,$cod_usuario_vend2
-						,$porc_vendedor2
-						,$cod_moneda
-						,'$idioma'
-						,'$referencia'
-						,$cod_est_cot
-						,$cod_ori_cot
-						,$cod_cot_desde
-						,$cod_empresa
-						,$cod_suc_despacho
-						,$cod_suc_factura
-						,$cod_persona
-						,'$sumar_items'
-						,$sub_total
-						,$porc_descto1
-						,$monto_dscto1
-						,$porc_descto2
-						,$monto_dscto2
-						,$total_neto
-						,$porc_iva
-						,$monto_iva
-						,$total_con_iva
-						,$cod_forma_pago
-						,$validez_oferta
-						,'$entrega'
-						,$cod_embalaje_cot
-						,$cod_flete_cot
-						,$cod_inst_cot
-						,'$garantia'
-						,$obs
-						,$posib_cierre
-						,'$fec_posib_cierre'
-						,$ing_usuario_dscto1
-						,$ing_usuario_dscto2
-						,$nom_forma_pago_otro
-						,$cod_solicitud_cotizacion
-						,$cod_tipo_rechazo
-						,$rechazo
-						,$texto_rechazo
-						,$DESCTO_1_AUTORIZADO
-						,$DESCTO_2_AUTORIZADO
-						,'$aut_descto_esp'";
+                    $param  = "     '$operacion'
+                        ,$cod_cotizacion
+                        ,'$fecha_cotizacion'
+                        ,$cod_usuario
+                        ,$cod_usuario_vend1
+                        ,$porc_vendedor1
+                        ,$cod_usuario_vend2
+                        ,$porc_vendedor2
+                        ,$cod_moneda
+                        ,'$idioma'
+                        ,'$referencia'
+                        ,$cod_est_cot
+                        ,$cod_ori_cot
+                        ,$cod_cot_desde
+                        ,$cod_empresa
+                        ,$cod_suc_despacho
+                        ,$cod_suc_factura
+                        ,$cod_persona
+                        ,'$sumar_items'
+                        ,$sub_total
+                        ,$porc_descto1
+                        ,$monto_dscto1
+                        ,$porc_descto2
+                        ,$monto_dscto2
+                        ,$total_neto
+                        ,$porc_iva
+                        ,$monto_iva
+                        ,$total_con_iva
+                        ,$cod_forma_pago
+                        ,$validez_oferta
+                        ,'$entrega'
+                        ,$cod_embalaje_cot
+                        ,$cod_flete_cot
+                        ,$cod_inst_cot
+                        ,'$garantia'
+                        ,$obs
+                        ,$posib_cierre
+                        ,'$fec_posib_cierre'
+                        ,$ing_usuario_dscto1
+                        ,$ing_usuario_dscto2
+                        ,$nom_forma_pago_otro
+                        ,$cod_solicitud_cotizacion
+                        ,$cod_tipo_rechazo
+                        ,$rechazo
+                        ,$texto_rechazo
+                        ,$DESCTO_1_AUTORIZADO
+                        ,$DESCTO_2_AUTORIZADO
+                        ,'$aut_descto_esp'";
                     
                     if ($db->EXECUTE_SP($sp, $param)){
                         
@@ -1549,11 +1561,11 @@ class wi_cotizacion extends wi_cotizacion_base {
                             //Se crea Seguimiento de Cotizacion.
                             $sp = 'spu_bitacora_cotizacion';
                             $param = "'INICIA_SEGUIMIENTO'
-						,NULL
-						,$this->cod_usuario
-						,$cod_cotizacion
-						,NULL
-						,$cod_persona";
+                        ,NULL
+                        ,$this->cod_usuario
+                        ,$cod_cotizacion
+                        ,NULL
+                        ,$cod_persona";
                             
                             if (!$db->EXECUTE_SP($sp, $param))
                                 return false;
@@ -1577,35 +1589,35 @@ class wi_cotizacion extends wi_cotizacion_base {
                                 if (!$db->EXECUTE_SP('sp_orden_no_parametricas', $parametros_sp))
                                     return false;
                                     
-                                    $cod_llamado	= $this->dws['dw_llamado_cot']->get_item(0, 'LL_COD_LLAMADO');
+                                    $cod_llamado    = $this->dws['dw_llamado_cot']->get_item(0, 'LL_COD_LLAMADO');
                                     $parametros_sp="'REALIZADO_WEB'
-							,$cod_llamado
-							,null
-							,null
-							,null
-							,null
-							,null
-							,null
-							,'S'
-							,null
-							,'COTIZACION'
-							,$cod_cotizacion
-							,$this->cod_usuario";
+                            ,$cod_llamado
+                            ,null
+                            ,null
+                            ,null
+                            ,null
+                            ,null
+                            ,null
+                            ,'S'
+                            ,null
+                            ,'COTIZACION'
+                            ,$cod_cotizacion
+                            ,$this->cod_usuario";
                                     
                                     if($cod_llamado <> ''){
                                         if (!$db->EXECUTE_SP('spu_llamado', $parametros_sp)){
                                             return false;
                                         }else{
                                             $param="'INSERT',
-								NULL,
-								$cod_llamado,
-								32, -- MH
-								'realizado con exito',
-								'S',
-								'N'";
-								
-								if (!$db->EXECUTE_SP('spu_llamado_conversa', $param))
-								    return false;
+                                NULL,
+                                $cod_llamado,
+                                32, -- MH
+                                'realizado con exito',
+                                'S',
+                                'N'";
+                                
+                                if (!$db->EXECUTE_SP('spu_llamado_conversa', $param))
+                                    return false;
                                         }
                                         
                                     }
@@ -1739,91 +1751,91 @@ class wi_cotizacion extends wi_cotizacion_base {
         $db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
         $cod_cotizacion = $this->get_key();
         $sql = "SELECT COD_PRODUCTO
-					   ,NOM_PRODUCTO
-					   ,SUM(CANTIDAD) CANTIDAD
-					   ,PRECIO
-					   ,PRECIO * SUM(CANTIDAD) TOTAL,
-					    C.COD_COTIZACION,
-						E.NOM_EMPRESA,
-						E.RUT,
-						E.DIG_VERIF,
-						dbo.f_format_date(C.FECHA_COTIZACION, 3) FECHA_COTIZACION,
-						dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[DIRECCION]') DIRECCION,
-						dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[NOM_COMUNA]') NOM_COMUNA,
-						dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[NOM_CIUDAD]') NOM_CIUDAD,
-						S.TELEFONO TELEFONO_F,
-						S.FAX FAX_F,
-						C.REFERENCIA,
-						P.NOM_PERSONA,
-						P.EMAIL,
-						P.TELEFONO,
-						IC.NOM_PRODUCTO,
-						C.SUBTOTAL,
-						C.PORC_DSCTO1,
-						C.MONTO_DSCTO1,
-						C.PORC_DSCTO2,
-						C.MONTO_DSCTO2,
-						C.MONTO_DSCTO1 + C.MONTO_DSCTO2 FINAL,
-						C.TOTAL_NETO,
-						C.PORC_IVA,
-						C.MONTO_IVA,
-						C.TOTAL_CON_IVA,
-						C.NOM_FORMA_PAGO_OTRO,
-						FP.NOM_FORMA_PAGO,
-						C.VALIDEZ_OFERTA,
-						C.ENTREGA,
-						EC.NOM_EMBALAJE_COTIZACION,
-						FL.NOM_FLETE_COTIZACION,
-						I.NOM_INSTALACION_COTIZACION,
-						C.GARANTIA,
-						M.SIMBOLO,
-						U.NOM_USUARIO,
-						U.MAIL MAIL_U,
-						U.TELEFONO FONO_U,
-						U.CELULAR CEL_U,
-						U.INI_USUARIO,
-						CASE
-							WHEN C.MONTO_DSCTO1 = 0 AND C.MONTO_DSCTO2 = 0 THEN 1
-							WHEN C.MONTO_DSCTO1 <> 0 AND C.MONTO_DSCTO2 = 0 THEN 2
-							WHEN C.MONTO_DSCTO1 <> 0 AND C.MONTO_DSCTO2 <> 0 THEN 3
-						END TIPO_DESCUENTOS,
-					    dbo.f_get_parametro(6) NOM_EMPRESA_EMISOR,
-						dbo.f_get_parametro(20) RUT_EMPRESA,
-						dbo.f_get_parametro(10) DIR_EMPRESA,
-						dbo.f_get_parametro(21) GIRO_EMPRESA,
-						dbo.f_get_parametro(11) TEL_EMPRESA,
-						dbo.f_get_parametro(61) BANCO,
-						dbo.f_get_parametro(62) CTA_CTE,
-						dbo.f_get_parametro(12) FAX_EMPRESA,
-						dbo.f_get_parametro(13) MAIL_EMPRESA,
-						dbo.f_get_parametro(14) CIUDAD_EMPRESA,
-						dbo.f_get_parametro(15) PAIS_EMPRESA,
-						dbo.f_get_parametro(25) SITIO_WEB_EMPRESA,
-						dbo.f_get_parametro(72) EQUIPO_ESPECIAL,
-						CONVERT(VARCHAR, OBS) OBS
-				FROM ITEM_COTIZACION IC, COTIZACION C, EMPRESA E, SUCURSAL S, PERSONA P
-					,FORMA_PAGO FP, EMBALAJE_COTIZACION EC, FLETE_COTIZACION FL
-					,INSTALACION_COTIZACION I, MONEDA M, USUARIO U
-				WHERE C.COD_COTIZACION = $cod_cotizacion
-				AND C.COD_COTIZACION = IC.COD_COTIZACION
-				AND E.COD_EMPRESA = C.COD_EMPRESA
-				AND S.COD_SUCURSAL = C.COD_SUCURSAL_FACTURA
-				AND P.COD_PERSONA = C.COD_PERSONA
-				AND FP.COD_FORMA_PAGO = C.COD_FORMA_PAGO
-				AND EC.COD_EMBALAJE_COTIZACION = C.COD_EMBALAJE_COTIZACION
-				AND FL.COD_FLETE_COTIZACION = C.COD_FLETE_COTIZACION
-				AND I.COD_INSTALACION_COTIZACION = C.COD_INSTALACION_COTIZACION
-				AND M.COD_MONEDA = C.COD_MONEDA
-				AND U.COD_USUARIO = C.COD_USUARIO_VENDEDOR1
-				GROUP BY COD_PRODUCTO, NOM_PRODUCTO, PRECIO, NOM_EMPRESA,
-				RUT, DIG_VERIF, C.COD_COTIZACION, FECHA_COTIZACION,
-				C.COD_SUCURSAL_FACTURA, S.TELEFONO, S.FAX, C.REFERENCIA,
-				NOM_PERSONA, EMAIL, P.TELEFONO, SUBTOTAL, PORC_DSCTO1,
-				MONTO_DSCTO1, PORC_DSCTO2, MONTO_DSCTO2, TOTAL_NETO,
-				PORC_IVA, MONTO_IVA, TOTAL_CON_IVA, NOM_FORMA_PAGO_OTRO,
-				NOM_FORMA_PAGO, VALIDEZ_OFERTA, ENTREGA, NOM_EMBALAJE_COTIZACION,
-				NOM_FLETE_COTIZACION, NOM_INSTALACION_COTIZACION, GARANTIA,
-				SIMBOLO, NOM_USUARIO, U.MAIL, U.TELEFONO, U.CELULAR, U.INI_USUARIO, CONVERT(VARCHAR, OBS)";
+                       ,NOM_PRODUCTO
+                       ,SUM(CANTIDAD) CANTIDAD
+                       ,PRECIO
+                       ,PRECIO * SUM(CANTIDAD) TOTAL,
+                        C.COD_COTIZACION,
+                        E.NOM_EMPRESA,
+                        E.RUT,
+                        E.DIG_VERIF,
+                        dbo.f_format_date(C.FECHA_COTIZACION, 3) FECHA_COTIZACION,
+                        dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[DIRECCION]') DIRECCION,
+                        dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[NOM_COMUNA]') NOM_COMUNA,
+                        dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[NOM_CIUDAD]') NOM_CIUDAD,
+                        S.TELEFONO TELEFONO_F,
+                        S.FAX FAX_F,
+                        C.REFERENCIA,
+                        P.NOM_PERSONA,
+                        P.EMAIL,
+                        P.TELEFONO,
+                        IC.NOM_PRODUCTO,
+                        C.SUBTOTAL,
+                        C.PORC_DSCTO1,
+                        C.MONTO_DSCTO1,
+                        C.PORC_DSCTO2,
+                        C.MONTO_DSCTO2,
+                        C.MONTO_DSCTO1 + C.MONTO_DSCTO2 FINAL,
+                        C.TOTAL_NETO,
+                        C.PORC_IVA,
+                        C.MONTO_IVA,
+                        C.TOTAL_CON_IVA,
+                        C.NOM_FORMA_PAGO_OTRO,
+                        FP.NOM_FORMA_PAGO,
+                        C.VALIDEZ_OFERTA,
+                        C.ENTREGA,
+                        EC.NOM_EMBALAJE_COTIZACION,
+                        FL.NOM_FLETE_COTIZACION,
+                        I.NOM_INSTALACION_COTIZACION,
+                        C.GARANTIA,
+                        M.SIMBOLO,
+                        U.NOM_USUARIO,
+                        U.MAIL MAIL_U,
+                        U.TELEFONO FONO_U,
+                        U.CELULAR CEL_U,
+                        U.INI_USUARIO,
+                        CASE
+                            WHEN C.MONTO_DSCTO1 = 0 AND C.MONTO_DSCTO2 = 0 THEN 1
+                            WHEN C.MONTO_DSCTO1 <> 0 AND C.MONTO_DSCTO2 = 0 THEN 2
+                            WHEN C.MONTO_DSCTO1 <> 0 AND C.MONTO_DSCTO2 <> 0 THEN 3
+                        END TIPO_DESCUENTOS,
+                        dbo.f_get_parametro(6) NOM_EMPRESA_EMISOR,
+                        dbo.f_get_parametro(20) RUT_EMPRESA,
+                        dbo.f_get_parametro(10) DIR_EMPRESA,
+                        dbo.f_get_parametro(21) GIRO_EMPRESA,
+                        dbo.f_get_parametro(11) TEL_EMPRESA,
+                        dbo.f_get_parametro(61) BANCO,
+                        dbo.f_get_parametro(62) CTA_CTE,
+                        dbo.f_get_parametro(12) FAX_EMPRESA,
+                        dbo.f_get_parametro(13) MAIL_EMPRESA,
+                        dbo.f_get_parametro(14) CIUDAD_EMPRESA,
+                        dbo.f_get_parametro(15) PAIS_EMPRESA,
+                        dbo.f_get_parametro(25) SITIO_WEB_EMPRESA,
+                        dbo.f_get_parametro(72) EQUIPO_ESPECIAL,
+                        CONVERT(VARCHAR, OBS) OBS
+                FROM ITEM_COTIZACION IC, COTIZACION C, EMPRESA E, SUCURSAL S, PERSONA P
+                    ,FORMA_PAGO FP, EMBALAJE_COTIZACION EC, FLETE_COTIZACION FL
+                    ,INSTALACION_COTIZACION I, MONEDA M, USUARIO U
+                WHERE C.COD_COTIZACION = $cod_cotizacion
+                AND C.COD_COTIZACION = IC.COD_COTIZACION
+                AND E.COD_EMPRESA = C.COD_EMPRESA
+                AND S.COD_SUCURSAL = C.COD_SUCURSAL_FACTURA
+                AND P.COD_PERSONA = C.COD_PERSONA
+                AND FP.COD_FORMA_PAGO = C.COD_FORMA_PAGO
+                AND EC.COD_EMBALAJE_COTIZACION = C.COD_EMBALAJE_COTIZACION
+                AND FL.COD_FLETE_COTIZACION = C.COD_FLETE_COTIZACION
+                AND I.COD_INSTALACION_COTIZACION = C.COD_INSTALACION_COTIZACION
+                AND M.COD_MONEDA = C.COD_MONEDA
+                AND U.COD_USUARIO = C.COD_USUARIO_VENDEDOR1
+                GROUP BY COD_PRODUCTO, NOM_PRODUCTO, PRECIO, NOM_EMPRESA,
+                RUT, DIG_VERIF, C.COD_COTIZACION, FECHA_COTIZACION,
+                C.COD_SUCURSAL_FACTURA, S.TELEFONO, S.FAX, C.REFERENCIA,
+                NOM_PERSONA, EMAIL, P.TELEFONO, SUBTOTAL, PORC_DSCTO1,
+                MONTO_DSCTO1, PORC_DSCTO2, MONTO_DSCTO2, TOTAL_NETO,
+                PORC_IVA, MONTO_IVA, TOTAL_CON_IVA, NOM_FORMA_PAGO_OTRO,
+                NOM_FORMA_PAGO, VALIDEZ_OFERTA, ENTREGA, NOM_EMBALAJE_COTIZACION,
+                NOM_FLETE_COTIZACION, NOM_INSTALACION_COTIZACION, GARANTIA,
+                SIMBOLO, NOM_USUARIO, U.MAIL, U.TELEFONO, U.CELULAR, U.INI_USUARIO, CONVERT(VARCHAR, OBS)";
         
         $result = $db->build_results($sql);
         $cod_producto_old = "";
@@ -1849,99 +1861,99 @@ class wi_cotizacion extends wi_cotizacion_base {
     function printcot_resumen_pdf($con_logo) {
         $cod_cotizacion = $this->get_key();
         
-        $sql = "SELECT	C.COD_COTIZACION,
-				E.NOM_EMPRESA,
-				E.RUT,
-				E.DIG_VERIF,
-				dbo.f_format_date(C.FECHA_COTIZACION, 3) FECHA_COTIZACION,
-				dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[DIRECCION]') DIRECCION,
-				dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[NOM_COMUNA]') NOM_COMUNA,
-				dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[NOM_CIUDAD]') NOM_CIUDAD,
-				SF.TELEFONO TELEFONO_F,
-				SF.FAX FAX_F,
-				C.REFERENCIA,
-				P.NOM_PERSONA,
-				P.EMAIL,
-				p.TELEFONO,
-				IC.NOM_PRODUCTO,
-					case IC.COD_PRODUCTO
-						when 'T' then ''
-					else IC.ITEM
-					end ITEM,
-					case IC.COD_PRODUCTO
-						when 'T' then null
-						else IC.COD_PRODUCTO
-					end COD_PRODUCTO,
-					case IC.COD_PRODUCTO
-						when 'T' then null
-						else IC.CANTIDAD
-					end CANTIDAD,
-					case IC.COD_PRODUCTO
-						when 'T' then null
-						else IC.PRECIO
-					end PRECIO,
-					case IC.COD_PRODUCTO
-						when 'T' then null
-						else IC.CANTIDAD * IC.PRECIO
-					end TOTAL,
-				CASE
-					WHEN C.MONTO_DSCTO1 = 0 AND C.MONTO_DSCTO2 = 0 THEN 1
-					WHEN C.MONTO_DSCTO1 <> 0 AND C.MONTO_DSCTO2 = 0 THEN 2
-					WHEN C.MONTO_DSCTO1 <> 0 AND C.MONTO_DSCTO2 <> 0 THEN 3
-				END TIPO_DESCUENTOS,
-				C.SUBTOTAL,
-				C.PORC_DSCTO1,
-				C.MONTO_DSCTO1,
-				C.PORC_DSCTO2,
-				C.MONTO_DSCTO2,
-				C.MONTO_DSCTO1 + C.MONTO_DSCTO2 FINAL,
-				C.TOTAL_NETO,
-				C.PORC_IVA,
-				C.MONTO_IVA,
-				C.TOTAL_CON_IVA,
-				C.NOM_FORMA_PAGO_OTRO,
-				FP.NOM_FORMA_PAGO,
-				C.VALIDEZ_OFERTA,
-				C.ENTREGA,
-				C.OBS,
-				EC.NOM_EMBALAJE_COTIZACION,
-				FL.NOM_FLETE_COTIZACION,
-				I.NOM_INSTALACION_COTIZACION,
-				C.GARANTIA,
-				M.SIMBOLO,
-				U.NOM_USUARIO,
-				U.MAIL MAIL_U,
-				U.TELEFONO FONO_U,
-				U.CELULAR CEL_U,
-				U.INI_USUARIO,
-				dbo.f_get_parametro(".self::K_PARAM_NOM_EMPRESA.") NOM_EMPRESA_EMISOR,
-				dbo.f_get_parametro(".self::K_PARAM_RUT_EMPRESA.") RUT_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_GIRO_EMPRESA.") GIRO_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_DIR_EMPRESA.") DIR_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_TEL_EMPRESA.") TEL_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_BANCO.") BANCO,
-				dbo.f_get_parametro(".self::K_PARAM_CTA_CTE.") CTA_CTE,
-				dbo.f_get_parametro(".self::K_PARAM_FAX_EMPRESA.") FAX_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_MAIL_EMPRESA.") MAIL_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_CIUDAD_EMPRESA.") CIUDAD_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_PAIS_EMPRESA.") PAIS_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_SITIO_WEB_EMPRESA.") SITIO_WEB_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_EQUIPO_ESPECIAL.") EQUIPO_ESPECIAL
-				FROM COTIZACION C, EMPRESA E, PERSONA P, ITEM_COTIZACION IC,FORMA_PAGO FP,
-				 INSTALACION_COTIZACION I, FLETE_COTIZACION FL, EMBALAJE_COTIZACION EC,
-				 MONEDA M, USUARIO U, SUCURSAL SF
-				WHERE C.COD_COTIZACION = $cod_cotizacion AND
-				E.COD_EMPRESA = C.COD_EMPRESA AND
-				P.COD_PERSONA = C.COD_PERSONA AND
-				IC.COD_COTIZACION = C.COD_COTIZACION AND
-				FP.COD_FORMA_PAGO = C.COD_FORMA_PAGO AND
-				I.COD_INSTALACION_COTIZACION =C.COD_INSTALACION_COTIZACION AND
-				FL.COD_FLETE_COTIZACION = C.COD_FLETE_COTIZACION AND
-				EC.COD_EMBALAJE_COTIZACION = C.COD_EMBALAJE_COTIZACION AND
-				M.COD_MONEDA = C.COD_MONEDA AND
-				U.COD_USUARIO = C.COD_USUARIO_VENDEDOR1 AND
-				SF.COD_SUCURSAL = C.COD_SUCURSAL_FACTURA
-				order by IC.ORDEN asc";
+        $sql = "SELECT  C.COD_COTIZACION,
+                E.NOM_EMPRESA,
+                E.RUT,
+                E.DIG_VERIF,
+                dbo.f_format_date(C.FECHA_COTIZACION, 3) FECHA_COTIZACION,
+                dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[DIRECCION]') DIRECCION,
+                dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[NOM_COMUNA]') NOM_COMUNA,
+                dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[NOM_CIUDAD]') NOM_CIUDAD,
+                SF.TELEFONO TELEFONO_F,
+                SF.FAX FAX_F,
+                C.REFERENCIA,
+                P.NOM_PERSONA,
+                P.EMAIL,
+                p.TELEFONO,
+                IC.NOM_PRODUCTO,
+                    case IC.COD_PRODUCTO
+                        when 'T' then ''
+                    else IC.ITEM
+                    end ITEM,
+                    case IC.COD_PRODUCTO
+                        when 'T' then null
+                        else IC.COD_PRODUCTO
+                    end COD_PRODUCTO,
+                    case IC.COD_PRODUCTO
+                        when 'T' then null
+                        else IC.CANTIDAD
+                    end CANTIDAD,
+                    case IC.COD_PRODUCTO
+                        when 'T' then null
+                        else IC.PRECIO
+                    end PRECIO,
+                    case IC.COD_PRODUCTO
+                        when 'T' then null
+                        else IC.CANTIDAD * IC.PRECIO
+                    end TOTAL,
+                CASE
+                    WHEN C.MONTO_DSCTO1 = 0 AND C.MONTO_DSCTO2 = 0 THEN 1
+                    WHEN C.MONTO_DSCTO1 <> 0 AND C.MONTO_DSCTO2 = 0 THEN 2
+                    WHEN C.MONTO_DSCTO1 <> 0 AND C.MONTO_DSCTO2 <> 0 THEN 3
+                END TIPO_DESCUENTOS,
+                C.SUBTOTAL,
+                C.PORC_DSCTO1,
+                C.MONTO_DSCTO1,
+                C.PORC_DSCTO2,
+                C.MONTO_DSCTO2,
+                C.MONTO_DSCTO1 + C.MONTO_DSCTO2 FINAL,
+                C.TOTAL_NETO,
+                C.PORC_IVA,
+                C.MONTO_IVA,
+                C.TOTAL_CON_IVA,
+                C.NOM_FORMA_PAGO_OTRO,
+                FP.NOM_FORMA_PAGO,
+                C.VALIDEZ_OFERTA,
+                C.ENTREGA,
+                C.OBS,
+                EC.NOM_EMBALAJE_COTIZACION,
+                FL.NOM_FLETE_COTIZACION,
+                I.NOM_INSTALACION_COTIZACION,
+                C.GARANTIA,
+                M.SIMBOLO,
+                U.NOM_USUARIO,
+                U.MAIL MAIL_U,
+                U.TELEFONO FONO_U,
+                U.CELULAR CEL_U,
+                U.INI_USUARIO,
+                dbo.f_get_parametro(".self::K_PARAM_NOM_EMPRESA.") NOM_EMPRESA_EMISOR,
+                dbo.f_get_parametro(".self::K_PARAM_RUT_EMPRESA.") RUT_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_GIRO_EMPRESA.") GIRO_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_DIR_EMPRESA.") DIR_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_TEL_EMPRESA.") TEL_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_BANCO.") BANCO,
+                dbo.f_get_parametro(".self::K_PARAM_CTA_CTE.") CTA_CTE,
+                dbo.f_get_parametro(".self::K_PARAM_FAX_EMPRESA.") FAX_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_MAIL_EMPRESA.") MAIL_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_CIUDAD_EMPRESA.") CIUDAD_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_PAIS_EMPRESA.") PAIS_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_SITIO_WEB_EMPRESA.") SITIO_WEB_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_EQUIPO_ESPECIAL.") EQUIPO_ESPECIAL
+                FROM COTIZACION C, EMPRESA E, PERSONA P, ITEM_COTIZACION IC,FORMA_PAGO FP,
+                 INSTALACION_COTIZACION I, FLETE_COTIZACION FL, EMBALAJE_COTIZACION EC,
+                 MONEDA M, USUARIO U, SUCURSAL SF
+                WHERE C.COD_COTIZACION = $cod_cotizacion AND
+                E.COD_EMPRESA = C.COD_EMPRESA AND
+                P.COD_PERSONA = C.COD_PERSONA AND
+                IC.COD_COTIZACION = C.COD_COTIZACION AND
+                FP.COD_FORMA_PAGO = C.COD_FORMA_PAGO AND
+                I.COD_INSTALACION_COTIZACION =C.COD_INSTALACION_COTIZACION AND
+                FL.COD_FLETE_COTIZACION = C.COD_FLETE_COTIZACION AND
+                EC.COD_EMBALAJE_COTIZACION = C.COD_EMBALAJE_COTIZACION AND
+                M.COD_MONEDA = C.COD_MONEDA AND
+                U.COD_USUARIO = C.COD_USUARIO_VENDEDOR1 AND
+                SF.COD_SUCURSAL = C.COD_SUCURSAL_FACTURA
+                order by IC.ORDEN asc";
         
         
         // reporte
@@ -1973,100 +1985,100 @@ class wi_cotizacion extends wi_cotizacion_base {
     function printcot_ampliada_pdf($con_logo) {
         $cod_cotizacion = $this->get_key();
         
-        $sql = "SELECT			C.COD_COTIZACION,
-				E.NOM_EMPRESA,
-				E.RUT,
-				E.DIG_VERIF,
-				dbo.f_format_date(C.FECHA_COTIZACION, 3) FECHA_COTIZACION,
-				dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[DIRECCION]') DIRECCION,
-				dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[NOM_COMUNA]') NOM_COMUNA,
-				dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[NOM_CIUDAD]') NOM_CIUDAD,
-				SF.TELEFONO TELEFONO_F,
-				SF.FAX FAX_F,
-				C.REFERENCIA,
-				P.NOM_PERSONA,
-				P.EMAIL,
-				p.TELEFONO,
-				IC.NOM_PRODUCTO,
-				case IC.COD_PRODUCTO
-					when 'T' then ''
-					else IC.ITEM
-				end ITEM,
-				IC.COD_PRODUCTO COD_PRODUCTO_ORIGINAL,
-				case IC.COD_PRODUCTO
-					when 'T' then null
-					else IC.COD_PRODUCTO
-				end COD_PRODUCTO,
-				case IC.COD_PRODUCTO
-					when 'T' then null
-					else IC.CANTIDAD
-				end CANTIDAD,
-				case IC.COD_PRODUCTO
-					when 'T' then null
-					else IC.PRECIO
-				end PRECIO,
-				case IC.COD_PRODUCTO
-					when 'T' then null
-					else IC.CANTIDAD * IC.PRECIO
-				end TOTAL,
-				CASE
-					WHEN C.MONTO_DSCTO1 = 0 AND C.MONTO_DSCTO2 = 0 THEN 1
-					WHEN C.MONTO_DSCTO1 <> 0 AND C.MONTO_DSCTO2 = 0 THEN 2
-					WHEN C.MONTO_DSCTO1 <> 0 AND C.MONTO_DSCTO2 <> 0 THEN 3
-				END TIPO_DESCUENTOS,
-				C.SUBTOTAL,
-				C.PORC_DSCTO1,
-				C.MONTO_DSCTO1,
-				C.PORC_DSCTO2,
-				C.MONTO_DSCTO2,
-				C.MONTO_DSCTO1 + C.MONTO_DSCTO2 FINAL,
-				C.TOTAL_NETO,
-				C.PORC_IVA,
-				C.MONTO_IVA,
-				C.TOTAL_CON_IVA,
-				FP.NOM_FORMA_PAGO,
-				C.VALIDEZ_OFERTA,
-				C.ENTREGA,
-				C.OBS,
-				EC.NOM_EMBALAJE_COTIZACION,
-				FL.NOM_FLETE_COTIZACION,
-				I.NOM_INSTALACION_COTIZACION,
-				C.GARANTIA,
-				M.SIMBOLO,
-				U.NOM_USUARIO,
-				U.MAIL MAIL_U,
-				U.TELEFONO FONO_U,
-				C.NOM_FORMA_PAGO_OTRO,
-				U.CELULAR CEL_U,
-				convert(text, dbo.f_prod_get_atributo(IC.COD_PRODUCTO))  ATRIBUTO_PRODUCTO,
-				dbo.f_get_parametro(".self::K_PARAM_NOM_EMPRESA.") NOM_EMPRESA_EMISOR,
-				dbo.f_get_parametro(".self::K_PARAM_RUT_EMPRESA.") RUT_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_DIR_EMPRESA.") DIR_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_GIRO_EMPRESA.") GIRO_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_TEL_EMPRESA.") TEL_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_BANCO.") BANCO,
-				dbo.f_get_parametro(".self::K_PARAM_CTA_CTE.") CTA_CTE,
-				dbo.f_get_parametro(".self::K_PARAM_FAX_EMPRESA.") FAX_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_MAIL_EMPRESA.") MAIL_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_CIUDAD_EMPRESA.") CIUDAD_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_PAIS_EMPRESA.") PAIS_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_SITIO_WEB_EMPRESA.") SITIO_WEB_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_EQUIPO_ESPECIAL.") EQUIPO_ESPECIAL
-		FROM COTIZACION C, EMPRESA E, PERSONA P, ITEM_COTIZACION IC,FORMA_PAGO FP,
-					 INSTALACION_COTIZACION I, FLETE_COTIZACION FL, EMBALAJE_COTIZACION EC,
-					 MONEDA M, USUARIO U, SUCURSAL SF
-		WHERE C.COD_COTIZACION = $cod_cotizacion AND
-						E.COD_EMPRESA = C.COD_EMPRESA AND
-						P.COD_PERSONA = C.COD_PERSONA AND
-						IC.COD_COTIZACION = C.COD_COTIZACION AND
-						FP.COD_FORMA_PAGO = C.COD_FORMA_PAGO AND
-						I.COD_INSTALACION_COTIZACION =C.COD_INSTALACION_COTIZACION AND
-						FL.COD_FLETE_COTIZACION = C.COD_FLETE_COTIZACION AND
-						EC.COD_EMBALAJE_COTIZACION = C.COD_EMBALAJE_COTIZACION AND
-						M.COD_MONEDA = C.COD_MONEDA AND
-						U.COD_USUARIO = C.COD_USUARIO_VENDEDOR1 AND
-						SF.COD_SUCURSAL = C.COD_SUCURSAL_FACTURA
-						order by IC.ORDEN asc";
+        $sql = "SELECT          C.COD_COTIZACION,
+                E.NOM_EMPRESA,
+                E.RUT,
+                E.DIG_VERIF,
+                dbo.f_format_date(C.FECHA_COTIZACION, 3) FECHA_COTIZACION,
+                dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[DIRECCION]') DIRECCION,
+                dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[NOM_COMUNA]') NOM_COMUNA,
+                dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[NOM_CIUDAD]') NOM_CIUDAD,
+                SF.TELEFONO TELEFONO_F,
+                SF.FAX FAX_F,
+                C.REFERENCIA,
+                P.NOM_PERSONA,
+                P.EMAIL,
+                p.TELEFONO,
+                IC.NOM_PRODUCTO,
+                case IC.COD_PRODUCTO
+                    when 'T' then ''
+                    else IC.ITEM
+                end ITEM,
+                IC.COD_PRODUCTO COD_PRODUCTO_ORIGINAL,
+                case IC.COD_PRODUCTO
+                    when 'T' then null
+                    else IC.COD_PRODUCTO
+                end COD_PRODUCTO,
+                case IC.COD_PRODUCTO
+                    when 'T' then null
+                    else IC.CANTIDAD
+                end CANTIDAD,
+                case IC.COD_PRODUCTO
+                    when 'T' then null
+                    else IC.PRECIO
+                end PRECIO,
+                case IC.COD_PRODUCTO
+                    when 'T' then null
+                    else IC.CANTIDAD * IC.PRECIO
+                end TOTAL,
+                CASE
+                    WHEN C.MONTO_DSCTO1 = 0 AND C.MONTO_DSCTO2 = 0 THEN 1
+                    WHEN C.MONTO_DSCTO1 <> 0 AND C.MONTO_DSCTO2 = 0 THEN 2
+                    WHEN C.MONTO_DSCTO1 <> 0 AND C.MONTO_DSCTO2 <> 0 THEN 3
+                END TIPO_DESCUENTOS,
+                C.SUBTOTAL,
+                C.PORC_DSCTO1,
+                C.MONTO_DSCTO1,
+                C.PORC_DSCTO2,
+                C.MONTO_DSCTO2,
+                C.MONTO_DSCTO1 + C.MONTO_DSCTO2 FINAL,
+                C.TOTAL_NETO,
+                C.PORC_IVA,
+                C.MONTO_IVA,
+                C.TOTAL_CON_IVA,
+                FP.NOM_FORMA_PAGO,
+                C.VALIDEZ_OFERTA,
+                C.ENTREGA,
+                C.OBS,
+                EC.NOM_EMBALAJE_COTIZACION,
+                FL.NOM_FLETE_COTIZACION,
+                I.NOM_INSTALACION_COTIZACION,
+                C.GARANTIA,
+                M.SIMBOLO,
+                U.NOM_USUARIO,
+                U.MAIL MAIL_U,
+                U.TELEFONO FONO_U,
+                C.NOM_FORMA_PAGO_OTRO,
+                U.CELULAR CEL_U,
+                convert(text, dbo.f_prod_get_atributo(IC.COD_PRODUCTO))  ATRIBUTO_PRODUCTO,
+                dbo.f_get_parametro(".self::K_PARAM_NOM_EMPRESA.") NOM_EMPRESA_EMISOR,
+                dbo.f_get_parametro(".self::K_PARAM_RUT_EMPRESA.") RUT_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_DIR_EMPRESA.") DIR_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_GIRO_EMPRESA.") GIRO_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_TEL_EMPRESA.") TEL_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_BANCO.") BANCO,
+                dbo.f_get_parametro(".self::K_PARAM_CTA_CTE.") CTA_CTE,
+                dbo.f_get_parametro(".self::K_PARAM_FAX_EMPRESA.") FAX_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_MAIL_EMPRESA.") MAIL_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_CIUDAD_EMPRESA.") CIUDAD_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_PAIS_EMPRESA.") PAIS_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_SITIO_WEB_EMPRESA.") SITIO_WEB_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_EQUIPO_ESPECIAL.") EQUIPO_ESPECIAL
+        FROM COTIZACION C, EMPRESA E, PERSONA P, ITEM_COTIZACION IC,FORMA_PAGO FP,
+                     INSTALACION_COTIZACION I, FLETE_COTIZACION FL, EMBALAJE_COTIZACION EC,
+                     MONEDA M, USUARIO U, SUCURSAL SF
+        WHERE C.COD_COTIZACION = $cod_cotizacion AND
+                        E.COD_EMPRESA = C.COD_EMPRESA AND
+                        P.COD_PERSONA = C.COD_PERSONA AND
+                        IC.COD_COTIZACION = C.COD_COTIZACION AND
+                        FP.COD_FORMA_PAGO = C.COD_FORMA_PAGO AND
+                        I.COD_INSTALACION_COTIZACION =C.COD_INSTALACION_COTIZACION AND
+                        FL.COD_FLETE_COTIZACION = C.COD_FLETE_COTIZACION AND
+                        EC.COD_EMBALAJE_COTIZACION = C.COD_EMBALAJE_COTIZACION AND
+                        M.COD_MONEDA = C.COD_MONEDA AND
+                        U.COD_USUARIO = C.COD_USUARIO_VENDEDOR1 AND
+                        SF.COD_SUCURSAL = C.COD_SUCURSAL_FACTURA
+                        order by IC.ORDEN asc";
         //reporte
         $labels = array();
         $labels['strCOD_COTIZACION'] = $cod_cotizacion;
@@ -2077,128 +2089,128 @@ class wi_cotizacion extends wi_cotizacion_base {
         $cod_cotizacion = $this->get_key();
         
         $sql= "SELECT C.COD_COTIZACION,
-				E.NOM_EMPRESA,
-				E.RUT,
-				E.DIG_VERIF,
-				dbo.f_format_date(C.FECHA_COTIZACION, 3) FECHA_COTIZACION,
-				dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[DIRECCION]') DIRECCION,
-				dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[NOM_COMUNA]') NOM_COMUNA,
-				dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[NOM_CIUDAD]') NOM_CIUDAD,
-				SF.TELEFONO TELEFONO_F,
-				SF.FAX FAX_F,
-				C.REFERENCIA,
-				P.NOM_PERSONA,
-				P.EMAIL,
-				p.TELEFONO,
-				IC.NOM_PRODUCTO,
-				case IC.COD_PRODUCTO
-					when 'T' then ''
-					else IC.ITEM
-				end ITEM,
-				case IC.COD_PRODUCTO
-					when 'T' then null
-					else IC.COD_PRODUCTO
-				end COD_PRODUCTO,
-				case IC.COD_PRODUCTO
-					when 'T' then null
-					else IC.CANTIDAD
-				end CANTIDAD, ";
+                E.NOM_EMPRESA,
+                E.RUT,
+                E.DIG_VERIF,
+                dbo.f_format_date(C.FECHA_COTIZACION, 3) FECHA_COTIZACION,
+                dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[DIRECCION]') DIRECCION,
+                dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[NOM_COMUNA]') NOM_COMUNA,
+                dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[NOM_CIUDAD]') NOM_CIUDAD,
+                SF.TELEFONO TELEFONO_F,
+                SF.FAX FAX_F,
+                C.REFERENCIA,
+                P.NOM_PERSONA,
+                P.EMAIL,
+                p.TELEFONO,
+                IC.NOM_PRODUCTO,
+                case IC.COD_PRODUCTO
+                    when 'T' then ''
+                    else IC.ITEM
+                end ITEM,
+                case IC.COD_PRODUCTO
+                    when 'T' then null
+                    else IC.COD_PRODUCTO
+                end COD_PRODUCTO,
+                case IC.COD_PRODUCTO
+                    when 'T' then null
+                    else IC.CANTIDAD
+                end CANTIDAD, ";
         $NOM_DOC = '';
         if($embalada == 'noembalada'){
             $NOM_DOC = "PESOS Y MEDIDAS S-EMB COTIZACION $cod_cotizacion";
             
             $sql.= "case PR.COD_PRODUCTO
-						when 'T' then null
-						else PR.LARGO
-					end LARGO,
-					case PR.COD_PRODUCTO
-						when 'T' then null
-						else PR.ANCHO
-					end ANCHO,
-					case PR.COD_PRODUCTO
-						when 'T' then null
-						else PR.ALTO
-					end ALTO,
-					case PR.COD_PRODUCTO
-						when 'T' then null
-						else PR.PESO
-					end PESO,
-					case PR.COD_PRODUCTO
-						when 'T' then null
-						else ((PR.LARGO)*(PR.ANCHO)*(PR.ALTO))/1000000
-					end VOLUMEN,
-					case PR.COD_PRODUCTO
-						when 'T' then null
-						else IC.CANTIDAD * (((PR.LARGO)*(PR.ANCHO)*(PR.ALTO))/1000000)
-					end VOLT,
-					case PR.COD_PRODUCTO
-						when 'T' then null
-						else IC.CANTIDAD * PR.PESO
-					end PESOT,
-					'Especificaciones Equipo sin Embalaje' TITLE_ITEM, ";
+                        when 'T' then null
+                        else PR.LARGO
+                    end LARGO,
+                    case PR.COD_PRODUCTO
+                        when 'T' then null
+                        else PR.ANCHO
+                    end ANCHO,
+                    case PR.COD_PRODUCTO
+                        when 'T' then null
+                        else PR.ALTO
+                    end ALTO,
+                    case PR.COD_PRODUCTO
+                        when 'T' then null
+                        else PR.PESO
+                    end PESO,
+                    case PR.COD_PRODUCTO
+                        when 'T' then null
+                        else ((PR.LARGO)*(PR.ANCHO)*(PR.ALTO))/1000000
+                    end VOLUMEN,
+                    case PR.COD_PRODUCTO
+                        when 'T' then null
+                        else IC.CANTIDAD * (((PR.LARGO)*(PR.ANCHO)*(PR.ALTO))/1000000)
+                    end VOLT,
+                    case PR.COD_PRODUCTO
+                        when 'T' then null
+                        else IC.CANTIDAD * PR.PESO
+                    end PESOT,
+                    'Especificaciones Equipo sin Embalaje' TITLE_ITEM, ";
         }else{
             $NOM_DOC = "PESOS Y MEDIDAS C-EMB COTIZACION $cod_cotizacion";
             
             $sql.= "case PR.COD_PRODUCTO
-						when 'T' then null
-						else PR.LARGO_EMBALADO
-					end LARGO,
-					case PR.COD_PRODUCTO
-						when 'T' then null
-						else PR.ANCHO_EMBALADO
-					end ANCHO,
-					case PR.COD_PRODUCTO
-						when 'T' then null
-						else PR.ALTO_EMBALADO
-					end ALTO,
-					case PR.COD_PRODUCTO
-						when 'T' then null
-						else PR.PESO_EMBALADO
-					end PESO,
-					case PR.COD_PRODUCTO
-						when 'T' then null
-						else ((PR.LARGO_EMBALADO)*(PR.ANCHO_EMBALADO)*(PR.ALTO_EMBALADO))/1000000
-					end VOLUMEN,
-					case PR.COD_PRODUCTO
-						when 'T' then null
-						else IC.CANTIDAD * (((PR.LARGO_EMBALADO)*(PR.ANCHO_EMBALADO)*(PR.ALTO_EMBALADO))/1000000)
-					end VOLT,
-					case PR.COD_PRODUCTO
-						when 'T' then null
-						else IC.CANTIDAD * PR.PESO_EMBALADO
-					end PESOT,
-					'Especificaciones Equipo con Embalaje' TITLE_ITEM, ";
+                        when 'T' then null
+                        else PR.LARGO_EMBALADO
+                    end LARGO,
+                    case PR.COD_PRODUCTO
+                        when 'T' then null
+                        else PR.ANCHO_EMBALADO
+                    end ANCHO,
+                    case PR.COD_PRODUCTO
+                        when 'T' then null
+                        else PR.ALTO_EMBALADO
+                    end ALTO,
+                    case PR.COD_PRODUCTO
+                        when 'T' then null
+                        else PR.PESO_EMBALADO
+                    end PESO,
+                    case PR.COD_PRODUCTO
+                        when 'T' then null
+                        else ((PR.LARGO_EMBALADO)*(PR.ANCHO_EMBALADO)*(PR.ALTO_EMBALADO))/1000000
+                    end VOLUMEN,
+                    case PR.COD_PRODUCTO
+                        when 'T' then null
+                        else IC.CANTIDAD * (((PR.LARGO_EMBALADO)*(PR.ANCHO_EMBALADO)*(PR.ALTO_EMBALADO))/1000000)
+                    end VOLT,
+                    case PR.COD_PRODUCTO
+                        when 'T' then null
+                        else IC.CANTIDAD * PR.PESO_EMBALADO
+                    end PESOT,
+                    'Especificaciones Equipo con Embalaje' TITLE_ITEM, ";
         }
         
         $sql.= "U. NOM_USUARIO,
-				U.MAIL MAIL_U,
-				U.TELEFONO FONO_U,
-				U.CELULAR CEL_U,
-				dbo.f_get_parametro(".self::K_PARAM_NOM_EMPRESA.") NOM_EMPRESA_EMISOR,
-				dbo.f_get_parametro(".self::K_PARAM_RUT_EMPRESA.") RUT_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_DIR_EMPRESA.") DIR_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_GIRO_EMPRESA.") GIRO_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_TEL_EMPRESA.") TEL_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_BANCO.") BANCO,
-				dbo.f_get_parametro(".self::K_PARAM_CTA_CTE.") CTA_CTE,
-				dbo.f_get_parametro(".self::K_PARAM_FAX_EMPRESA.") FAX_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_MAIL_EMPRESA.") MAIL_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_CIUDAD_EMPRESA.") CIUDAD_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_PAIS_EMPRESA.") PAIS_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_SITIO_WEB_EMPRESA.") SITIO_WEB_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_EQUIPO_ESPECIAL.") EQUIPO_ESPECIAL
-		FROM COTIZACION C, EMPRESA E, PERSONA P,
-				ITEM_COTIZACION IC, USUARIO U, PRODUCTO PR,
-				SUCURSAL SF, SUCURSAL SD
-		WHERE C.COD_COTIZACION = $cod_cotizacion AND
-				E.COD_EMPRESA = C.COD_EMPRESA AND
-				P.COD_PERSONA = C.COD_PERSONA AND
-				IC.COD_COTIZACION = C.COD_COTIZACION AND
-				U.COD_USUARIO = C.COD_USUARIO_VENDEDOR1 and
-				SF.COD_SUCURSAL = C.COD_SUCURSAL_FACTURA AND
-				SD.COD_SUCURSAL = C.COD_SUCURSAL_DESPACHO AND
-		    	PR.COD_PRODUCTO = IC.COD_PRODUCTO
-				order by IC.ORDEN asc";
+                U.MAIL MAIL_U,
+                U.TELEFONO FONO_U,
+                U.CELULAR CEL_U,
+                dbo.f_get_parametro(".self::K_PARAM_NOM_EMPRESA.") NOM_EMPRESA_EMISOR,
+                dbo.f_get_parametro(".self::K_PARAM_RUT_EMPRESA.") RUT_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_DIR_EMPRESA.") DIR_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_GIRO_EMPRESA.") GIRO_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_TEL_EMPRESA.") TEL_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_BANCO.") BANCO,
+                dbo.f_get_parametro(".self::K_PARAM_CTA_CTE.") CTA_CTE,
+                dbo.f_get_parametro(".self::K_PARAM_FAX_EMPRESA.") FAX_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_MAIL_EMPRESA.") MAIL_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_CIUDAD_EMPRESA.") CIUDAD_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_PAIS_EMPRESA.") PAIS_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_SITIO_WEB_EMPRESA.") SITIO_WEB_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_EQUIPO_ESPECIAL.") EQUIPO_ESPECIAL
+        FROM COTIZACION C, EMPRESA E, PERSONA P,
+                ITEM_COTIZACION IC, USUARIO U, PRODUCTO PR,
+                SUCURSAL SF, SUCURSAL SD
+        WHERE C.COD_COTIZACION = $cod_cotizacion AND
+                E.COD_EMPRESA = C.COD_EMPRESA AND
+                P.COD_PERSONA = C.COD_PERSONA AND
+                IC.COD_COTIZACION = C.COD_COTIZACION AND
+                U.COD_USUARIO = C.COD_USUARIO_VENDEDOR1 and
+                SF.COD_SUCURSAL = C.COD_SUCURSAL_FACTURA AND
+                SD.COD_SUCURSAL = C.COD_SUCURSAL_DESPACHO AND
+                PR.COD_PRODUCTO = IC.COD_PRODUCTO
+                order by IC.ORDEN asc";
         
         $labels = array();
         $labels['strCOD_COTIZACION'] = $cod_cotizacion;
@@ -2217,20 +2229,20 @@ class wi_cotizacion extends wi_cotizacion_base {
         
         $db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
         $sql = "SELECT ITEM
-					  ,IC.COD_PRODUCTO
-					  ,IC.NOM_PRODUCTO
-					  ,CANTIDAD
-					  ,dbo.number_format(LARGO, 0, ',', '.')+' x '+dbo.number_format(ANCHO, 0, ',', '.')+' x '+dbo.number_format(ALTO, 0, ',', '.') MEDIDAS
-					  ,DIAMETRO_CANERIA GRIFERIA
-					  ,DIAMETRO_DESAGUE DESAGUE
-					  ,CONSUMO_ELECTRICIDAD POTENCIA
-					  ,VOLTAJE
-					  ,POTENCIA_KW
-				FROM ITEM_COTIZACION IC
-					,PRODUCTO P
-				WHERE COD_COTIZACION = $cod_cotizacion
-				AND P.COD_PRODUCTO = IC.COD_PRODUCTO
-				ORDER BY ORDEN";
+                      ,IC.COD_PRODUCTO
+                      ,IC.NOM_PRODUCTO
+                      ,CANTIDAD
+                      ,dbo.number_format(LARGO, 0, ',', '.')+' x '+dbo.number_format(ANCHO, 0, ',', '.')+' x '+dbo.number_format(ALTO, 0, ',', '.') MEDIDAS
+                      ,DIAMETRO_CANERIA GRIFERIA
+                      ,DIAMETRO_DESAGUE DESAGUE
+                      ,CONSUMO_ELECTRICIDAD POTENCIA
+                      ,VOLTAJE
+                      ,POTENCIA_KW
+                FROM ITEM_COTIZACION IC
+                    ,PRODUCTO P
+                WHERE COD_COTIZACION = $cod_cotizacion
+                AND P.COD_PRODUCTO = IC.COD_PRODUCTO
+                ORDER BY ORDEN";
         $res = $db->query($sql);
         
         $worksheet->set_column(0, 0, 10.8);
@@ -2344,11 +2356,11 @@ class wi_cotizacion extends wi_cotizacion_base {
             $worksheet->write(4+$l, 4, $my_row['MEDIDAS'], $text_border_all_center);
             $worksheet->write(4+$l, 5, $my_row['CANTIDAD'], $text_border_all_right);
             
-            $GRIFERIA		= $my_row['GRIFERIA'];
-            $DESAGUE		= $my_row['DESAGUE'];
-            $POTENCIA		= $my_row['POTENCIA'];
-            $VOLTAJE		= $my_row['VOLTAJE'];
-            $POTENCIA_KW	= $my_row['POTENCIA_KW'];
+            $GRIFERIA       = $my_row['GRIFERIA'];
+            $DESAGUE        = $my_row['DESAGUE'];
+            $POTENCIA       = $my_row['POTENCIA'];
+            $VOLTAJE        = $my_row['VOLTAJE'];
+            $POTENCIA_KW    = $my_row['POTENCIA_KW'];
             
             if($GRIFERIA == '')
                 $GRIFERIA = "-";
@@ -2402,53 +2414,53 @@ class wi_cotizacion extends wi_cotizacion_base {
         $db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
         
         $sql = "SELECT dbo.f_format_date(GETDATE(), 3) FECHA_ACTUAL,
-					  REFERENCIA,
-					  U.NOM_USUARIO,
-					  U.MAIL MAIL_U,
-					  U.TELEFONO FONO_U,
-					  U.CELULAR CEL_U,
-					  dbo.f_get_parametro(".self::K_PARAM_NOM_EMPRESA.") NOM_EMPRESA_EMISOR,
-					  dbo.f_get_parametro(".self::K_PARAM_RUT_EMPRESA.") RUT_EMPRESA,
-					  dbo.f_get_parametro(".self::K_PARAM_DIR_EMPRESA.") DIR_EMPRESA,
-					  dbo.f_get_parametro(".self::K_PARAM_TEL_EMPRESA.") TEL_EMPRESA,
-					  dbo.f_get_parametro(".self::K_PARAM_FAX_EMPRESA.") FAX_EMPRESA,
-					  dbo.f_get_parametro(".self::K_PARAM_MAIL_EMPRESA.") MAIL_EMPRESA,
-					  dbo.f_get_parametro(".self::K_PARAM_CIUDAD_EMPRESA.") CIUDAD_EMPRESA,
-					  dbo.f_get_parametro(".self::K_PARAM_PAIS_EMPRESA.") PAIS_EMPRESA,
-					  dbo.f_get_parametro(".self::K_PARAM_SITIO_WEB_EMPRESA.") SITIO_WEB_EMPRESA,
-					  dbo.f_get_parametro(".self::K_PARAM_EQUIPO_ESPECIAL.") EQUIPO_ESPECIAL,
-					  OBS
-				FROM COTIZACION C
-					,USUARIO U
-				WHERE COD_COTIZACION = ".$this->get_key();
+                      REFERENCIA,
+                      U.NOM_USUARIO,
+                      U.MAIL MAIL_U,
+                      U.TELEFONO FONO_U,
+                      U.CELULAR CEL_U,
+                      dbo.f_get_parametro(".self::K_PARAM_NOM_EMPRESA.") NOM_EMPRESA_EMISOR,
+                      dbo.f_get_parametro(".self::K_PARAM_RUT_EMPRESA.") RUT_EMPRESA,
+                      dbo.f_get_parametro(".self::K_PARAM_DIR_EMPRESA.") DIR_EMPRESA,
+                      dbo.f_get_parametro(".self::K_PARAM_TEL_EMPRESA.") TEL_EMPRESA,
+                      dbo.f_get_parametro(".self::K_PARAM_FAX_EMPRESA.") FAX_EMPRESA,
+                      dbo.f_get_parametro(".self::K_PARAM_MAIL_EMPRESA.") MAIL_EMPRESA,
+                      dbo.f_get_parametro(".self::K_PARAM_CIUDAD_EMPRESA.") CIUDAD_EMPRESA,
+                      dbo.f_get_parametro(".self::K_PARAM_PAIS_EMPRESA.") PAIS_EMPRESA,
+                      dbo.f_get_parametro(".self::K_PARAM_SITIO_WEB_EMPRESA.") SITIO_WEB_EMPRESA,
+                      dbo.f_get_parametro(".self::K_PARAM_EQUIPO_ESPECIAL.") EQUIPO_ESPECIAL,
+                      OBS
+                FROM COTIZACION C
+                    ,USUARIO U
+                WHERE COD_COTIZACION = ".$this->get_key();
         $result = $db->build_results($sql);
         
-        $FECHA_ACTUAL		= $result[0]['FECHA_ACTUAL'];
-        $REFERENCIA			= $result[0]['REFERENCIA'];
-        $OBS				= $result[0]['OBS'];
-        $NOM_USUARIO		= $result[0]['NOM_USUARIO'];
-        $MAIL_U				= $result[0]['MAIL_U'];
-        $FONO_U				= $result[0]['FONO_U'];
-        $CEL_U				= $result[0]['CEL_U'];
-        $NOM_EMPRESA_EMISOR	= $result[0]['NOM_EMPRESA_EMISOR'];
-        $RUT_EMPRESA 		= $result[0]['RUT_EMPRESA'];
-        $DIR_EMPRESA 		= $result[0]['DIR_EMPRESA'];
-        $CIUDAD_EMPRESA 	= $result[0]['CIUDAD_EMPRESA'];
-        $PAIS_EMPRESA 		= $result[0]['PAIS_EMPRESA'];
-        $TEL_EMPRESA 		= $result[0]['TEL_EMPRESA'];
-        $FAX_EMPRESA 		= $result[0]['FAX_EMPRESA'];
-        $MAIL_EMPRESA 		= $result[0]['MAIL_EMPRESA'];
-        $SITIO_WEB_EMPRESA	= $result[0]['SITIO_WEB_EMPRESA'];
+        $FECHA_ACTUAL       = $result[0]['FECHA_ACTUAL'];
+        $REFERENCIA         = $result[0]['REFERENCIA'];
+        $OBS                = $result[0]['OBS'];
+        $NOM_USUARIO        = $result[0]['NOM_USUARIO'];
+        $MAIL_U             = $result[0]['MAIL_U'];
+        $FONO_U             = $result[0]['FONO_U'];
+        $CEL_U              = $result[0]['CEL_U'];
+        $NOM_EMPRESA_EMISOR = $result[0]['NOM_EMPRESA_EMISOR'];
+        $RUT_EMPRESA        = $result[0]['RUT_EMPRESA'];
+        $DIR_EMPRESA        = $result[0]['DIR_EMPRESA'];
+        $CIUDAD_EMPRESA     = $result[0]['CIUDAD_EMPRESA'];
+        $PAIS_EMPRESA       = $result[0]['PAIS_EMPRESA'];
+        $TEL_EMPRESA        = $result[0]['TEL_EMPRESA'];
+        $FAX_EMPRESA        = $result[0]['FAX_EMPRESA'];
+        $MAIL_EMPRESA       = $result[0]['MAIL_EMPRESA'];
+        $SITIO_WEB_EMPRESA  = $result[0]['SITIO_WEB_EMPRESA'];
         
         $sql = "SELECT ITEM
-					  ,IC.COD_PRODUCTO
-					  ,IC.NOM_PRODUCTO
-					  ,IC.CANTIDAD
-				FROM ITEM_COTIZACION IC
-					,PRODUCTO P
-				WHERE COD_COTIZACION = $cod_cotizacion
-				AND P.COD_PRODUCTO = IC.COD_PRODUCTO
-				ORDER BY ORDEN";
+                      ,IC.COD_PRODUCTO
+                      ,IC.NOM_PRODUCTO
+                      ,IC.CANTIDAD
+                FROM ITEM_COTIZACION IC
+                    ,PRODUCTO P
+                WHERE COD_COTIZACION = $cod_cotizacion
+                AND P.COD_PRODUCTO = IC.COD_PRODUCTO
+                ORDER BY ORDEN";
         $res = $db->query($sql);
         
         $worksheet->set_row(0, 60);
@@ -2646,11 +2658,11 @@ class wi_cotizacion extends wi_cotizacion_base {
         $sql = "exec spr_cot_tecnica $cod_cotizacion, 'GAS', '$con_total_consumo'";
         //reporte
         $db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
-        $sql_c = 	"select ISNULL(SUM(IC.CANTIDAD * P.POTENCIA), 0) TOTAL_CONSUMO_GAS
-					from PRODUCTO P
-						,ITEM_COTIZACION IC
-					WHERE IC.COD_COTIZACION = $cod_cotizacion
-					AND P.COD_PRODUCTO = IC.COD_PRODUCTO";
+        $sql_c =    "select ISNULL(SUM(IC.CANTIDAD * P.POTENCIA), 0) TOTAL_CONSUMO_GAS
+                    from PRODUCTO P
+                        ,ITEM_COTIZACION IC
+                    WHERE IC.COD_COTIZACION = $cod_cotizacion
+                    AND P.COD_PRODUCTO = IC.COD_PRODUCTO";
         $result = $db->build_results($sql_c);
         
         $labels = array();
@@ -2712,90 +2724,90 @@ class wi_cotizacion extends wi_cotizacion_base {
         $worksheet = &$workbook->addworksheet('COTIZACION_'.$cod_cotizacion);
         
         $db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
-        $sql = "SELECT	C.COD_COTIZACION,
-				E.NOM_EMPRESA,
-				E.RUT,
-				E.DIG_VERIF,
-				dbo.f_format_date(getdate(), 3) FECHA_IMPRESO,
-				dbo.f_format_date(C.FECHA_COTIZACION, 3) FECHA_COTIZACION,
-				dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[DIRECCION]') DIRECCION,
-				dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[NOM_COMUNA]') NOM_COMUNA,
-				dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[NOM_CIUDAD]') NOM_CIUDAD,
-				SF.TELEFONO TELEFONO_F,
-				SF.FAX FAX_F,
-				C.REFERENCIA,
-				P.NOM_PERSONA,
-				P.EMAIL,
-				p.TELEFONO,
-				IC.NOM_PRODUCTO,
-					case IC.COD_PRODUCTO
-						when 'T' then ''
-					else IC.ITEM
-					end ITEM,
-					case IC.COD_PRODUCTO
-						when 'T' then null
-						else IC.COD_PRODUCTO
-					end COD_PRODUCTO,
-					case IC.COD_PRODUCTO
-						when 'T' then null
-						else IC.CANTIDAD
-					end CANTIDAD,
-					case IC.COD_PRODUCTO
-						when 'T' then null
-						else IC.PRECIO
-					end PRECIO,
-					case IC.COD_PRODUCTO
-						when 'T' then null
-						else IC.CANTIDAD * IC.PRECIO
-					end TOTAL,
-				C.SUBTOTAL,
-				C.PORC_DSCTO1,
-				C.MONTO_DSCTO1,
-				C.PORC_DSCTO2,
-				C.MONTO_DSCTO2,
-				C.MONTO_DSCTO1 + C.MONTO_DSCTO2 FINAL,
-				C.TOTAL_NETO,
-				C.PORC_IVA,
-				C.MONTO_IVA,
-				C.TOTAL_CON_IVA,
-				FP.NOM_FORMA_PAGO,
-				C.VALIDEZ_OFERTA,
-				C.ENTREGA,
-				C.OBS,
-				EC.NOM_EMBALAJE_COTIZACION,
-				FL.NOM_FLETE_COTIZACION,
-				I.NOM_INSTALACION_COTIZACION,
-				C.GARANTIA,
-				M.SIMBOLO,
-				U.NOM_USUARIO,
-				U.MAIL MAIL_U,
-				U.TELEFONO FONO_U,
-				U.CELULAR CEL_U,
-				dbo.f_get_parametro(".self::K_PARAM_NOM_EMPRESA.") NOM_EMPRESA_EMISOR,
-				dbo.f_get_parametro(".self::K_PARAM_RUT_EMPRESA.") RUT_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_DIR_EMPRESA.") DIR_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_TEL_EMPRESA.") TEL_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_FAX_EMPRESA.") FAX_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_MAIL_EMPRESA.") MAIL_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_CIUDAD_EMPRESA.") CIUDAD_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_PAIS_EMPRESA.") PAIS_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_SITIO_WEB_EMPRESA.") SITIO_WEB_EMPRESA,
-				dbo.f_get_parametro(".self::K_PARAM_EQUIPO_ESPECIAL.") EQUIPO_ESPECIAL
-			FROM COTIZACION C, EMPRESA E, PERSONA P, ITEM_COTIZACION IC,FORMA_PAGO FP,
-				 INSTALACION_COTIZACION I, FLETE_COTIZACION FL, EMBALAJE_COTIZACION EC,
-				 MONEDA M, USUARIO U, SUCURSAL SF
-			WHERE C.COD_COTIZACION = $cod_cotizacion AND
-				E.COD_EMPRESA = C.COD_EMPRESA AND
-				P.COD_PERSONA = C.COD_PERSONA AND
-				IC.COD_COTIZACION = C.COD_COTIZACION AND
-				FP.COD_FORMA_PAGO = C.COD_FORMA_PAGO AND
-				I.COD_INSTALACION_COTIZACION =C.COD_INSTALACION_COTIZACION AND
-				FL.COD_FLETE_COTIZACION = C.COD_FLETE_COTIZACION AND
-				EC.COD_EMBALAJE_COTIZACION = C.COD_EMBALAJE_COTIZACION AND
-				M.COD_MONEDA = C.COD_MONEDA AND
-				U.COD_USUARIO = C.COD_USUARIO_VENDEDOR1 AND
-				SF.COD_SUCURSAL = C.COD_SUCURSAL_FACTURA
-				order by IC.ORDEN asc";
+        $sql = "SELECT  C.COD_COTIZACION,
+                E.NOM_EMPRESA,
+                E.RUT,
+                E.DIG_VERIF,
+                dbo.f_format_date(getdate(), 3) FECHA_IMPRESO,
+                dbo.f_format_date(C.FECHA_COTIZACION, 3) FECHA_COTIZACION,
+                dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[DIRECCION]') DIRECCION,
+                dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[NOM_COMUNA]') NOM_COMUNA,
+                dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[NOM_CIUDAD]') NOM_CIUDAD,
+                SF.TELEFONO TELEFONO_F,
+                SF.FAX FAX_F,
+                C.REFERENCIA,
+                P.NOM_PERSONA,
+                P.EMAIL,
+                p.TELEFONO,
+                IC.NOM_PRODUCTO,
+                    case IC.COD_PRODUCTO
+                        when 'T' then ''
+                    else IC.ITEM
+                    end ITEM,
+                    case IC.COD_PRODUCTO
+                        when 'T' then null
+                        else IC.COD_PRODUCTO
+                    end COD_PRODUCTO,
+                    case IC.COD_PRODUCTO
+                        when 'T' then null
+                        else IC.CANTIDAD
+                    end CANTIDAD,
+                    case IC.COD_PRODUCTO
+                        when 'T' then null
+                        else IC.PRECIO
+                    end PRECIO,
+                    case IC.COD_PRODUCTO
+                        when 'T' then null
+                        else IC.CANTIDAD * IC.PRECIO
+                    end TOTAL,
+                C.SUBTOTAL,
+                C.PORC_DSCTO1,
+                C.MONTO_DSCTO1,
+                C.PORC_DSCTO2,
+                C.MONTO_DSCTO2,
+                C.MONTO_DSCTO1 + C.MONTO_DSCTO2 FINAL,
+                C.TOTAL_NETO,
+                C.PORC_IVA,
+                C.MONTO_IVA,
+                C.TOTAL_CON_IVA,
+                FP.NOM_FORMA_PAGO,
+                C.VALIDEZ_OFERTA,
+                C.ENTREGA,
+                C.OBS,
+                EC.NOM_EMBALAJE_COTIZACION,
+                FL.NOM_FLETE_COTIZACION,
+                I.NOM_INSTALACION_COTIZACION,
+                C.GARANTIA,
+                M.SIMBOLO,
+                U.NOM_USUARIO,
+                U.MAIL MAIL_U,
+                U.TELEFONO FONO_U,
+                U.CELULAR CEL_U,
+                dbo.f_get_parametro(".self::K_PARAM_NOM_EMPRESA.") NOM_EMPRESA_EMISOR,
+                dbo.f_get_parametro(".self::K_PARAM_RUT_EMPRESA.") RUT_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_DIR_EMPRESA.") DIR_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_TEL_EMPRESA.") TEL_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_FAX_EMPRESA.") FAX_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_MAIL_EMPRESA.") MAIL_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_CIUDAD_EMPRESA.") CIUDAD_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_PAIS_EMPRESA.") PAIS_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_SITIO_WEB_EMPRESA.") SITIO_WEB_EMPRESA,
+                dbo.f_get_parametro(".self::K_PARAM_EQUIPO_ESPECIAL.") EQUIPO_ESPECIAL
+            FROM COTIZACION C, EMPRESA E, PERSONA P, ITEM_COTIZACION IC,FORMA_PAGO FP,
+                 INSTALACION_COTIZACION I, FLETE_COTIZACION FL, EMBALAJE_COTIZACION EC,
+                 MONEDA M, USUARIO U, SUCURSAL SF
+            WHERE C.COD_COTIZACION = $cod_cotizacion AND
+                E.COD_EMPRESA = C.COD_EMPRESA AND
+                P.COD_PERSONA = C.COD_PERSONA AND
+                IC.COD_COTIZACION = C.COD_COTIZACION AND
+                FP.COD_FORMA_PAGO = C.COD_FORMA_PAGO AND
+                I.COD_INSTALACION_COTIZACION =C.COD_INSTALACION_COTIZACION AND
+                FL.COD_FLETE_COTIZACION = C.COD_FLETE_COTIZACION AND
+                EC.COD_EMBALAJE_COTIZACION = C.COD_EMBALAJE_COTIZACION AND
+                M.COD_MONEDA = C.COD_MONEDA AND
+                U.COD_USUARIO = C.COD_USUARIO_VENDEDOR1 AND
+                SF.COD_SUCURSAL = C.COD_SUCURSAL_FACTURA
+                order by IC.ORDEN asc";
         
         $result = $db->build_results($sql);
         
@@ -3467,93 +3479,93 @@ class wi_cotizacion extends wi_cotizacion_base {
         $worksheet = &$workbook->addworksheet('COTIZACION_'.$cod_cotizacion);
         
         $db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
-        $sql = "SELECT	C.COD_COTIZACION,
-						IC.COD_ITEM_COTIZACION,
-						E.NOM_EMPRESA,
-						E.RUT,
-						E.DIG_VERIF,
-						dbo.f_format_date(getdate(), 3) FECHA_IMPRESO,
-						dbo.f_format_date(C.FECHA_COTIZACION, 3) FECHA_COTIZACION,
-						dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[DIRECCION]') DIRECCION,
-						dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[NOM_COMUNA]') NOM_COMUNA,
-						dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[NOM_CIUDAD]') NOM_CIUDAD,
-						SF.TELEFONO TELEFONO_F,
-						SF.FAX FAX_F,
-						C.REFERENCIA,
-						P.NOM_PERSONA,
-						P.EMAIL,
-						p.TELEFONO,
-						IC.NOM_PRODUCTO,
-						case IC.COD_PRODUCTO
-							when 'T' then ''
-							else IC.ITEM
-						end ITEM,
-						IC.COD_PRODUCTO COD_PRODUCTO_ORIGINAL,
-						case IC.COD_PRODUCTO
-							when 'T' then null
-							else IC.COD_PRODUCTO
-						end COD_PRODUCTO,
-						case IC.COD_PRODUCTO
-							when 'T' then null
-							else IC.CANTIDAD
-						end CANTIDAD,
-						case IC.COD_PRODUCTO
-							when 'T' then null
-							else IC.PRECIO
-						end PRECIO,
-						case IC.COD_PRODUCTO
-							when 'T' then null
-							else IC.CANTIDAD * IC.PRECIO
-						end TOTAL,
-						C.SUBTOTAL,
-						C.PORC_DSCTO1,
-						C.MONTO_DSCTO1,
-						C.PORC_DSCTO2,
-						C.MONTO_DSCTO2,
-						C.MONTO_DSCTO1 + C.MONTO_DSCTO2 FINAL,
-						C.TOTAL_NETO,
-						C.PORC_IVA,
-						C.MONTO_IVA,
-						C.TOTAL_CON_IVA,
-						FP.NOM_FORMA_PAGO,
-						C.VALIDEZ_OFERTA,
-						C.ENTREGA,
-						C.OBS,
-						EC.NOM_EMBALAJE_COTIZACION,
-						FL.NOM_FLETE_COTIZACION,
-						I.NOM_INSTALACION_COTIZACION,
-						C.GARANTIA,
-						M.SIMBOLO,
-						U.NOM_USUARIO,
-						U.MAIL MAIL_U,
-						U.TELEFONO FONO_U,
-						U.CELULAR CEL_U,
-						IC.COD_PRODUCTO,
-						dbo.f_get_parametro(".self::K_PARAM_NOM_EMPRESA.") NOM_EMPRESA_EMISOR,
-						dbo.f_get_parametro(".self::K_PARAM_RUT_EMPRESA.") RUT_EMPRESA,
-						dbo.f_get_parametro(".self::K_PARAM_DIR_EMPRESA.") DIR_EMPRESA,
-						dbo.f_get_parametro(".self::K_PARAM_TEL_EMPRESA.") TEL_EMPRESA,
-						dbo.f_get_parametro(".self::K_PARAM_FAX_EMPRESA.") FAX_EMPRESA,
-						dbo.f_get_parametro(".self::K_PARAM_MAIL_EMPRESA.") MAIL_EMPRESA,
-						dbo.f_get_parametro(".self::K_PARAM_CIUDAD_EMPRESA.") CIUDAD_EMPRESA,
-						dbo.f_get_parametro(".self::K_PARAM_PAIS_EMPRESA.") PAIS_EMPRESA,
-						dbo.f_get_parametro(".self::K_PARAM_SITIO_WEB_EMPRESA.") SITIO_WEB_EMPRESA,
-						dbo.f_get_parametro(".self::K_PARAM_EQUIPO_ESPECIAL.") EQUIPO_ESPECIAL
-		FROM COTIZACION C, EMPRESA E, PERSONA P, ITEM_COTIZACION IC,FORMA_PAGO FP,
-							 INSTALACION_COTIZACION I, FLETE_COTIZACION FL, EMBALAJE_COTIZACION EC,
-							 MONEDA M, USUARIO U, SUCURSAL SF
-				WHERE C.COD_COTIZACION = $cod_cotizacion AND
-								E.COD_EMPRESA = C.COD_EMPRESA AND
-								P.COD_PERSONA = C.COD_PERSONA AND
-								IC.COD_COTIZACION = C.COD_COTIZACION AND
-								FP.COD_FORMA_PAGO = C.COD_FORMA_PAGO AND
-								I.COD_INSTALACION_COTIZACION =C.COD_INSTALACION_COTIZACION AND
-								FL.COD_FLETE_COTIZACION = C.COD_FLETE_COTIZACION AND
-								EC.COD_EMBALAJE_COTIZACION = C.COD_EMBALAJE_COTIZACION AND
-								M.COD_MONEDA = C.COD_MONEDA AND
-								U.COD_USUARIO = C.COD_USUARIO_VENDEDOR1 AND
-								SF.COD_SUCURSAL = C.COD_SUCURSAL_FACTURA
-								order by IC.ORDEN asc";
+        $sql = "SELECT  C.COD_COTIZACION,
+                        IC.COD_ITEM_COTIZACION,
+                        E.NOM_EMPRESA,
+                        E.RUT,
+                        E.DIG_VERIF,
+                        dbo.f_format_date(getdate(), 3) FECHA_IMPRESO,
+                        dbo.f_format_date(C.FECHA_COTIZACION, 3) FECHA_COTIZACION,
+                        dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[DIRECCION]') DIRECCION,
+                        dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[NOM_COMUNA]') NOM_COMUNA,
+                        dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[NOM_CIUDAD]') NOM_CIUDAD,
+                        SF.TELEFONO TELEFONO_F,
+                        SF.FAX FAX_F,
+                        C.REFERENCIA,
+                        P.NOM_PERSONA,
+                        P.EMAIL,
+                        p.TELEFONO,
+                        IC.NOM_PRODUCTO,
+                        case IC.COD_PRODUCTO
+                            when 'T' then ''
+                            else IC.ITEM
+                        end ITEM,
+                        IC.COD_PRODUCTO COD_PRODUCTO_ORIGINAL,
+                        case IC.COD_PRODUCTO
+                            when 'T' then null
+                            else IC.COD_PRODUCTO
+                        end COD_PRODUCTO,
+                        case IC.COD_PRODUCTO
+                            when 'T' then null
+                            else IC.CANTIDAD
+                        end CANTIDAD,
+                        case IC.COD_PRODUCTO
+                            when 'T' then null
+                            else IC.PRECIO
+                        end PRECIO,
+                        case IC.COD_PRODUCTO
+                            when 'T' then null
+                            else IC.CANTIDAD * IC.PRECIO
+                        end TOTAL,
+                        C.SUBTOTAL,
+                        C.PORC_DSCTO1,
+                        C.MONTO_DSCTO1,
+                        C.PORC_DSCTO2,
+                        C.MONTO_DSCTO2,
+                        C.MONTO_DSCTO1 + C.MONTO_DSCTO2 FINAL,
+                        C.TOTAL_NETO,
+                        C.PORC_IVA,
+                        C.MONTO_IVA,
+                        C.TOTAL_CON_IVA,
+                        FP.NOM_FORMA_PAGO,
+                        C.VALIDEZ_OFERTA,
+                        C.ENTREGA,
+                        C.OBS,
+                        EC.NOM_EMBALAJE_COTIZACION,
+                        FL.NOM_FLETE_COTIZACION,
+                        I.NOM_INSTALACION_COTIZACION,
+                        C.GARANTIA,
+                        M.SIMBOLO,
+                        U.NOM_USUARIO,
+                        U.MAIL MAIL_U,
+                        U.TELEFONO FONO_U,
+                        U.CELULAR CEL_U,
+                        IC.COD_PRODUCTO,
+                        dbo.f_get_parametro(".self::K_PARAM_NOM_EMPRESA.") NOM_EMPRESA_EMISOR,
+                        dbo.f_get_parametro(".self::K_PARAM_RUT_EMPRESA.") RUT_EMPRESA,
+                        dbo.f_get_parametro(".self::K_PARAM_DIR_EMPRESA.") DIR_EMPRESA,
+                        dbo.f_get_parametro(".self::K_PARAM_TEL_EMPRESA.") TEL_EMPRESA,
+                        dbo.f_get_parametro(".self::K_PARAM_FAX_EMPRESA.") FAX_EMPRESA,
+                        dbo.f_get_parametro(".self::K_PARAM_MAIL_EMPRESA.") MAIL_EMPRESA,
+                        dbo.f_get_parametro(".self::K_PARAM_CIUDAD_EMPRESA.") CIUDAD_EMPRESA,
+                        dbo.f_get_parametro(".self::K_PARAM_PAIS_EMPRESA.") PAIS_EMPRESA,
+                        dbo.f_get_parametro(".self::K_PARAM_SITIO_WEB_EMPRESA.") SITIO_WEB_EMPRESA,
+                        dbo.f_get_parametro(".self::K_PARAM_EQUIPO_ESPECIAL.") EQUIPO_ESPECIAL
+        FROM COTIZACION C, EMPRESA E, PERSONA P, ITEM_COTIZACION IC,FORMA_PAGO FP,
+                             INSTALACION_COTIZACION I, FLETE_COTIZACION FL, EMBALAJE_COTIZACION EC,
+                             MONEDA M, USUARIO U, SUCURSAL SF
+                WHERE C.COD_COTIZACION = $cod_cotizacion AND
+                                E.COD_EMPRESA = C.COD_EMPRESA AND
+                                P.COD_PERSONA = C.COD_PERSONA AND
+                                IC.COD_COTIZACION = C.COD_COTIZACION AND
+                                FP.COD_FORMA_PAGO = C.COD_FORMA_PAGO AND
+                                I.COD_INSTALACION_COTIZACION =C.COD_INSTALACION_COTIZACION AND
+                                FL.COD_FLETE_COTIZACION = C.COD_FLETE_COTIZACION AND
+                                EC.COD_EMBALAJE_COTIZACION = C.COD_EMBALAJE_COTIZACION AND
+                                M.COD_MONEDA = C.COD_MONEDA AND
+                                U.COD_USUARIO = C.COD_USUARIO_VENDEDOR1 AND
+                                SF.COD_SUCURSAL = C.COD_SUCURSAL_FACTURA
+                                order by IC.ORDEN asc";
         
         $result = $db->build_results($sql);
         
@@ -3900,14 +3912,14 @@ class wi_cotizacion extends wi_cotizacion_base {
             
             if ($COD_PRODUCTO == 'TE'){
                 $sql_atr = "select MOTIVO_TE NOM_ATRIBUTO_PRODUCTO
-							from ITEM_COTIZACION
-							where COD_PRODUCTO = 'TE'
-							and COD_COTIZACION =$cod_cotizacion
-							and COD_ITEM_COTIZACION = $COD_ITEM_COTIZACION";
+                            from ITEM_COTIZACION
+                            where COD_PRODUCTO = 'TE'
+                            and COD_COTIZACION =$cod_cotizacion
+                            and COD_ITEM_COTIZACION = $COD_ITEM_COTIZACION";
             }else{
                 $sql_atr = "SELECT NOM_ATRIBUTO_PRODUCTO
-						FROM ATRIBUTO_PRODUCTO
-						WHERE COD_PRODUCTO = '$COD_PRODUCTO'";
+                        FROM ATRIBUTO_PRODUCTO
+                        WHERE COD_PRODUCTO = '$COD_PRODUCTO'";
             }
             
             $db_2 = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
@@ -4054,7 +4066,7 @@ class wi_cotizacion extends wi_cotizacion_base {
             if((($MONTO_DSCTO1 > 0)&($MONTO_DSCTO2 == 0)) ||
                 (($MONTO_DSCTO2 > 0)&($MONTO_DSCTO1 == 0))){
                     $margen_dscto = 2;
-                    /*	$worksheet->write($row_position, 7+$margen_dscto, "Subtotal ", $border_item_left);
+                    /*  $worksheet->write($row_position, 7+$margen_dscto, "Subtotal ", $border_item_left);
                      $worksheet->write($row_position, 9+$margen_dscto, $SIMBOLO, $text_normal_right);
                      $worksheet->write($row_position, 10+$margen_dscto, $SUBTOTAL, $monto_normal);
                      
@@ -4263,125 +4275,125 @@ class wi_cotizacion extends wi_cotizacion_base {
         
         $db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
         $sql = "SELECT C.COD_COTIZACION,
-					E.NOM_EMPRESA,
-					E.RUT,
-					E.DIG_VERIF,
-					dbo.f_format_date(getdate(), 3) FECHA_IMPRESO,
-					dbo.f_format_date(C.FECHA_COTIZACION, 3) FECHA_COTIZACION,
-					dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[DIRECCION]') DIRECCION,
-					dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[NOM_COMUNA]') NOM_COMUNA,
-					dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[NOM_CIUDAD]') NOM_CIUDAD,
-					SF.TELEFONO TELEFONO_F,
-					SF.FAX FAX_F,
-					C.REFERENCIA,
-					P.NOM_PERSONA,
-					P.EMAIL,
-					p.TELEFONO,
-					IC.NOM_PRODUCTO,
-					case IC.COD_PRODUCTO
-						when 'T' then ''
-						else IC.ITEM
-					end ITEM,
-					case IC.COD_PRODUCTO
-						when 'T' then null
-						else IC.COD_PRODUCTO
-					end COD_PRODUCTO,
-					case IC.COD_PRODUCTO
-						when 'T' then null
-						else IC.CANTIDAD
-					end CANTIDAD,";
+                    E.NOM_EMPRESA,
+                    E.RUT,
+                    E.DIG_VERIF,
+                    dbo.f_format_date(getdate(), 3) FECHA_IMPRESO,
+                    dbo.f_format_date(C.FECHA_COTIZACION, 3) FECHA_COTIZACION,
+                    dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[DIRECCION]') DIRECCION,
+                    dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[NOM_COMUNA]') NOM_COMUNA,
+                    dbo.f_get_direccion('SUCURSAL', C.COD_SUCURSAL_FACTURA, '[NOM_CIUDAD]') NOM_CIUDAD,
+                    SF.TELEFONO TELEFONO_F,
+                    SF.FAX FAX_F,
+                    C.REFERENCIA,
+                    P.NOM_PERSONA,
+                    P.EMAIL,
+                    p.TELEFONO,
+                    IC.NOM_PRODUCTO,
+                    case IC.COD_PRODUCTO
+                        when 'T' then ''
+                        else IC.ITEM
+                    end ITEM,
+                    case IC.COD_PRODUCTO
+                        when 'T' then null
+                        else IC.COD_PRODUCTO
+                    end COD_PRODUCTO,
+                    case IC.COD_PRODUCTO
+                        when 'T' then null
+                        else IC.CANTIDAD
+                    end CANTIDAD,";
         $NOM_DOC = '';
         if($embalada == 'noembalada'){
             $NOM_DOC = "PESOS Y MEDIDAS S-EMB COTIZACION $cod_cotizacion";
             
             $sql.= "case PR.COD_PRODUCTO
-							when 'T' then null
-							else PR.LARGO
-						end LARGO,
-						case PR.COD_PRODUCTO
-							when 'T' then null
-							else PR.ANCHO
-						end ANCHO,
-						case PR.COD_PRODUCTO
-							when 'T' then null
-							else PR.ALTO
-						end ALTO,
-						case PR.COD_PRODUCTO
-							when 'T' then null
-							else PR.PESO
-						end PESO,
-						case PR.COD_PRODUCTO
-							when 'T' then null
-							else ((PR.LARGO)*(PR.ANCHO)*(PR.ALTO))/1000000
-						end VOLUMEN,
-						case PR.COD_PRODUCTO
-							when 'T' then null
-							else IC.CANTIDAD * (((PR.LARGO)*(PR.ANCHO)*(PR.ALTO))/1000000)
-						end VOLT,
-						case PR.COD_PRODUCTO
-							when 'T' then null
-							else IC.CANTIDAD * PR.PESO
-						end PESOT,
-						'Especificaciones Equipo sin Embalaje' TITLE_ITEM, ";
+                            when 'T' then null
+                            else PR.LARGO
+                        end LARGO,
+                        case PR.COD_PRODUCTO
+                            when 'T' then null
+                            else PR.ANCHO
+                        end ANCHO,
+                        case PR.COD_PRODUCTO
+                            when 'T' then null
+                            else PR.ALTO
+                        end ALTO,
+                        case PR.COD_PRODUCTO
+                            when 'T' then null
+                            else PR.PESO
+                        end PESO,
+                        case PR.COD_PRODUCTO
+                            when 'T' then null
+                            else ((PR.LARGO)*(PR.ANCHO)*(PR.ALTO))/1000000
+                        end VOLUMEN,
+                        case PR.COD_PRODUCTO
+                            when 'T' then null
+                            else IC.CANTIDAD * (((PR.LARGO)*(PR.ANCHO)*(PR.ALTO))/1000000)
+                        end VOLT,
+                        case PR.COD_PRODUCTO
+                            when 'T' then null
+                            else IC.CANTIDAD * PR.PESO
+                        end PESOT,
+                        'Especificaciones Equipo sin Embalaje' TITLE_ITEM, ";
         }else{
             $NOM_DOC = "PESOS Y MEDIDAS C-EMB COTIZACION $cod_cotizacion";
             
             $sql.= "case PR.COD_PRODUCTO
-							when 'T' then null
-							else PR.LARGO_EMBALADO
-						end LARGO,
-						case PR.COD_PRODUCTO
-							when 'T' then null
-							else PR.ANCHO_EMBALADO
-						end ANCHO,
-						case PR.COD_PRODUCTO
-							when 'T' then null
-							else PR.ALTO_EMBALADO
-						end ALTO,
-						case PR.COD_PRODUCTO
-							when 'T' then null
-							else PR.PESO_EMBALADO
-						end PESO,
-						case PR.COD_PRODUCTO
-							when 'T' then null
-							else ((PR.LARGO_EMBALADO)*(PR.ANCHO_EMBALADO)*(PR.ALTO_EMBALADO))/1000000
-						end VOLUMEN,
-						case PR.COD_PRODUCTO
-							when 'T' then null
-							else IC.CANTIDAD * (((PR.LARGO_EMBALADO)*(PR.ANCHO_EMBALADO)*(PR.ALTO_EMBALADO))/1000000)
-						end VOLT,
-						case PR.COD_PRODUCTO
-							when 'T' then null
-							else IC.CANTIDAD * PR.PESO_EMBALADO
-						end PESOT,
-						'Especificaciones Equipo con Embalaje' TITLE_ITEM, ";
+                            when 'T' then null
+                            else PR.LARGO_EMBALADO
+                        end LARGO,
+                        case PR.COD_PRODUCTO
+                            when 'T' then null
+                            else PR.ANCHO_EMBALADO
+                        end ANCHO,
+                        case PR.COD_PRODUCTO
+                            when 'T' then null
+                            else PR.ALTO_EMBALADO
+                        end ALTO,
+                        case PR.COD_PRODUCTO
+                            when 'T' then null
+                            else PR.PESO_EMBALADO
+                        end PESO,
+                        case PR.COD_PRODUCTO
+                            when 'T' then null
+                            else ((PR.LARGO_EMBALADO)*(PR.ANCHO_EMBALADO)*(PR.ALTO_EMBALADO))/1000000
+                        end VOLUMEN,
+                        case PR.COD_PRODUCTO
+                            when 'T' then null
+                            else IC.CANTIDAD * (((PR.LARGO_EMBALADO)*(PR.ANCHO_EMBALADO)*(PR.ALTO_EMBALADO))/1000000)
+                        end VOLT,
+                        case PR.COD_PRODUCTO
+                            when 'T' then null
+                            else IC.CANTIDAD * PR.PESO_EMBALADO
+                        end PESOT,
+                        'Especificaciones Equipo con Embalaje' TITLE_ITEM, ";
         }
         
         $sql.= "U. NOM_USUARIO,
-					U.MAIL MAIL_U,
-					U.TELEFONO FONO_U,
-					U.CELULAR CEL_U,
-					dbo.f_get_parametro(".self::K_PARAM_NOM_EMPRESA.") NOM_EMPRESA_EMISOR,
-					dbo.f_get_parametro(".self::K_PARAM_RUT_EMPRESA.") RUT_EMPRESA,
-					dbo.f_get_parametro(".self::K_PARAM_DIR_EMPRESA.") DIR_EMPRESA,
-					dbo.f_get_parametro(".self::K_PARAM_TEL_EMPRESA.") TEL_EMPRESA,
-					dbo.f_get_parametro(".self::K_PARAM_FAX_EMPRESA.") FAX_EMPRESA,
-					dbo.f_get_parametro(".self::K_PARAM_MAIL_EMPRESA.") MAIL_EMPRESA,
-					dbo.f_get_parametro(".self::K_PARAM_CIUDAD_EMPRESA.") CIUDAD_EMPRESA,
-					dbo.f_get_parametro(".self::K_PARAM_PAIS_EMPRESA.") PAIS_EMPRESA,
-					dbo.f_get_parametro(".self::K_PARAM_SITIO_WEB_EMPRESA.") SITIO_WEB_EMPRESA
-			FROM COTIZACION C, EMPRESA E, PERSONA P,
-					ITEM_COTIZACION IC, USUARIO U, PRODUCTO PR,
-					SUCURSAL SF, SUCURSAL SD
-			WHERE C.COD_COTIZACION = $cod_cotizacion AND
-					E.COD_EMPRESA = C.COD_EMPRESA AND
-					P.COD_PERSONA = C.COD_PERSONA AND
-					IC.COD_COTIZACION = C.COD_COTIZACION AND
-					U.COD_USUARIO = C.COD_USUARIO_VENDEDOR1 and
-					SF.COD_SUCURSAL = C.COD_SUCURSAL_FACTURA AND
-					SD.COD_SUCURSAL = C.COD_SUCURSAL_DESPACHO AND
-			    	PR.COD_PRODUCTO = IC.COD_PRODUCTO
-					order by IC.ORDEN asc";
+                    U.MAIL MAIL_U,
+                    U.TELEFONO FONO_U,
+                    U.CELULAR CEL_U,
+                    dbo.f_get_parametro(".self::K_PARAM_NOM_EMPRESA.") NOM_EMPRESA_EMISOR,
+                    dbo.f_get_parametro(".self::K_PARAM_RUT_EMPRESA.") RUT_EMPRESA,
+                    dbo.f_get_parametro(".self::K_PARAM_DIR_EMPRESA.") DIR_EMPRESA,
+                    dbo.f_get_parametro(".self::K_PARAM_TEL_EMPRESA.") TEL_EMPRESA,
+                    dbo.f_get_parametro(".self::K_PARAM_FAX_EMPRESA.") FAX_EMPRESA,
+                    dbo.f_get_parametro(".self::K_PARAM_MAIL_EMPRESA.") MAIL_EMPRESA,
+                    dbo.f_get_parametro(".self::K_PARAM_CIUDAD_EMPRESA.") CIUDAD_EMPRESA,
+                    dbo.f_get_parametro(".self::K_PARAM_PAIS_EMPRESA.") PAIS_EMPRESA,
+                    dbo.f_get_parametro(".self::K_PARAM_SITIO_WEB_EMPRESA.") SITIO_WEB_EMPRESA
+            FROM COTIZACION C, EMPRESA E, PERSONA P,
+                    ITEM_COTIZACION IC, USUARIO U, PRODUCTO PR,
+                    SUCURSAL SF, SUCURSAL SD
+            WHERE C.COD_COTIZACION = $cod_cotizacion AND
+                    E.COD_EMPRESA = C.COD_EMPRESA AND
+                    P.COD_PERSONA = C.COD_PERSONA AND
+                    IC.COD_COTIZACION = C.COD_COTIZACION AND
+                    U.COD_USUARIO = C.COD_USUARIO_VENDEDOR1 and
+                    SF.COD_SUCURSAL = C.COD_SUCURSAL_FACTURA AND
+                    SD.COD_SUCURSAL = C.COD_SUCURSAL_DESPACHO AND
+                    PR.COD_PRODUCTO = IC.COD_PRODUCTO
+                    order by IC.ORDEN asc";
         
         $result = $db->build_results($sql);
         
@@ -5426,11 +5438,11 @@ class wi_cotizacion extends wi_cotizacion_base {
         $worksheet->merge_cells(13+$i, 8, 13+$i, 9);
         
         if($con_total_consumo == 'S'){
-            $sql_c = 	"select ISNULL(SUM(IC.CANTIDAD * P.POTENCIA), 0) TOTAL_CONSUMO_GAS
-					from PRODUCTO P
-						,ITEM_COTIZACION IC
-					WHERE IC.COD_COTIZACION = $cod_cotizacion
-					AND P.COD_PRODUCTO = IC.COD_PRODUCTO";
+            $sql_c =    "select ISNULL(SUM(IC.CANTIDAD * P.POTENCIA), 0) TOTAL_CONSUMO_GAS
+                    from PRODUCTO P
+                        ,ITEM_COTIZACION IC
+                    WHERE IC.COD_COTIZACION = $cod_cotizacion
+                    AND P.COD_PRODUCTO = IC.COD_PRODUCTO";
             $result_b = $db->build_results($sql_c);
             
             $worksheet->write(15+$i, 8, "Total Consumo[MCal/hr]", $text_blue_bold_right);
@@ -6911,20 +6923,20 @@ class wi_cotizacion extends wi_cotizacion_base {
         $this->dws['dw_cotizacion']->set_item(0, 'NOM_USUARIO', $this->nom_usuario);
         $this->dws['dw_cotizacion']->set_item(0, 'COD_COTIZACION_DESDE', $cod_cotizacion);
         $this->dws['dw_cotizacion']->set_item(0, 'LL_LLAMADO','none');
-	$this->dws['dw_cotizacion']->set_item(0, 'VALIDEZ_OFERTA',$this->get_parametro(self::K_PARAM_VALIDEZ_OFERTA));
+    $this->dws['dw_cotizacion']->set_item(0, 'VALIDEZ_OFERTA',$this->get_parametro(self::K_PARAM_VALIDEZ_OFERTA));
         $this->dws['dw_cotizacion']->set_item(0, 'ENTREGA',$this->get_parametro(self::K_PARAM_ENTREGA));
         $this->dws['dw_cotizacion']->set_item(0, 'GARANTIA',$this->get_parametro(self::K_PARAM_GARANTIA));
-	$this->dws['dw_cotizacion']->set_item(0, 'GARANTIA',$this->get_parametro(self::K_PARAM_GARANTIA));
-	$this->dws['dw_cotizacion']->set_item(0, 'COD_EMBALAJE_COTIZACION', $this->get_orden_min('EMBALAJE_COTIZACION'));
-	$this->dws['dw_cotizacion']->set_item(0, 'COD_FLETE_COTIZACION', $this->get_orden_min('FLETE_COTIZACION'));
-	$this->dws['dw_cotizacion']->set_item(0, 'COD_INSTALACION_COTIZACION', $this->get_orden_min('INSTALACION_COTIZACION'));
+    $this->dws['dw_cotizacion']->set_item(0, 'GARANTIA',$this->get_parametro(self::K_PARAM_GARANTIA));
+    $this->dws['dw_cotizacion']->set_item(0, 'COD_EMBALAJE_COTIZACION', $this->get_orden_min('EMBALAJE_COTIZACION'));
+    $this->dws['dw_cotizacion']->set_item(0, 'COD_FLETE_COTIZACION', $this->get_orden_min('FLETE_COTIZACION'));
+    $this->dws['dw_cotizacion']->set_item(0, 'COD_INSTALACION_COTIZACION', $this->get_orden_min('INSTALACION_COTIZACION'));
 
         $db = new database(K_TIPO_BD, K_SERVER, K_BD, K_USER, K_PASS);
-        $sql = "select	  COD_USUARIO
-						, PORC_PARTICIPACION
-				from 	  USUARIO
-				where	  COD_USUARIO = $this->cod_usuario
-				and		  es_vendedor = 'S'";
+        $sql = "select    COD_USUARIO
+                        , PORC_PARTICIPACION
+                from      USUARIO
+                where     COD_USUARIO = $this->cod_usuario
+                and       es_vendedor = 'S'";
         $result = $db->build_results($sql);
         
         if (count($result)>0) {
@@ -6945,31 +6957,31 @@ class wi_cotizacion extends wi_cotizacion_base {
         
         // validez de la oferta
         $sql_parametro="SELECT VALOR
-						FROM PARAMETRO
-						WHERE COD_PARAMETRO = 7";
+                        FROM PARAMETRO
+                        WHERE COD_PARAMETRO = 7";
         $result_parametro = $db->build_results($sql_parametro);
         
         $sql="SELECT ".$result_parametro[0]['VALOR']." + DATEDIFF(DAY, GETDATE(), FECHA_COTIZACION) VALIDEZ
-			  FROM COTIZACION
-			  WHERE COD_COTIZACION = $cod_cotizacion";
+              FROM COTIZACION
+              WHERE COD_COTIZACION = $cod_cotizacion";
         $result = $db->build_results($sql);
         
         //////////
         
         for($i=0; $i<$this->dws['dw_item_cotizacion']->row_count(); $i++){
-            $cod_producto 	= $this->dws['dw_item_cotizacion']->get_item($i, 'COD_PRODUCTO');
-            $precio_cot		= $this->dws['dw_item_cotizacion']->get_item($i, 'PRECIO');
+            $cod_producto   = $this->dws['dw_item_cotizacion']->get_item($i, 'COD_PRODUCTO');
+            $precio_cot     = $this->dws['dw_item_cotizacion']->get_item($i, 'PRECIO');
             
-            $result			= $db->build_results("select
-															PRECIO_VENTA_PUBLICO
-														  , PRECIO_LIBRE
-												  from 		PRODUCTO
-												  where 	COD_PRODUCTO = '$cod_producto'");
+            $result         = $db->build_results("select
+                                                            PRECIO_VENTA_PUBLICO
+                                                          , PRECIO_LIBRE
+                                                  from      PRODUCTO
+                                                  where     COD_PRODUCTO = '$cod_producto'");
             // para los TE, E, I, etc Se los salta
             if ($result[0]['PRECIO_LIBRE']=='S')
                 continue;
                 
-                $precio_bd		= $result[0]['PRECIO_VENTA_PUBLICO'];
+                $precio_bd      = $result[0]['PRECIO_VENTA_PUBLICO'];
                 if($precio_bd != $precio_cot ){
                     $num_dif++;
                 }
@@ -6986,8 +6998,8 @@ class wi_cotizacion extends wi_cotizacion_base {
             $this->dws['dw_item_cotizacion']->set_status_row($i, K_ROW_NEW_MODIFIED);
         }
         
-        /*	if($num_dif > 0)	// && $puede_usar_precio_cot)
-         $this->que_precio_usa($cod_cotizacion);	*/
+        /*  if($num_dif > 0)    // && $puede_usar_precio_cot)
+         $this->que_precio_usa($cod_cotizacion);    */
         
         if (session::is_set('usa_precio_prod')) {
             session::un_set('usa_precio_prod');
@@ -7026,12 +7038,12 @@ class wi_cotizacion extends wi_cotizacion_base {
         $puede_usar_precio_cot = w_base::tiene_privilegio_opcion_usuario('990505', $cod_usuario);
         // validez de la oferta
         $sql_parametro="SELECT VALOR
-						FROM PARAMETRO
-						WHERE COD_PARAMETRO = 7";
+                        FROM PARAMETRO
+                        WHERE COD_PARAMETRO = 7";
         $result_parametro = $db->build_results($sql_parametro);
         $sql="SELECT ".$result_parametro[0]['VALOR']." + DATEDIFF(DAY, GETDATE(), FECHA_SOLICITUD_COTIZACION) VALIDEZ
-			  FROM SOLICITUD_COTIZACION
-			  WHERE COD_SOLICITUD_COTIZACION = $cod_solicitud";
+              FROM SOLICITUD_COTIZACION
+              WHERE COD_SOLICITUD_COTIZACION = $cod_solicitud";
         $result = $db->build_results($sql);
         
         if($result[0]['VALIDEZ'] >= 0)
@@ -7040,34 +7052,34 @@ class wi_cotizacion extends wi_cotizacion_base {
                 $validez_oferta = false;
                 //////////
                 
-                $sql="SELECT	ISC.COD_SOLICITUD_COTIZACION
-						, ISC.COD_PRODUCTO
-						, ISC.NOM_PRODUCTO
-						, ISC.CANTIDAD
-						, ISC.PRECIO
-						, ISC.TOTAL_PRECIO
-						, SC.COD_SOLICITUD_COTIZACION
-						, C.NOM_CONTACTO
-						, C.RUT
-						, C.DIG_VERIF
-						, C.NOM_CIUDAD
-						,dbo.f_contacto_telefono(CP.COD_CONTACTO_PERSONA,1) TELEFONO
-						,dbo.f_contacto_telefono(CP.COD_CONTACTO_PERSONA,2) CELULAR
-						,CP.NOM_PERSONA
-						,CP.MAIL
-						,LL.MENSAJE
-						,dbo.f_get_parametro(1) PORC_IVA
-						,P.PRECIO_VENTA_PUBLICO
-				FROM	ITEM_SOLICITUD_COTIZACION ISC RIGHT OUTER JOIN SOLICITUD_COTIZACION SC ON  ISC.COD_SOLICITUD_COTIZACION = SC.COD_SOLICITUD_COTIZACION
-															LEFT OUTER JOIN PRODUCTO P ON P.COD_PRODUCTO = ISC.COD_PRODUCTO
-						, CONTACTO C
-						,CONTACTO_PERSONA CP
-						,LLAMADO LL
-				WHERE	  SC.COD_SOLICITUD_COTIZACION = $cod_solicitud
-				AND		  C.COD_CONTACTO = SC.COD_CONTACTO
-				AND       C.COD_CONTACTO = CP.COD_CONTACTO
-				AND       SC.COD_LLAMADO = LL.COD_LLAMADO
-				ORDER BY  COD_ITEM_SOLICITUD_COTIZACION";
+                $sql="SELECT    ISC.COD_SOLICITUD_COTIZACION
+                        , ISC.COD_PRODUCTO
+                        , ISC.NOM_PRODUCTO
+                        , ISC.CANTIDAD
+                        , ISC.PRECIO
+                        , ISC.TOTAL_PRECIO
+                        , SC.COD_SOLICITUD_COTIZACION
+                        , C.NOM_CONTACTO
+                        , C.RUT
+                        , C.DIG_VERIF
+                        , C.NOM_CIUDAD
+                        ,dbo.f_contacto_telefono(CP.COD_CONTACTO_PERSONA,1) TELEFONO
+                        ,dbo.f_contacto_telefono(CP.COD_CONTACTO_PERSONA,2) CELULAR
+                        ,CP.NOM_PERSONA
+                        ,CP.MAIL
+                        ,LL.MENSAJE
+                        ,dbo.f_get_parametro(1) PORC_IVA
+                        ,P.PRECIO_VENTA_PUBLICO
+                FROM    ITEM_SOLICITUD_COTIZACION ISC RIGHT OUTER JOIN SOLICITUD_COTIZACION SC ON  ISC.COD_SOLICITUD_COTIZACION = SC.COD_SOLICITUD_COTIZACION
+                                                            LEFT OUTER JOIN PRODUCTO P ON P.COD_PRODUCTO = ISC.COD_PRODUCTO
+                        , CONTACTO C
+                        ,CONTACTO_PERSONA CP
+                        ,LLAMADO LL
+                WHERE     SC.COD_SOLICITUD_COTIZACION = $cod_solicitud
+                AND       C.COD_CONTACTO = SC.COD_CONTACTO
+                AND       C.COD_CONTACTO = CP.COD_CONTACTO
+                AND       SC.COD_LLAMADO = LL.COD_LLAMADO
+                ORDER BY  COD_ITEM_SOLICITUD_COTIZACION";
                 
                 $result = $db->build_results($sql);
                 for ($i=0; $i<count($result); $i++) {
@@ -7080,7 +7092,7 @@ class wi_cotizacion extends wi_cotizacion_base {
                     $this->dws['dw_item_cotizacion']->set_item($row, 'CANTIDAD', $cantidad);
                     $this->dws['dw_item_cotizacion']->set_item($row, 'PRECIO', $precio);
                     
-                    $precio_bd	= $result[$i]['PRECIO_VENTA_PUBLICO'];
+                    $precio_bd  = $result[$i]['PRECIO_VENTA_PUBLICO'];
                     if($precio_bd != $precio)
                         $num_dif++;
                         
@@ -7121,7 +7133,7 @@ class wi_cotizacion extends wi_cotizacion_base {
                 if($priv <> 'E'){
                     $this->dws['dw_cotizacion']->set_entrable('VALIDEZ_OFERTA', false);
                 }
-                /*if($num_dif > 0)	// && $puede_usar_precio_cot && $validez_oferta)
+                /*if($num_dif > 0)  // && $puede_usar_precio_cot && $validez_oferta)
                  $this->que_precio_usa_solicitud($cod_solicitud);*/
                 if (session::is_set('usa_precio_prod')) {
                     session::un_set('usa_precio_prod');
